@@ -86,7 +86,8 @@ npm run type-check  # Should pass with 0 errors
 
 ---
 
-### [ ] Step: Custom Hooks - useLibrary
+### [x] Step: Custom Hooks - useLibrary
+<!-- chat-id: 656b7e85-90de-4201-b382-d7bc23bb1588 -->
 
 **Files**: `hooks/useLibrary.ts` (new)
 

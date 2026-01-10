@@ -125,7 +125,8 @@ npm run type-check  # Should pass with 0 errors
 
 ---
 
-### [ ] Step: Shared PromptCard Component
+### [x] Step: Shared PromptCard Component
+<!-- chat-id: ca49b0eb-c95e-4ae0-807f-ef04bc0966ee -->
 
 **Files**: `components/shared/PromptCard.tsx` (new)
 

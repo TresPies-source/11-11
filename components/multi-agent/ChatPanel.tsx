@@ -1,0 +1,213 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Minus,
+  Maximize2,
+  X,
+  Send,
+  Sparkles,
+  User,
+  Bot,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ChatMessage, Session } from "@/lib/types";
+import { AGENT_PERSONAS, ANIMATION_EASE } from "@/lib/constants";
+
+interface ChatPanelProps {
+  session: Session;
+  onMinimize: (id: string) => void;
+  onMaximize: (id: string) => void;
+  onClose: (id: string) => void;
+  onSendMessage: (id: string, content: string) => void;
+}
+
+export function ChatPanel({
+  session,
+  onMinimize,
+  onMaximize,
+  onClose,
+  onSendMessage,
+}: ChatPanelProps) {
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const persona = AGENT_PERSONAS.find((p) => p.id === session.persona);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [session.messages]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      onSendMessage(session.id, input.trim());
+      setInput("");
+    }
+  };
+
+  if (session.isMinimized) {
+    return (
+      <motion.div
+        layout
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.2, ease: ANIMATION_EASE }}
+        className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+        onClick={() => onMaximize(session.id)}
+      >
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                "w-2 h-2 rounded-full",
+                persona?.color === "blue" && "bg-blue-500",
+                persona?.color === "purple" && "bg-purple-500",
+                persona?.color === "green" && "bg-green-500",
+                persona?.color === "amber" && "bg-amber-500"
+              )}
+            />
+            <span className="font-medium text-sm">{session.title}</span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose(session.id);
+            }}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      layout
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ duration: 0.2, ease: ANIMATION_EASE }}
+      className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col overflow-hidden"
+    >
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <Sparkles
+            className={cn(
+              "w-4 h-4 flex-shrink-0",
+              persona?.color === "blue" && "text-blue-500",
+              persona?.color === "purple" && "text-purple-500",
+              persona?.color === "green" && "text-green-500",
+              persona?.color === "amber" && "text-amber-500"
+            )}
+          />
+          <span className="font-medium text-sm truncate">{session.title}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => onMinimize(session.id)}
+            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+            title="Minimize"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onClose(session.id)}
+            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+            title="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+        {session.messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            <div className="text-center">
+              <Bot className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Start a conversation with {persona?.name}</p>
+            </div>
+          </div>
+        ) : (
+          session.messages.map((message) => (
+            <div
+              key={message.id}
+              className={cn(
+                "flex gap-3",
+                message.role === "user" ? "justify-end" : "justify-start"
+              )}
+            >
+              {message.role === "assistant" && (
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                    persona?.color === "blue" && "bg-blue-100",
+                    persona?.color === "purple" && "bg-purple-100",
+                    persona?.color === "green" && "bg-green-100",
+                    persona?.color === "amber" && "bg-amber-100"
+                  )}
+                >
+                  <Bot
+                    className={cn(
+                      "w-4 h-4",
+                      persona?.color === "blue" && "text-blue-600",
+                      persona?.color === "purple" && "text-purple-600",
+                      persona?.color === "green" && "text-green-600",
+                      persona?.color === "amber" && "text-amber-600"
+                    )}
+                  />
+                </div>
+              )}
+              <div
+                className={cn(
+                  "rounded-lg px-4 py-2 max-w-[80%]",
+                  message.role === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-900"
+                )}
+              >
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              </div>
+              {message.role === "user" && (
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4 text-blue-600" />
+                </div>
+              )}
+            </div>
+          ))
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="border-t border-gray-200 p-4 bg-gray-50"
+      >
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={`Message ${persona?.name}...`}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button
+            type="submit"
+            disabled={!input.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+      </form>
+    </motion.div>
+  );
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useEffect } from "react";
 import { useSyncStatus } from "@/hooks/useSyncStatus";
 import type { SyncOperation, SyncStatusState } from "@/lib/types";
 
@@ -19,6 +19,10 @@ interface SyncStatusProviderProps {
 
 export function SyncStatusProvider({ children }: SyncStatusProviderProps) {
   const { status, addOperation, retryLastFailed, clearOperations } = useSyncStatus();
+
+  useEffect(() => {
+    console.log('[SyncStatus] Shared context initialized');
+  }, []);
 
   const contextValue: SyncStatusContextValue = {
     status,

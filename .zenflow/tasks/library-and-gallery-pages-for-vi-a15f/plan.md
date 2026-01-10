@@ -151,6 +151,7 @@ npm run type-check  # Should pass with 0 errors
 ---
 
 ### [ ] Step: Library Page - Route and View
+<!-- chat-id: 503c883f-12ec-40a2-8ae0-f7f6be4a41e6 -->
 
 **Files**: `app/library/page.tsx` (new), `components/library/LibraryView.tsx` (new)
 

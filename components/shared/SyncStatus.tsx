@@ -4,6 +4,7 @@ import { Cloud, GitBranch, RotateCw } from "lucide-react";
 import { SyncStatus as SyncStatusType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useSyncStatus } from "@/hooks/useSyncStatus";
+import { useRepository } from "@/hooks/useRepository";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
@@ -12,7 +13,8 @@ interface SyncStatusProps {
 }
 
 export function SyncStatus({ status }: SyncStatusProps) {
-  const { status: syncStatus, retryLastFailed } = useSyncStatus();
+  const { status: syncStatus } = useSyncStatus();
+  const { retrySave } = useRepository();
   const [isRetrying, setIsRetrying] = useState(false);
 
   const mockStatus: SyncStatusType = status ?? {
@@ -60,8 +62,33 @@ export function SyncStatus({ status }: SyncStatusProps) {
 
   const handleRetry = async () => {
     setIsRetrying(true);
-    await retryLastFailed();
+    await retrySave();
     setTimeout(() => setIsRetrying(false), 600);
+  };
+
+  const getOperationTooltip = (): string => {
+    if (syncStatus.currentOperation) {
+      const fileName = syncStatus.currentOperation.fileName || "file";
+      return `Saving ${fileName}`;
+    }
+    
+    if (syncStatus.lastSync) {
+      const secondsAgo = Math.floor(
+        (Date.now() - syncStatus.lastSync.getTime()) / 1000
+      );
+      
+      if (secondsAgo < 60) {
+        return `Last synced ${secondsAgo} second${secondsAgo !== 1 ? 's' : ''} ago`;
+      } else if (secondsAgo < 3600) {
+        const minutesAgo = Math.floor(secondsAgo / 60);
+        return `Last synced ${minutesAgo} minute${minutesAgo !== 1 ? 's' : ''} ago`;
+      } else {
+        const hoursAgo = Math.floor(secondsAgo / 3600);
+        return `Last synced ${hoursAgo} hour${hoursAgo !== 1 ? 's' : ''} ago`;
+      }
+    }
+    
+    return "Not synced yet";
   };
 
   return (
@@ -77,6 +104,7 @@ export function SyncStatus({ status }: SyncStatusProps) {
               duration: 0.3,
               ease: "easeInOut",
             }}
+            title={getOperationTooltip()}
           >
             <Cloud
               className={cn(

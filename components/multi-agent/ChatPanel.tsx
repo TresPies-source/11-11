@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ChatMessage, Session } from "@/lib/types";
 import { AGENT_PERSONAS, ANIMATION_EASE } from "@/lib/constants";
-import { useContextBus } from "@/hooks/useContextBus";
+import { useContextBus, useContextBusSubscription } from "@/hooks/useContextBus";
 
 interface ChatPanelProps {
   session: Session;
@@ -37,7 +37,6 @@ const ChatPanelComponent = ({
   const [showContextToast, setShowContextToast] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const persona = AGENT_PERSONAS.find((p) => p.id === session.persona);
-  const contextBus = useContextBus();
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,31 +46,25 @@ const ChatPanelComponent = ({
     scrollToBottom();
   }, [session.messages, scrollToBottom]);
 
-  useEffect(() => {
-    const handlePlanUpdate = (event: { content: string; timestamp: Date }) => {
-      const preview = event.content.substring(0, 100);
-      console.log(
-        `[ContextBus] Plan update received for Agent: ${persona?.name}`,
-        {
-          timestamp: event.timestamp.toISOString(),
-          contentPreview: preview,
-        }
-      );
-      setSystemContext(event.content);
-      setShowContextToast(true);
-      
-      // Auto-dismiss after 3 seconds
-      setTimeout(() => {
-        setShowContextToast(false);
-      }, 3000);
-    };
+  const handlePlanUpdate = useCallback((event: { content: string; timestamp: Date }) => {
+    const preview = event.content.substring(0, 100);
+    console.log(
+      `[ContextBus] Plan update received for Agent: ${persona?.name}`,
+      {
+        timestamp: event.timestamp.toISOString(),
+        contentPreview: preview,
+      }
+    );
+    setSystemContext(event.content);
+    setShowContextToast(true);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+      setShowContextToast(false);
+    }, 3000);
+  }, [persona?.name]);
 
-    contextBus.on("PLAN_UPDATED", handlePlanUpdate);
-
-    return () => {
-      contextBus.off("PLAN_UPDATED", handlePlanUpdate);
-    };
-  }, [contextBus, persona?.name]);
+  useContextBusSubscription("PLAN_UPDATED", handlePlanUpdate);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {

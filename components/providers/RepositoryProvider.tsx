@@ -32,6 +32,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const [activeFile, setActiveFileState] = useState<FileNode | null>(null);
   const [fileContent, setFileContentState] = useState<string>("");
   const [savedContent, setSavedContent] = useState<string>("");
+  const [rollbackContent, setRollbackContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -111,6 +112,9 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
     setIsSaving(true);
     setError(null);
 
+    setRollbackContent(savedContent);
+    setSavedContent(fileContent);
+
     addOperation({
       type: 'save',
       status: 'pending',
@@ -132,7 +136,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       }
       
       const now = new Date();
-      setSavedContent(fileContent);
+      setRollbackContent("");
       setLastSaved(now);
 
       addOperation({
@@ -152,6 +156,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to save file";
       setError(errorMessage);
+      setSavedContent(rollbackContent);
 
       addOperation({
         type: 'save',
@@ -163,7 +168,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
     } finally {
       setIsSaving(false);
     }
-  }, [activeFile, fileContent, isDirty, emit, addOperation]);
+  }, [activeFile, fileContent, isDirty, emit, addOperation, savedContent, rollbackContent]);
 
   const discardChanges = useCallback(() => {
     setFileContentState(savedContent);
@@ -171,10 +176,10 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   }, [savedContent]);
 
   const retrySave = useCallback(async () => {
-    if (activeFile && isDirty) {
-      await saveFile();
-    }
-  }, [activeFile, isDirty, saveFile]);
+    if (!activeFile || !error) return;
+    setError(null);
+    await saveFile();
+  }, [activeFile, error, saveFile]);
 
   const value: RepositoryContextValue = {
     activeFile,

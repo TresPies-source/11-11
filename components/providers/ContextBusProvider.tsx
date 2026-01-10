@@ -38,18 +38,29 @@ export function ContextBusProvider({ children }: ContextBusProviderProps) {
         event: T,
         payload: EventMap[T]
       ) => {
+        const timestamp = new Date().toISOString();
+        console.log(`[ContextBus] Emitting ${event} at ${timestamp}`);
+        
+        if (event === "PLAN_UPDATED" && payload && typeof payload === "object" && "content" in payload) {
+          const content = (payload as any).content || "";
+          const preview = typeof content === "string" ? content.substring(0, 100) : "";
+          console.log(`[ContextBus] PLAN_UPDATED content preview: ${preview}${content.length > 100 ? "..." : ""}`);
+        }
+        
         emitter.emit(event, payload);
       },
       on: <T extends ContextBusEvent["type"]>(
         event: T,
         handler: (payload: EventMap[T]) => void
       ) => {
+        console.log(`[ContextBus] Subscribed to ${event}`);
         emitter.on(event, handler);
       },
       off: <T extends ContextBusEvent["type"]>(
         event: T,
         handler: (payload: EventMap[T]) => void
       ) => {
+        console.log(`[ContextBus] Unsubscribed from ${event}`);
         emitter.off(event, handler);
       },
     }),

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Minus,
   Maximize2,
@@ -10,10 +10,12 @@ import {
   Sparkles,
   User,
   Bot,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChatMessage, Session } from "@/lib/types";
 import { AGENT_PERSONAS, ANIMATION_EASE } from "@/lib/constants";
+import { useContextBus } from "@/hooks/useContextBus";
 
 interface ChatPanelProps {
   session: Session;
@@ -23,32 +25,64 @@ interface ChatPanelProps {
   onSendMessage: (id: string, content: string) => void;
 }
 
-export function ChatPanel({
+const ChatPanelComponent = ({
   session,
   onMinimize,
   onMaximize,
   onClose,
   onSendMessage,
-}: ChatPanelProps) {
+}: ChatPanelProps) => {
   const [input, setInput] = useState("");
+  const [systemContext, setSystemContext] = useState<string>("");
+  const [showContextToast, setShowContextToast] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const persona = AGENT_PERSONAS.find((p) => p.id === session.persona);
+  const contextBus = useContextBus();
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [session.messages]);
+  }, [session.messages, scrollToBottom]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input.trim()) {
-      onSendMessage(session.id, input.trim());
-      setInput("");
-    }
-  };
+  useEffect(() => {
+    const handlePlanUpdate = (event: { content: string; timestamp: Date }) => {
+      const preview = event.content.substring(0, 100);
+      console.log(
+        `[ContextBus] Plan update received for Agent: ${persona?.name}`,
+        {
+          timestamp: event.timestamp.toISOString(),
+          contentPreview: preview,
+        }
+      );
+      setSystemContext(event.content);
+      setShowContextToast(true);
+      
+      // Auto-dismiss after 3 seconds
+      setTimeout(() => {
+        setShowContextToast(false);
+      }, 3000);
+    };
+
+    contextBus.on("PLAN_UPDATED", handlePlanUpdate);
+
+    return () => {
+      contextBus.off("PLAN_UPDATED", handlePlanUpdate);
+    };
+  }, [contextBus, persona?.name]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (input.trim()) {
+        onSendMessage(session.id, input.trim());
+        setInput("");
+      }
+    },
+    [input, onSendMessage, session.id]
+  );
 
   if (session.isMinimized) {
     return (
@@ -95,8 +129,23 @@ export function ChatPanel({
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
       transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-      className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col overflow-hidden"
+      className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col overflow-hidden relative"
     >
+      <AnimatePresence>
+        {showContextToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: ANIMATION_EASE }}
+            className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+          >
+            <Check className="w-4 h-4" />
+            <span className="text-sm font-medium">Context Refreshed</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <Sparkles
@@ -210,4 +259,39 @@ export function ChatPanel({
       </form>
     </motion.div>
   );
-}
+};
+
+// Custom comparison function to prevent unnecessary re-renders
+const arePropsEqual = (
+  prevProps: ChatPanelProps,
+  nextProps: ChatPanelProps
+): boolean => {
+  // Compare session properties
+  if (prevProps.session.id !== nextProps.session.id) return false;
+  if (prevProps.session.isMinimized !== nextProps.session.isMinimized)
+    return false;
+  if (prevProps.session.title !== nextProps.session.title) return false;
+  if (prevProps.session.persona !== nextProps.session.persona) return false;
+
+  // Compare messages array length and content
+  if (prevProps.session.messages.length !== nextProps.session.messages.length)
+    return false;
+
+  // Deep compare messages
+  for (let i = 0; i < prevProps.session.messages.length; i++) {
+    const prevMsg = prevProps.session.messages[i];
+    const nextMsg = nextProps.session.messages[i];
+    if (
+      prevMsg.id !== nextMsg.id ||
+      prevMsg.content !== nextMsg.content ||
+      prevMsg.role !== nextMsg.role
+    ) {
+      return false;
+    }
+  }
+
+  // Props are equal if we got here
+  return true;
+};
+
+export const ChatPanel = React.memo(ChatPanelComponent, arePropsEqual);

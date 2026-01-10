@@ -11,7 +11,7 @@ export function Header() {
   const { user, isAuthenticated } = useSession();
 
   const handleSignIn = () => {
-    console.log("Sign in clicked");
+    // TODO: Implement Google OAuth sign-in
   };
 
   return (

@@ -106,7 +106,8 @@ npm run type-check  # Should pass with 0 errors
 
 ---
 
-### [ ] Step: Custom Hooks - useGallery
+### [x] Step: Custom Hooks - useGallery
+<!-- chat-id: c7c03eb9-4c6f-4954-bb15-a356d829e339 -->
 
 **Files**: `hooks/useGallery.ts` (new)
 

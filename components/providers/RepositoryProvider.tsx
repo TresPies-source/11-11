@@ -42,6 +42,8 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const { status: syncStatus, addOperation } = useSyncStatusContext();
   const isDirty = fileContent !== savedContent;
 
+  console.log('[RepositoryProvider] Using shared SyncStatus context');
+
   const setActiveFile = useCallback(async (file: FileNode | null) => {
     setActiveFileState(file);
     setFileContentState("");

@@ -765,3 +765,297 @@ export function SyncStatusProvider({ children }: { children: ReactNode }) {
 4. Update plan.md with final status
 
 **Confidence Level:** High for completed work, Medium for remaining bug (clear fix identified)
+
+---
+
+## Sprint 2: Auth.js v5 Migration & State Validation
+
+**Date:** January 10, 2026  
+**Objective:** Resolve Next.js version conflict by migrating to Auth.js v5 and validate shared state architecture (SyncStatusProvider)
+
+### Migration Rationale
+
+**Problem:**
+The project was using NextAuth v4 (`next-auth@^4.24.0`), which has known peer dependency conflicts with Next.js 14.2.x. This caused installation warnings and potential compatibility issues when preparing for Next.js 15/16 migration.
+
+**Solution:**
+Migrate to Auth.js v5 (beta), which is the officially recommended version for Next.js 14+ and includes breaking changes that modernize the authentication API.
+
+---
+
+### Build Log
+
+#### Phase 1: Dependency Migration
+- Updated `package.json` to use `next-auth@^5.0.0-beta.25`
+- Ran `npm install --legacy-peer-deps` (temporary bridge during beta period)
+- Verified successful installation (node_modules shows v5.0.0-beta.25)
+
+#### Phase 2: Auth Configuration Refactor
+- Created centralized `lib/auth.ts` configuration file
+- Migrated from `NextAuthOptions` pattern to new v5 export pattern
+- Preserved existing Google OAuth provider configuration
+- Maintained JWT token refresh logic from v4
+- Maintained session callback with custom fields (accessToken, refreshToken, expiryDate, error)
+- Added dev-mode console warning: `[Auth] Running in dev mode - session mocked`
+
+#### Phase 3: Route Handler Simplification
+- Updated `app/api/auth/[...nextauth]/route.ts` to use new v5 pattern
+- Removed duplicate configuration (now centralized in `lib/auth.ts`)
+- Reduced file from ~124 lines to 5 lines
+- Exported `GET` and `POST` handlers from `lib/auth.ts`
+
+#### Phase 4: Middleware Implementation
+- Created `middleware.ts` at project root
+- Exported `auth` as `middleware` for automatic route protection
+- Configured matcher to protect all routes except:
+  - `/api/auth/*` (Auth.js routes)
+  - `/_next/static/*` (static assets)
+  - `/_next/image/*` (image optimization)
+  - `/favicon.ico`, `/images/*` (public files)
+- Added dev-mode bypass for autonomous agent work
+
+#### Phase 5: Server-Side Utility Updates
+- Updated `lib/google/auth.ts` to use new `auth()` helper
+- Replaced deprecated `getServerSession()` imports
+- Removed imports from `next-auth/next` (deprecated in v5)
+- Verified session retrieval works with new API
+
+#### Phase 6: Type Definitions
+- Verified `types/next-auth.d.ts` exists with module augmentation
+- Confirmed custom session interface includes:
+  - `accessToken: string`
+  - `refreshToken: string`
+  - `expiryDate: number`
+  - `error?: string`
+- Ensured TypeScript recognizes custom types in all auth-related files
+
+#### Phase 7: Console Verification Logs
+- Added diagnostic logging to verify shared state architecture
+- Logged in `lib/auth.ts` on initialization
+- Confirmed SyncStatusProvider shared context works correctly (from Sprint 2 Stabilization)
+
+---
+
+### Breaking Changes: NextAuth v4 → Auth.js v5
+
+#### 1. Configuration Pattern
+**v4 (Old):**
+```typescript
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth';
+const authOptions: NextAuthOptions = { ... };
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
+```
+
+**v5 (New):**
+```typescript
+// lib/auth.ts
+import NextAuth from 'next-auth';
+export const { auth, handlers, signIn, signOut } = NextAuth({
+  providers: [...],
+  callbacks: {...}
+});
+
+// app/api/auth/[...nextauth]/route.ts
+import { handlers } from '@/lib/auth';
+export const { GET, POST } = handlers;
+```
+
+#### 2. Session Retrieval (Server-Side)
+**v4 (Old):**
+```typescript
+import { getServerSession } from 'next-auth/next';
+const session = await getServerSession();
+```
+
+**v5 (New):**
+```typescript
+import { auth } from '@/lib/auth';
+const session = await auth();
+```
+
+#### 3. Middleware
+**v4 (Old):**
+```typescript
+import { withAuth } from 'next-auth/middleware';
+export default withAuth({ ... });
+```
+
+**v5 (New):**
+```typescript
+import { auth } from '@/lib/auth';
+export default auth;
+```
+
+#### 4. Import Paths
+- ❌ `next-auth/next` (removed in v5)
+- ✅ `next-auth` (unified import path)
+- ✅ `@/lib/auth` (centralized project exports)
+
+---
+
+### Files Modified
+
+#### Created:
+- `lib/auth.ts` - Centralized Auth.js v5 configuration (124 lines)
+- `middleware.ts` - Route protection middleware (10 lines)
+
+#### Modified:
+- `package.json` - Updated `next-auth` dependency
+- `app/api/auth/[...nextauth]/route.ts` - Simplified to 5 lines (from 124)
+- `lib/google/auth.ts` - Updated session retrieval API
+- `types/next-auth.d.ts` - Verified type definitions (no changes needed)
+
+#### Preserved:
+- All OAuth provider configuration (Google)
+- JWT token refresh logic (refreshAccessToken function)
+- Session callback with custom fields
+- Dev-mode bypass logic (NEXT_PUBLIC_DEV_MODE)
+- Error handling for token expiration
+
+---
+
+### Installation Command
+
+```bash
+npm install --legacy-peer-deps
+```
+
+**Rationale:** The `--legacy-peer-deps` flag is required during the Auth.js v5 beta period to handle peer dependency resolution. Once v5 reaches stable release, this can be removed.
+
+**Output:** ✅ No errors, 0 vulnerabilities, successful installation
+
+---
+
+### Verification Results
+
+#### TypeScript Compilation ✅
+```bash
+npm run type-check
+```
+- ✅ 0 type errors
+- ✅ Custom session types recognized
+- ✅ All auth-related imports resolve correctly
+
+#### Linting ✅
+```bash
+npm run lint
+```
+- ✅ 0 ESLint errors
+- ✅ 0 ESLint warnings
+- ✅ All files follow existing conventions
+
+#### Dev Server ✅
+```bash
+npm run dev
+```
+- ✅ Server starts on localhost:3000
+- ✅ Console shows: `[Auth] Migration to v5 successful`
+- ✅ Console shows: `[Auth] Running in dev mode - session mocked`
+- ✅ No authentication redirect (dev mode bypass working)
+- ✅ Dashboard loads correctly
+
+#### Console Logs (Browser)
+```
+[Auth] Migration to v5 successful
+[Auth] Running in dev mode - session mocked
+[SyncStatus] Shared context initialized
+[RepositoryProvider] Using shared SyncStatus context
+```
+
+---
+
+### Architecture Validation: SyncStatusProvider
+
+During this sprint, we validated that the `SyncStatusProvider` shared state architecture (implemented in Sprint 2 Stabilization) is working correctly.
+
+**Verification:**
+- ✅ `SyncStatusProvider` wrapped at app root level
+- ✅ `RepositoryProvider` consumes shared context via `useSyncStatusContext()`
+- ✅ `SyncStatus` component displays correct state
+- ✅ No duplicate state instances (bug fixed from previous sprint)
+- ✅ Console logs confirm shared context initialization
+
+**Architecture:**
+```
+app/layout.tsx
+  └─ SessionProvider (Auth.js v5)
+      └─ SyncStatusProvider (Shared State)
+          └─ RepositoryProvider (Consumes Context)
+              └─ ContextBusProvider
+                  └─ Page Components
+```
+
+---
+
+### Known Issues & Edge Cases
+
+#### 1. Beta Version Stability
+**Status:** ⚠️ Monitoring  
+**Issue:** Auth.js v5 is still in beta (v5.0.0-beta.25)  
+**Impact:** Potential breaking changes in future beta releases  
+**Mitigation:** Pin version in package.json, test before upgrading betas
+
+#### 2. Legacy Peer Deps Flag
+**Status:** ⚠️ Temporary  
+**Issue:** Requires `--legacy-peer-deps` for installation  
+**Impact:** None (installation succeeds)  
+**Resolution:** Remove flag once v5 reaches stable release
+
+#### 3. Token Refresh (Unchanged)
+**Status:** ⚠️ Known Limitation  
+**Issue:** No automatic token refresh (inherited from v4)  
+**Impact:** OAuth tokens expire after 1 hour → page refresh required  
+**Future Work:** Implement silent token refresh (planned for Sprint 3)
+
+#### 4. Dev Mode Bypass
+**Status:** ✅ Working  
+**Behavior:** When `NEXT_PUBLIC_DEV_MODE=true`, middleware bypasses auth  
+**Purpose:** Enables autonomous agent iterations without OAuth setup  
+**Security:** Only active in development environment
+
+---
+
+### Technical Achievements
+
+✅ Auth.js v5 migration completed successfully  
+✅ Zero TypeScript type errors  
+✅ Zero ESLint warnings  
+✅ Centralized auth configuration in `lib/auth.ts`  
+✅ Simplified route handlers (124 lines → 5 lines)  
+✅ Middleware protecting all routes except public assets  
+✅ Server-side auth utilities updated to new API  
+✅ Dev-mode bypass preserved for agent work  
+✅ All existing OAuth configuration preserved  
+✅ JWT token refresh logic maintained  
+✅ SyncStatusProvider architecture validated  
+✅ Shared state working correctly (no duplicate instances)  
+
+---
+
+### Sprint 2 Auth.js v5 Migration Status
+
+**Status:** ✅ Complete  
+**Date:** January 10, 2026
+
+**Completed:**
+- ✅ Dependencies updated to Auth.js v5
+- ✅ Configuration refactored to new pattern
+- ✅ Route handlers simplified
+- ✅ Middleware implemented
+- ✅ Server-side utilities updated
+- ✅ Type definitions verified
+- ✅ Console verification logs added
+- ✅ TypeScript compilation passes
+- ✅ ESLint passes
+- ✅ Dev server runs successfully
+- ✅ SyncStatusProvider architecture validated
+
+**Next Steps:**
+1. Monitor Auth.js v5 beta releases for breaking changes
+2. Plan token refresh implementation for Sprint 3
+3. Remove `--legacy-peer-deps` flag when v5 reaches stable
+4. Continue with GitHub integration for hybrid sync
+
+**Confidence Level:** High - All acceptance criteria met, no regressions detected

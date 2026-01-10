@@ -3,7 +3,7 @@
 import { createContext, useContext, ReactNode, useState, useCallback } from "react";
 import { FileNode, SyncStatusState } from "@/lib/types";
 import { useContextBus } from "@/hooks/useContextBus";
-import { useSyncStatus } from "@/hooks/useSyncStatus";
+import { useSyncStatusContext } from "@/components/providers/SyncStatusProvider";
 
 export interface RepositoryContextValue {
   activeFile: FileNode | null;
@@ -39,7 +39,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   const { emit } = useContextBus();
-  const { status: syncStatus, addOperation } = useSyncStatus();
+  const { status: syncStatus, addOperation } = useSyncStatusContext();
   const isDirty = fileContent !== savedContent;
 
   const setActiveFile = useCallback(async (file: FileNode | null) => {

@@ -3,7 +3,7 @@
 import { Cloud, GitBranch, RotateCw } from "lucide-react";
 import { SyncStatus as SyncStatusType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useSyncStatus } from "@/hooks/useSyncStatus";
+import { useSyncStatusContext } from "@/components/providers/SyncStatusProvider";
 import { useRepository } from "@/hooks/useRepository";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -13,7 +13,7 @@ interface SyncStatusProps {
 }
 
 export function SyncStatus({ status }: SyncStatusProps) {
-  const { status: syncStatus } = useSyncStatus();
+  const { status: syncStatus } = useSyncStatusContext();
   const { retrySave } = useRepository();
   const [isRetrying, setIsRetrying] = useState(false);
 

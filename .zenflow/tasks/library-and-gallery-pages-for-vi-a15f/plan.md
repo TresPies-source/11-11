@@ -68,7 +68,8 @@ npm list gray-matter             # Should show installed version
 
 ---
 
-### [ ] Step: Type Definitions
+### [x] Step: Type Definitions
+<!-- chat-id: 48e11acd-76f6-428e-b0d6-c8dc0bcdf519 -->
 
 **Files**: `lib/types.ts`
 

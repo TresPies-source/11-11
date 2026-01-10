@@ -43,3 +43,24 @@ export const PLANNING_DIRECTORIES = [
   "04_System",
   "05_Logs",
 ] as const;
+
+export const DRIVE_FOLDER_IDS = {
+  prompts: process.env.NEXT_PUBLIC_DRIVE_PROMPTS_FOLDER_ID || "mock-prompts-folder",
+  prds: process.env.NEXT_PUBLIC_DRIVE_PRDS_FOLDER_ID || "mock-prds-folder",
+} as const;
+
+export const isDevelopmentMode = () => {
+  return process.env.NEXT_PUBLIC_DEV_MODE === "true";
+};
+
+export const getGoogleClientId = () => {
+  return process.env.GOOGLE_CLIENT_ID || "";
+};
+
+export const getGoogleClientSecret = () => {
+  return process.env.GOOGLE_CLIENT_SECRET || "";
+};
+
+export const getDriveFolderId = (folder: "prompts" | "prds"): string => {
+  return DRIVE_FOLDER_IDS[folder];
+};

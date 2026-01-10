@@ -9,6 +9,15 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    config.module.rules.unshift({
+      test: /node_modules[\\\/]next-auth[\\\/]css[\\\/]index\.js$/,
+      use: 'null-loader',
+      enforce: 'pre',
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

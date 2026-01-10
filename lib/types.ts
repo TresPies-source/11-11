@@ -49,12 +49,56 @@ export interface SyncStatus {
     connected: boolean;
     lastSync?: Date;
     syncing: boolean;
+    error?: string;
   };
   github: {
     connected: boolean;
     lastSync?: Date;
     syncing: boolean;
+    error?: string;
   };
 }
+
+export interface DriveFile {
+  id: string;
+  name: string;
+  mimeType: string;
+  modifiedTime: string;
+  path: string;
+  webViewLink?: string;
+}
+
+export interface SyncOperation {
+  id: string;
+  type: 'read' | 'write' | 'fetch' | 'save';
+  status: 'pending' | 'success' | 'error';
+  timestamp: Date;
+  error?: string;
+  fileId?: string;
+  fileName?: string;
+}
+
+export interface SyncStatusState {
+  operations: SyncOperation[];
+  lastSync: Date | null;
+  isError: boolean;
+  currentOperation: SyncOperation | null;
+}
+
+export interface RepositoryState {
+  activeFile: FileNode | null;
+  fileContent: string;
+  savedContent: string;
+  isDirty: boolean;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  error: string | null;
+}
+
+export type ContextBusEvent =
+  | { type: 'PLAN_UPDATED'; payload: { content: string; timestamp: Date } }
+  | { type: 'FILE_SAVED'; payload: { fileId: string; fileName: string } }
+  | { type: 'AGENT_SPAWNED'; payload: { agentId: string; persona: string } }
+  | { type: 'SYNC_STATUS_CHANGED'; payload: { status: 'synced' | 'syncing' | 'error' } };
 
 export type ActiveTab = "editor" | "multi-agent";

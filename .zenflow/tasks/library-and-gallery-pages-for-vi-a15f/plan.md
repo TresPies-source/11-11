@@ -50,7 +50,8 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 
 Save to `{@artifacts_path}/plan.md`.
 
-### [ ] Step: Repository Hygiene & Dependencies
+### [x] Step: Repository Hygiene & Dependencies
+<!-- chat-id: 104ddec4-41b0-45f2-a0ec-de29049fe21d -->
 
 **Files**: `.gitignore`, `package.json`
 

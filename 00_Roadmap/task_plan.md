@@ -40,10 +40,14 @@
 ## 4. The 11-11 Roadmap (Growth & Sustainability)
 
 ### Phase 1: The Foundation (v0.1 - v0.5)
-- **UI Shell & Workbench:** Interactive dashboard with multi-agent layout.
-- **Hybrid Sync:** Establishing the Google Drive and GitHub sync logic.
-- **The Librarian:** Initial semantic search and proactive prompt suggestions.
-- **Audit Protocol:** Initializing the `AUDIT_LOG.md` and Monday sessions.
+
+| Feature | Status | Notes |
+|:---|:---|:---|
+| **UI Shell & Workbench** | ✅ Complete | Multi-agent layout, resizable panels, file tree navigation all delivered. |
+| **Hybrid Sync (Google Drive)** | ✅ Complete | Core functionality delivered in Sprint 2. |
+| **Hybrid Sync (GitHub)** | 🔄 In Progress | Deep GitHub sync integration is part of the current sprint plan. |
+| **The Librarian** | ❌ Not Started | Needs PRD/spec before implementation can begin. |
+| **Audit Protocol** | ✅ Complete | `AUDIT_LOG.md` and Monday Morning Audits are established. |
 
 ### Current Sprint: Core Feature Validation & Advanced Prompt Management
 
@@ -78,6 +82,7 @@
 - **Rate-Based Monetization:** Tiered pricing for high-volume API usage.
 
 ## 5. The "Planning with Files" Hierarchy
+
 - `/00_Roadmap/`: High-level goals and `task_plan.md`.
 - `/01_PRDs/`: Product Requirement Documents.
 - `/02_Specs/`: Technical specifications and architecture.

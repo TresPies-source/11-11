@@ -45,26 +45,34 @@
 |:---|:---|:---|
 | **UI Shell & Workbench** | ✅ Complete | Multi-agent layout, resizable panels, file tree navigation all delivered. |
 | **Hybrid Sync (Google Drive)** | ✅ Complete | Core functionality delivered in Sprint 2. |
-| **Hybrid Sync (GitHub)** | 🔄 In Progress | Deep GitHub sync integration is part of the current sprint plan. |
-| **The Librarian** | ❌ Not Started | Needs PRD/spec before implementation can begin. |
+| **Hybrid Sync (GitHub)** | ❌ Not Started | Deferred to a future sprint. |
+| **The Librarian** | 🔄 In Progress | Current sprint focuses on implementing v0.1. |
 | **Audit Protocol** | ✅ Complete | `AUDIT_LOG.md` and Monday Morning Audits are established. |
 
-### Current Sprint: Core Feature Validation & Advanced Prompt Management
+### Current Sprint: The "Librarian First" Sprint
 
-**Objective:** Thoroughly validate the successful completion of core features from Sprint 2 (Google Drive Hybrid Sync, Monaco Editor) and Sprint 3 (UI shell, Context Bus, Library/Gallery, Multi-Agent integration) before proceeding with advanced prompt management capabilities and deep GitHub sync integration for the 11-11 Workbench.
+**Objective:** Implement The Librarian Agent v0.1 as the next major feature for the 11-11 Workbench. This sprint will focus on integrating Supabase for metadata storage and Supabase Vector for semantic search to power The Librarian's proactive suggestions and reactive critiques.
 
 **Key Features & Tasks:**
 
-1.  **Core Feature Validation (Sprint 2 & 3):**
-    -   **Sprint 2 Validation (Google Drive & Monaco Editor):** Verify Google Drive file listing, content fetching, and content updating functionality. Confirm Monaco Editor loads correctly, allows editing, and auto-saves changes. Test optimistic UI and dirty state indicators for the editor. Validate `ContextBus` event propagation for file changes.
-    -   **Sprint 3 Validation (UI Shell, Context Bus, Library/Gallery, Multi-Agent):** Review and execute existing test cases for Toast notifications, Library/Gallery pages, and Multi-Agent integration. Develop new test cases for edge scenarios and user experience flows across all validated components. Document any identified bugs or areas for improvement. Capture verification screenshots and update `JOURNAL.md` with validation results.
+1.  **Supabase Integration:**
+    -   Set up a new Supabase project and configure the database schema for prompt metadata.
+    -   Integrate the Supabase client into the 11-11 application.
+    -   Implement data access layers for creating, reading, updating, and deleting prompt metadata.
 
-2.  **Advanced Prompt Management:** Enhance the existing prompt management capabilities in 11-11 with robust search, filtering, and categorization.
+2.  **The Librarian Agent v0.1:**
+    -   Implement the proactive prompt suggestion feature, using Supabase Vector for semantic search.
+    -   Implement the reactive prompt critique feature, using a predefined set of rules.
+    -   Implement the automated prompt tagging and categorization feature.
+    -   Integrate The Librarian with the Context Bus to monitor editor content.
 
-3.  **Deep GitHub Sync Integration (Deferred):** Implement comprehensive synchronization with GitHub for version control and collaborative prompt management.
+### Future Sprints (Deferred)
+- **Core Feature Validation:** A dedicated sprint to validate all Sprint 2 & 3 features will be conducted after The Librarian v0.1 is delivered.
+- **Advanced Prompt Management:** Enhancements to prompt management (search, filtering, categorization) will be revisited after The Librarian is implemented.
+- **Deep GitHub Sync Integration:** Full integration with GitHub for version control and collaborative prompt management is deferred.
 
 ### Future Projects (Deferred)
-- **Continuous-Claude-v3 Integration:** Full integration of the `Continuous-Claude-v3` memory engine is deferred to a future development phase. Its potential for advanced memory management, semantic search, and proactive AI assistance is acknowledged and documented in `/00_Roadmap/future_projects/continuous_claude_v3.md`.
+- **Continuous-Claude-v3 Integration:** Full integration of the `Continuous-Claude-v3` memory engine is deferred to a future development phase.
 
 ### Phase 2: The Commons & Wikipedia (v0.6 - v1.0)
 - **Global Gallery:** The "Wikipedia of Prompts" discovery layer.

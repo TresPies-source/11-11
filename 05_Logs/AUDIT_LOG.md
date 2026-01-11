@@ -207,3 +207,15 @@ Weekly code audits to scout technical debt, assess tech stack improvements, and 
 -   [ ] Update `JOURNAL.md` to reflect the context reset and new sprint focus.
 
 **Status:** Context Reset & New Sprint Initiated
+
+
+## January 11, 2026 - Strategic Pivot: "Librarian First" Sprint
+
+**Audit Finding:** Following a strategic review, it was determined that prioritizing the implementation of The Librarian Agent v0.1 is the highest-value next step. This will deliver a key differentiating feature and accelerate the realization of the "AI-native" vision for 11-11.
+
+**Decision:** The current sprint is now **The "Librarian First" Sprint**. The previous sprint, "Core Feature Validation & Advanced Prompt Management," is deferred until after The Librarian v0.1 is delivered.
+
+**Impact:**
+- The `task_plan.md` has been updated to reflect the new sprint focus.
+- The `JOURNAL.md` will be updated to reflect the new sprint plan.
+- The development team will now focus on integrating Supabase and building The Librarian Agent v0.1.

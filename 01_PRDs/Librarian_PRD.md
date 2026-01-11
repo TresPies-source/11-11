@@ -1,80 +1,81 @@
-# PRD: The Librarian Agent v0.1
+# The Librarian Agent v0.1: Product Requirements Document (PRD) - Updated
 
-**Author:** Manus AI (Dojo) & The 11-11 Community
+**Author:** Manus AI (Dojo)
 **Status:** Draft
 **Date:** January 11, 2026
 
 ## 1. Overview
 
-The Librarian is a specialized AI agent within the 11-11 Workbench that acts as a proactive and reactive assistant for prompt engineering. Its primary goal is to enhance the user's workflow by providing intelligent suggestions, surfacing relevant information, and automating repetitive tasks.
+The Librarian is an AI-native agent that serves as a guide and collaborator for prompt engineers within the 11-11 Sustainable Intelligence OS. It provides proactive suggestions, reactive critiques, and automated organization to help users craft better prompts and discover new ideas.
 
-## 2. User Problems
+## 2. The "Librarian's Home" Page
 
-*   **Problem 1:** Users have to manually search for relevant information or previously used prompts, which is time-consuming and inefficient.
-*   **Problem 2:** Users may not be aware of best practices or alternative approaches for prompt engineering, leading to suboptimal results.
-*   **Problem 3:** Users struggle to manage and organize a large library of prompts, making it difficult to find and reuse them.
+The primary user interface for The Librarian is a dedicated page called "The Librarian's Home." This page is a dynamic, visual, and interactive space designed to feel like a "garden of prompts." It is divided into three main sections:
 
-## 3. User Stories
+### 2.1. The "Seedling" Section: Your Active Prompts
 
-*   **As a prompt engineer, I want** the Librarian to proactively suggest relevant prompts from my library based on the content I'm currently writing, **so that** I can reuse and adapt existing work.
-*   **As a prompt engineer, I want** to be able to ask the Librarian for suggestions on how to improve my current prompt, **so that** I can get better results from the AI.
-*   **As a prompt engineer, I want** the Librarian to automatically tag and categorize my prompts based on their content, **so that** I can easily find them later.
+- **User Problem:** I need a clear overview of my current work-in-progress prompts and their quality.
+- **User Story:** As a prompt engineer, I want to see all of my active prompts in one place, with a quick visual indicator of their quality, so I can easily track my work and prioritize my efforts.
+- **Features:**
+    - Each active prompt is represented as a "seedling" card.
+    - The card displays a snippet of the prompt, its current critique score, and a visual indicator of its growth.
+    - Clicking on a seedling takes the user to the editor, with The Librarian's critique and suggestions already loaded.
 
-## 4. Features
+### 2.2. The "Greenhouse" Section: Your Personal Library
 
-### 4.1 Proactive Prompt Suggestions
+- **User Problem:** I need a way to organize and browse my collection of mature, well-crafted prompts.
+- **User Story:** As a prompt engineer, I want to save my best prompts to a personal library, with a beautiful and inspiring visual representation, so I can easily find and reuse them later.
+- **Features:**
+    - Each saved prompt is a "flowering plant" card, with an AI-generated image representing the prompt's essence.
+    - The Greenhouse is searchable and filterable.
+    - Users can organize their plants into "garden beds" (collections).
+    - Users can share their garden beds with others.
 
-*   The Librarian will monitor the user's current editor content and use semantic search to find relevant prompts from the user's library.
-*   Suggestions will be displayed in a non-intrusive way, such as a subtle notification or a dedicated panel.
-*   Users can click on a suggestion to view the full prompt and insert it into their current editor.
+### 2.3. The "Global Commons" Section: The Wikipedia of Prompts
 
-### 4.2 Reactive Prompt Critiques
+- **User Problem:** I want to discover new ideas and learn from the work of other prompt engineers.
+- **User Story:** As a prompt engineer, I want to explore a vast, community-driven collection of prompts, so I can discover new techniques, get inspiration, and collaborate with others.
+- **Features:**
+    - A 2D map UI where each prompt is a point of light.
+    - Users can zoom, pan, and see prompts clustered by topic or theme.
+    - Clicking on a point of light reveals the prompt and its history (creator, forks, evolution).
 
-*   Users can trigger a prompt critique by a dedicated command or button.
-*   The Librarian will analyze the current prompt and provide suggestions for improvement based on best practices and a predefined set of rules.
-*   Suggestions will be displayed as inline comments or in a separate panel.
+## 3. The Librarian's Role & Features
 
-### 4.3 Automated Prompt Tagging & Categorization
+### 3.1. Proactive Suggestions
 
-*   The Librarian will automatically generate tags and categories for new prompts based on their content.
-*   Users can review and edit the generated tags and categories.
-*   This will enable the advanced prompt management features planned for the current sprint.
+- **User Problem:** I'm not sure how to improve my prompt, or I'm looking for new ideas.
+- **User Story:** As a prompt engineer, I want The Librarian to proactively suggest improvements to my prompts and show me related prompts from my personal library and the Global Commons, so I can learn and improve.
+- **Features:**
+    - The Librarian monitors the user's editor content (debounced on keystroke).
+    - It uses semantic search (Supabase Vector) to find related prompts.
+    - Suggestions are displayed in a non-intrusive way on The Librarian's Home page.
 
-## 5. Technical Requirements
+### 3.2. Reactive Critiques
 
-*   **Semantic Search:** The Librarian will require a semantic search engine to power its proactive suggestions. We can leverage Supabase Vector (pgvector) for this, as it's already part of our tech stack.
-*   **Natural Language Processing (NLP):** The Librarian will need NLP capabilities to understand the user's current editor content and to generate prompt critiques.
-*   **Integration with the Context Bus:** The Librarian will subscribe to events on the Context Bus to stay informed about changes to the user's editor content.
+- **User Problem:** I'm not sure if my prompt is well-written.
+- **User Story:** As a prompt engineer, I want The Librarian to give me feedback on my prompts, so I can understand their strengths and weaknesses and learn how to write better ones.
+- **Features:**
+    - The Librarian critiques prompts based on a predefined set of rules (Conciseness, Specificity, Context, Task Decomposition).
+    - The critique score is displayed on the seedling card.
+    - Detailed feedback is available in the editor.
 
-## 6. User Flows
+### 3.3. Automated Tagging & Categorization
 
-### 6.1 Proactive Suggestion Flow
+- **User Problem:** I don't have time to manually organize my prompts.
+- **User Story:** As a prompt engineer, I want The Librarian to automatically tag and categorize my prompts, so I can easily find them later.
+- **Features:**
+    - The Librarian uses a combination of keyword extraction and AI-powered classification to automatically tag and categorize prompts.
+    - Users can edit or add their own tags.
 
-1.  User types in the Monaco Editor.
-2.  The Librarian, listening to the Context Bus, receives the updated content.
-3.  The Librarian sends the content to the semantic search engine.
-4.  The search engine returns a list of relevant prompts.
-5.  The Librarian displays the top 3 suggestions in a dedicated panel.
-6.  User clicks on a suggestion.
-7.  The Librarian opens the selected prompt in a new editor tab.
+## 4. Technical Requirements
 
-### 6.2 Reactive Critique Flow
+- **Frontend:** Next.js, Tailwind CSS, Framer Motion, D3.js (or similar)
+- **Backend:** Supabase (PostgreSQL), Supabase Vector
+- **AI:** OpenAI for embeddings and image generation
 
-1.  User clicks the "Critique Prompt" button.
-2.  The Librarian sends the current prompt to the NLP service.
-3.  The NLP service returns a list of suggestions.
-4.  The Librarian displays the suggestions as inline comments in the editor.
-5.  User can accept or reject each suggestion.
+## 5. Success Metrics
 
-## 7. Out of Scope for v0.1
-
-*   Multi-modal search (images, sounds, etc.)
-*   The Memory Palace (3D visualization)
-*   Real-time collaboration features
-
-## 8. Success Metrics
-
-*   **Adoption:** Percentage of users who actively use the Librarian's features.
-*   **Engagement:** Number of suggestions clicked, critiques requested, and tags accepted.
-*   **User Satisfaction:** Qualitative feedback from users on the usefulness and usability of the Librarian.
-*   **Time Saved:** Reduction in the average time it takes for a user to find a relevant prompt.
+- **User Engagement:** Time spent on The Librarian's Home page, number of prompts created and saved, number of prompts shared.
+- **Prompt Quality:** Average critique score of prompts in the Greenhouse.
+- **Community Growth:** Number of prompts in the Global Commons, number of active community members.

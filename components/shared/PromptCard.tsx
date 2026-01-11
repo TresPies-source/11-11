@@ -76,6 +76,7 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
     },
     hover: {
       scale: 1.02,
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
       transition: { duration: 0.2 },
     },
   };
@@ -105,7 +106,8 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
           <button
             onClick={handleQuickCopy}
             className={cn(
-              "flex-shrink-0 p-1.5 rounded-md transition-colors",
+              "flex-shrink-0 p-1.5 rounded-md transition-all duration-100",
+              "active:scale-95",
               copied
                 ? "bg-green-100 text-green-600"
                 : "hover:bg-gray-100 text-gray-500"
@@ -132,6 +134,10 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
                 initial="hidden"
                 animate="visible"
                 custom={index}
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: "rgb(219 234 254)",
+                }}
               >
                 {tag}
               </motion.span>
@@ -144,7 +150,7 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
         {variant === "library" ? (
           <button
             onClick={handleRunInChat}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium"
           >
             <PlayCircle className="h-4 w-4" />
             Run in Chat
@@ -154,7 +160,7 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
             onClick={handleFork}
             disabled={forking}
             className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium",
+              "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 active:scale-95 transition-all duration-100 text-sm font-medium",
               forking && "opacity-50 cursor-not-allowed"
             )}
           >

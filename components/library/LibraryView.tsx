@@ -1,11 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import { useLibrary } from "@/hooks/useLibrary";
+import { usePromptSearch } from "@/hooks/usePromptSearch";
+import { useDebounce } from "@/hooks/useDebounce";
 import { PromptCard } from "@/components/shared/PromptCard";
-import { Loader2, BookOpen } from "lucide-react";
+import { SearchInput } from "@/components/shared/SearchInput";
+import { EmptySearchState } from "@/components/shared/EmptySearchState";
+import { LoadingState } from "@/components/shared/LoadingState";
+import { ErrorState } from "@/components/shared/ErrorState";
+import { BookOpen } from "lucide-react";
 
 export function LibraryView() {
-  const { prompts, loading, error } = useLibrary();
+  const { prompts, loading, error, retry } = useLibrary();
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
+  const { filteredPrompts } = usePromptSearch({
+    prompts,
+    searchTerm: debouncedSearch,
+  });
 
   if (loading) {
     return (
@@ -17,19 +30,7 @@ export function LibraryView() {
           </h1>
           <p className="text-gray-600 mt-2">Your personal collection of prompts</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-lg border border-gray-200 p-4 h-64 animate-pulse"
-            >
-              <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-              <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
-            </div>
-          ))}
-        </div>
+        <LoadingState count={6} />
       </div>
     );
   }
@@ -44,10 +45,12 @@ export function LibraryView() {
           </h1>
           <p className="text-gray-600 mt-2">Your personal collection of prompts</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium">Failed to load prompts</p>
-          <p className="text-red-600 text-sm mt-1">{error}</p>
-        </div>
+        <ErrorState
+          title="Unable to load prompts"
+          message={error}
+          onRetry={retry}
+          loading={loading}
+        />
       </div>
     );
   }
@@ -87,11 +90,26 @@ export function LibraryView() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {prompts.map((prompt) => (
-          <PromptCard key={prompt.id} prompt={prompt} variant="library" />
-        ))}
+      <div className="mb-6">
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search prompts by title, description, or tags..."
+        />
       </div>
+
+      {filteredPrompts.length === 0 && searchTerm ? (
+        <EmptySearchState
+          searchTerm={searchTerm}
+          onClear={() => setSearchTerm("")}
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPrompts.map((prompt) => (
+            <PromptCard key={prompt.id} prompt={prompt} variant="library" />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

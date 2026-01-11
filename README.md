@@ -57,7 +57,6 @@ This allows you to work without setting up OAuth. A mock user session is automat
 ├── 03_Prompts/          # Local prompt library
 ├── 04_System/           # AI Personas and system prompts
 ├── 05_Logs/             # Development traces and audit logs
-│   ├── AUDIT_LOG.md
 │   └── screenshots/
 ├── app/                 # Next.js App Router pages
 ├── components/          # React components
@@ -69,6 +68,7 @@ This allows you to work without setting up OAuth. A mock user session is automat
 ├── data/                # Mock data and fixtures
 ├── lib/                 # Utilities, types, and constants
 ├── public/              # Static assets
+├── AUDIT_LOG.md         # Weekly code audit log
 ├── JOURNAL.md           # Development journal and architectural decisions
 └── README.md            # This file
 ```
@@ -167,7 +167,7 @@ Currently, the application uses manual testing and type checking. Future sprints
 ## 📖 Documentation
 
 - **JOURNAL.md** - Detailed development log and architectural decisions
-- **05_Logs/AUDIT_LOG.md** - Weekly code audit log
+- **AUDIT_LOG.md** - Weekly code audit log (root directory)
 - **01_PRDs/** - Product requirements and feature specs
 - **02_Specs/** - Technical implementation specs
 

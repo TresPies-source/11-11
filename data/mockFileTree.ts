@@ -11,6 +11,14 @@ export const mockFileTree: FileNode[] = [
     isModified: true,
   },
   {
+    id: "audit_log",
+    name: "AUDIT_LOG.md",
+    type: "file",
+    path: "/AUDIT_LOG.md",
+    source: "local",
+    modified: new Date("2026-01-10T07:00:00"),
+  },
+  {
     id: "00_roadmap",
     name: "00_Roadmap",
     type: "folder",
@@ -144,14 +152,6 @@ export const mockFileTree: FileNode[] = [
     path: "/05_Logs",
     source: "local",
     children: [
-      {
-        id: "audit_log",
-        name: "AUDIT_LOG.md",
-        type: "file",
-        path: "/05_Logs/AUDIT_LOG.md",
-        source: "local",
-        modified: new Date("2026-01-10T07:00:00"),
-      },
       {
         id: "screenshots",
         name: "screenshots",

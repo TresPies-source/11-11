@@ -95,6 +95,21 @@ export interface RepositoryState {
   error: string | null;
 }
 
+export interface PromptMetadata {
+  title?: string;
+  description?: string;
+  tags?: string[];
+  public?: boolean;
+  author?: string;
+  created?: string;
+  version?: string;
+}
+
+export interface PromptFile extends DriveFile {
+  metadata?: PromptMetadata;
+  rawContent?: string;
+}
+
 export type ContextBusEvent =
   | { type: 'PLAN_UPDATED'; payload: { content: string; timestamp: Date } }
   | { type: 'FILE_SAVED'; payload: { fileId: string; fileName: string } }

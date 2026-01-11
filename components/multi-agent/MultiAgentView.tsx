@@ -1,14 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import matter from "gray-matter";
 import { ChatPanel } from "./ChatPanel";
 import { NewSessionButton } from "./NewSessionButton";
 import { Session, ChatMessage } from "@/lib/types";
 import { MAX_CHAT_PANELS, AGENT_PERSONAS } from "@/lib/constants";
+import { useToast } from "@/hooks/useToast";
 
 export function MultiAgentView() {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const toast = useToast();
+  const hasLoadedPrompt = useRef(false);
+
+  useEffect(() => {
+    const loadPromptId = searchParams.get("loadPrompt");
+    if (!loadPromptId || hasLoadedPrompt.current) return;
+    
+    hasLoadedPrompt.current = true;
+
+    const loadPromptIntoChat = async () => {
+      try {
+        const response = await fetch(`/api/drive/content/${loadPromptId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch prompt content");
+        }
+
+        const data = await response.json();
+        const { content } = data;
+
+        if (!content) {
+          throw new Error("Prompt content is empty");
+        }
+
+        const parsed = matter(content);
+        const rawContent = parsed.content.trim();
+
+        const defaultPersona = AGENT_PERSONAS[0];
+        const userMessage: ChatMessage = {
+          id: `msg-${Date.now()}-user`,
+          role: "user",
+          content: rawContent,
+          timestamp: new Date(),
+        };
+
+        const newSession: Session = {
+          id: `session-${Date.now()}`,
+          title: "Prompt Session",
+          persona: defaultPersona.id,
+          messages: [userMessage],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isMinimized: false,
+        };
+
+        setSessions((prev) => [...prev, newSession]);
+        toast.success("Prompt loaded into chat");
+
+        router.replace("/");
+      } catch (error) {
+        console.error("Error loading prompt:", error);
+        toast.error("Failed to load prompt");
+        router.replace("/");
+      }
+    };
+
+    loadPromptIntoChat();
+  }, [searchParams, router, toast]);
 
   const createNewSession = () => {
     if (sessions.length >= MAX_CHAT_PANELS) return;

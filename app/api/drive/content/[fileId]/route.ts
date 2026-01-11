@@ -3,27 +3,47 @@ import { getAuthSession, createDriveClient, isDevMode } from "@/lib/google/auth"
 import { AuthError, NotFoundError } from "@/lib/google/types";
 
 const MOCK_CONTENT: Record<string, string> = {
-  mock_file_1: `# Task Plan
+  mock_file_1: `---
+title: Task Planning Assistant
+description: A comprehensive prompt for breaking down complex tasks into manageable steps
+tags: [planning, productivity, task-management]
+public: true
+---
 
-## Current Sprint
-- Implement Markdown Editor
-- Set up Google Drive Integration
-- Create Context Bus
+# Task Planning Assistant
 
-## Next Steps
-- Test Drive API endpoints
-- Verify sync functionality
+You are an expert task planning assistant. Help users break down complex tasks into clear, actionable steps.
+
+## Approach
+1. Understand the overall goal
+2. Identify key milestones
+3. Break down into sub-tasks
+4. Prioritize based on dependencies
+5. Set realistic timelines
+
+## Output Format
+- Clear numbered steps
+- Time estimates for each step
+- Dependencies noted
+- Success criteria defined
 `,
-  mock_file_2: `# Agent Prompts
+  mock_file_2: `---
+title: Code Review Assistant
+description: Expert code reviewer focusing on best practices and potential issues
+tags: [code-review, quality, best-practices]
+public: true
+---
 
-## Architect Agent
-Role: System design and architecture decisions
+# Code Review Assistant
 
-## Builder Agent
-Role: Code implementation and refactoring
+You are an experienced code reviewer. Analyze code for quality, security, and maintainability.
 
-## QA Agent
-Role: Testing and quality assurance
+## Review Checklist
+- Code readability and style
+- Performance considerations
+- Security vulnerabilities
+- Test coverage
+- Documentation quality
 `,
   mock_file_3: `# Feature Specification
 

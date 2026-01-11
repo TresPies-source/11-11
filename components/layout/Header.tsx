@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Brain, LogIn, User } from "lucide-react";
 import { WorkspaceSelector } from "@/components/shared/WorkspaceSelector";
 import { SyncStatus } from "@/components/shared/SyncStatus";
@@ -9,10 +11,16 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   const { user, isAuthenticated } = useSession();
+  const pathname = usePathname();
 
   const handleSignIn = () => {
     // TODO: Implement Google OAuth sign-in
   };
+
+  const navLinks = [
+    { href: "/library", label: "Library" },
+    { href: "/gallery", label: "Gallery" },
+  ];
 
   return (
     <header className="h-14 border-b border-gray-200 bg-white px-4 flex items-center justify-between">
@@ -32,6 +40,28 @@ export function Header() {
         </div>
 
         <div className="h-6 w-px bg-gray-200" />
+
+        <nav className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                  isActive
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="h-6 w-px bg-gray-200 hidden md:block" />
 
         <WorkspaceSelector />
       </div>

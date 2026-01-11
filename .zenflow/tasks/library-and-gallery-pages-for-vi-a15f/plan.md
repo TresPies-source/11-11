@@ -201,7 +201,8 @@ npm run dev
 
 ---
 
-### [ ] Step: Header Navigation Update
+### [x] Step: Header Navigation Update
+<!-- chat-id: 2b4d12a6-cf14-4cab-b946-4711b6e3618c -->
 
 **Files**: `components/layout/Header.tsx`
 

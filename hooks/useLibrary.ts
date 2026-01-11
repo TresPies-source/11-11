@@ -8,12 +8,16 @@ interface UseLibraryReturn {
   prompts: PromptFile[];
   loading: boolean;
   error: string | null;
+  retry: () => void;
 }
 
 export function useLibrary(): UseLibraryReturn {
   const [prompts, setPrompts] = useState<PromptFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const retry = () => setRetryCount((prev) => prev + 1);
 
   useEffect(() => {
     async function fetchPrompts() {
@@ -70,11 +74,12 @@ export function useLibrary(): UseLibraryReturn {
     }
 
     fetchPrompts();
-  }, []);
+  }, [retryCount]);
 
   return {
     prompts,
     loading,
     error,
+    retry,
   };
 }

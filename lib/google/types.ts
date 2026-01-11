@@ -53,6 +53,19 @@ export interface DriveUpdateResponse {
   fileId: string;
 }
 
+export interface DriveCreateFileParams {
+  folderId: string;
+  name: string;
+  content: string;
+}
+
+export interface DriveCreateFileResponse {
+  success: boolean;
+  fileId: string;
+  fileName: string;
+  modifiedTime: string;
+}
+
 export class DriveError extends Error {
   constructor(
     message: string,

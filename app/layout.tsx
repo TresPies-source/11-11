@@ -4,6 +4,7 @@ import { MockSessionProvider } from "@/components/providers/MockSessionProvider"
 import { RepositoryProvider } from "@/components/providers/RepositoryProvider";
 import { ContextBusProvider } from "@/components/providers/ContextBusProvider";
 import { SyncStatusProvider } from "@/components/providers/SyncStatusProvider";
+import { ToastProvider } from "@/components/providers/ToastProvider";
 
 export const metadata: Metadata = {
   title: "11-11 | Sustainable Intelligence OS",
@@ -18,15 +19,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <ContextBusProvider>
-          <MockSessionProvider>
-            <SyncStatusProvider>
-              <RepositoryProvider>
-                {children}
-              </RepositoryProvider>
-            </SyncStatusProvider>
-          </MockSessionProvider>
-        </ContextBusProvider>
+        <ToastProvider>
+          <ContextBusProvider>
+            <MockSessionProvider>
+              <SyncStatusProvider>
+                <RepositoryProvider>
+                  {children}
+                </RepositoryProvider>
+              </SyncStatusProvider>
+            </MockSessionProvider>
+          </ContextBusProvider>
+        </ToastProvider>
       </body>
     </html>
   );

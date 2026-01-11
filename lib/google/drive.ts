@@ -4,6 +4,8 @@ import {
   DriveFileMetadata,
   DriveFileContentResponse,
   DriveUpdateResponse,
+  DriveCreateFileParams,
+  DriveCreateFileResponse,
   DriveListFilesResponse,
   RetryConfig,
   AuthError,
@@ -95,6 +97,34 @@ export class DriveClient {
         return {
           success: true,
           fileId,
+          modifiedTime: response.data.modifiedTime || new Date().toISOString(),
+        };
+      } catch (error) {
+        this.handleError(error);
+      }
+    });
+  }
+
+  async createFile(params: DriveCreateFileParams): Promise<DriveCreateFileResponse> {
+    return this.withRetry(async () => {
+      try {
+        const response = await this.drive.files.create({
+          requestBody: {
+            name: params.name,
+            parents: [params.folderId],
+            mimeType: "text/markdown",
+          },
+          media: {
+            mimeType: "text/markdown",
+            body: params.content,
+          },
+          fields: "id, name, modifiedTime",
+        });
+
+        return {
+          success: true,
+          fileId: response.data.id || "",
+          fileName: response.data.name || params.name,
           modifiedTime: response.data.modifiedTime || new Date().toISOString(),
         };
       } catch (error) {

@@ -82,6 +82,21 @@
 - Automated tagging and categorization
 - Global Commons 2D map UI
 
+### Current Sprint: Hotfix & Validate
+
+**Objective:** Resolve the critical authentication issue preventing The Librarian's Home from loading and conduct a comprehensive validation of all features delivered in the v0.1 sprint.
+
+**Planned Features:**
+- **Hotfix:**
+    - Investigate and resolve the `[auth][error] MissingSecret` error.
+    - Ensure the `/librarian` page loads correctly and all data is fetched from Supabase.
+- **Validation:**
+    - Create a comprehensive test plan for The Librarian's Home (v0.1).
+    - Execute the test plan, covering all features (Seedling/Greenhouse sections, critique engine, status management, etc.).
+    - Document all bugs and issues in a new `05_Logs/BUGS.md` file.
+    - Fix all identified bugs.
+
+
 ### Next Sprint: Hybrid Storage Enhancement
 
 **Objective:** Enhance Google Drive integration and implement GitHub sync for version control and collaborative prompt management.

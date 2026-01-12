@@ -1,3 +1,6 @@
+// ARCHIVED: Supabase schema types (migrated to PGlite on January 12, 2026)
+// This file is kept for reference during migration troubleshooting
+
 export type PromptStatus = 'draft' | 'active' | 'saved' | 'archived';
 
 export interface Database {

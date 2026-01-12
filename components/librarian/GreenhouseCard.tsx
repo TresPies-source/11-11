@@ -4,7 +4,7 @@ import { useState, memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Copy, Check, PlayCircle, Pencil, ChevronDown } from "lucide-react";
-import type { PromptWithCritique } from "@/lib/supabase/prompts";
+import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
 import { CritiqueScore } from "./CritiqueScore";

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { updatePromptStatus } from '@/lib/supabase/prompts';
+import { updatePromptStatus } from '@/lib/pglite/prompts';
 import matter from 'gray-matter';
 import type { PromptStatus } from '@/lib/types';
 
@@ -77,7 +77,7 @@ export function usePromptStatus(): UsePromptStatusReturn {
         try {
           await updateDriveMetadata(driveFileId, newStatus);
         } catch (driveError) {
-          console.warn('[usePromptStatus] Failed to update Drive metadata, but Supabase update succeeded:', driveError);
+          console.warn('[usePromptStatus] Failed to update Drive metadata, but PGlite update succeeded:', driveError);
         }
       }
 

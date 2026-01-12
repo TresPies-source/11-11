@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDriveClient, isDevMode } from "@/lib/google/auth";
-import { syncPromptFromDrive } from "@/lib/supabase/prompts";
+import { syncPromptFromDrive } from "@/lib/pglite/prompts";
 import { AuthError } from "@/lib/google/types";
 import { auth } from "@/lib/auth";
 

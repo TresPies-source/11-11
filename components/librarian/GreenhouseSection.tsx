@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flower2, ArrowUpDown, Tag } from "lucide-react";
-import type { PromptWithCritique } from "@/lib/supabase/prompts";
+import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { GreenhouseCard } from "./GreenhouseCard";
 import { CardErrorBoundary } from "./CardErrorBoundary";
 import { SearchInput } from "@/components/shared/SearchInput";

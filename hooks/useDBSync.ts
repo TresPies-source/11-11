@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { syncPromptFromDrive } from '@/lib/supabase/prompts';
-import { isSupabaseConfigured } from '@/lib/supabase/client';
+import { syncDriveFile } from '@/lib/pglite/prompts';
 import type { DriveFile } from '@/lib/types';
 
 export interface SyncStatus {
@@ -14,13 +13,13 @@ export interface SyncStatus {
   errors: string[];
 }
 
-export interface UseSupabaseSyncOptions {
+export interface UseDBSyncOptions {
   userId: string;
   autoSyncInterval?: number;
   syncOnMount?: boolean;
 }
 
-export interface UseSupabaseSyncReturn {
+export interface UseDBSyncReturn {
   syncStatus: SyncStatus;
   triggerSync: () => Promise<void>;
   isSyncing: boolean;
@@ -29,9 +28,7 @@ export interface UseSupabaseSyncReturn {
 const DEFAULT_AUTO_SYNC_INTERVAL = 5 * 60 * 1000;
 const LAST_SYNC_KEY = 'librarian_last_sync_time';
 
-const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
-
-export function useSupabaseSync(options: UseSupabaseSyncOptions): UseSupabaseSyncReturn {
+export function useDBSync(options: UseDBSyncOptions): UseDBSyncReturn {
   const { 
     userId, 
     autoSyncInterval = DEFAULT_AUTO_SYNC_INTERVAL,
@@ -85,26 +82,6 @@ export function useSupabaseSync(options: UseSupabaseSyncOptions): UseSupabaseSyn
       return;
     }
 
-    if (isDevMode) {
-      console.log('[Mock] Sync operation - skipping in dev mode');
-      setSyncStatus(prev => ({
-        ...prev,
-        isSyncing: false,
-        lastSyncTime: new Date(),
-        totalFiles: 0,
-        syncedFiles: 0,
-        failedFiles: 0,
-        errors: [],
-      }));
-      setLastSyncTime(new Date());
-      return;
-    }
-
-    if (!isSupabaseConfigured()) {
-      console.warn('[Sync] Supabase not configured - skipping sync');
-      return;
-    }
-
     isSyncingRef.current = true;
     setSyncStatus(prev => ({
       ...prev,
@@ -141,7 +118,8 @@ export function useSupabaseSync(options: UseSupabaseSyncOptions): UseSupabaseSyn
 
           const { content } = await contentResponse.json();
           
-          await syncPromptFromDrive(file, userId, content);
+          const driveFileWithContent = { ...file, content };
+          await syncDriveFile(userId, driveFileWithContent);
           syncedCount++;
 
           setSyncStatus(prev => ({

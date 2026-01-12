@@ -1,6 +1,6 @@
 # 11-11: The Sustainable Intelligence OS
 
-**Version:** 0.1.1 (The Librarian's Home)
+**Version:** 0.2.0 (Local-First Foundation)
 
 11-11 is a "Hardworking Workbench" for prompt engineering and a "Global Commons" for collective intelligence. It's a sustainable platform built for calm, patient work—designed to be orchestrated by AI agents and used by humans.
 
@@ -37,25 +37,16 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) to see the UI Shell.
 
-### Supabase Setup (Optional for Librarian Features)
+### Database Setup (Automatic)
 
-The Librarian's Home requires Supabase for prompt storage and critique tracking:
+11-11 uses **PGlite** for local-first storage—a lightweight Postgres database that runs directly in your browser:
 
-1. **Create a Supabase project** at [supabase.com](https://supabase.com)
-2. **Run the database migration:**
-   - Navigate to SQL Editor in your Supabase dashboard
-   - Copy contents of `lib/supabase/migrations/001_initial_schema.sql`
-   - Execute the query to create tables and policies
-3. **Configure environment variables in `.env.local`:**
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   ```
-   Get these values from: Supabase Dashboard > Settings > API
-4. **Verify setup:** Visit `/librarian` to see your prompt workspace
+- **Zero Configuration:** Database auto-initializes on first run using IndexedDB
+- **Seed Data:** 30 realistic prompts automatically loaded on first launch
+- **Browser Storage:** Data persists in IndexedDB (browser local storage)
+- **Full Postgres:** Real SQL queries, indexes, triggers, and JSONB support
 
-**Dev Mode:** If Supabase is not configured, the application falls back to mock data automatically.
+No external services, API keys, or setup required. Just `npm run dev` and start working.
 
 ### Development Mode
 
@@ -127,7 +118,7 @@ npm run type-check   # Run TypeScript compiler (no emit)
 - **Greenhouse Section:** Personal library of saved prompts with search/filtering
 - **Reactive Critique Engine:** Rule-based scoring (Conciseness, Specificity, Context, Task Decomposition)
 - **Status Management:** Seamless transitions between draft, active, saved, and archived states
-- **Supabase Integration:** Persistent storage with automatic fallback to mock data
+- **PGlite Integration:** Local-first Postgres database with auto-initialization and seed data
 
 ### ✅ Header & Navigation
 - **Workspace Selector:** Switch between workspaces (mock)
@@ -166,7 +157,7 @@ All transitions follow the "Hardworking" calm aesthetic:
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **Framework** | Next.js 14 (App Router) | Modern React framework with SSR |
-| **Database** | Supabase | PostgreSQL database with real-time subscriptions |
+| **Database** | PGlite | Local-first Postgres database (in-process) |
 | **Styling** | Tailwind CSS | Utility-first styling |
 | **Animations** | Framer Motion | Smooth, performant animations |
 | **Icons** | Lucide React | Clean, consistent iconography |
@@ -209,7 +200,7 @@ Currently, the application uses manual testing and type checking. Future sprints
 ### ✅ The Librarian's Home (v0.1) - **COMPLETE**
 - Seedling and Greenhouse sections for prompt management
 - Reactive critique engine with rule-based scoring
-- Supabase integration with automatic fallback to mock data
+- PGlite local database with auto-initialization and seed data
 - Status transitions and search/filtering
 
 ### 📋 Sprint 2: Hybrid Storage (v0.2) - **PLANNED**
@@ -226,7 +217,7 @@ Currently, the application uses manual testing and type checking. Future sprints
 
 ### 📋 Future: The Global Commons - **PLANNED**
 - Global prompt gallery (Wikipedia of Prompts)
-- Semantic search via Supabase pgvector
+- Semantic search via pgvector
 - One-click publish with public flag
 - Collaborative forking and remixing
 
@@ -249,6 +240,6 @@ TBD (Expected: MIT or Apache 2.0)
 Built with the philosophy of "Planning with Files" and the vision of a **Sustainable Intelligence Platform**.
 
 **Author:** Manus AI (Dojo)  
-**Status:** The Librarian's Home (v0.1) Complete  
-**Version:** 0.1.1  
+**Status:** Local-First Foundation (v0.2.0) Complete  
+**Version:** 0.2.0  
 **Last Updated:** January 12, 2026

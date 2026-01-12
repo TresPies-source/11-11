@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { critiquePromptSync } from '@/lib/critique/engine';
-import { saveCritique } from '@/lib/supabase/critiques';
+import { saveCritique } from '@/lib/pglite/critiques';
 import type { CritiqueResult } from '@/lib/types';
 
 const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const savedCritique = await saveCritique(promptId, critiqueData);
 
     if (!savedCritique && !isDevMode) {
-      console.error('[Critique API] Failed to save critique to Supabase');
+      console.error('[Critique API] Failed to save critique to database');
       return NextResponse.json(
         { error: 'Failed to save critique' },
         { status: 500 }

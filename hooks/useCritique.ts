@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDebounce } from './useDebounce';
 import { critiquePromptSync } from '@/lib/critique/engine';
-import { saveCritique, getLatestCritique } from '@/lib/supabase/critiques';
+import { saveCritique, getLatestCritique } from '@/lib/pglite/critiques';
 import type { CritiqueResult } from '@/lib/types';
 
 interface UseCritiqueOptions {

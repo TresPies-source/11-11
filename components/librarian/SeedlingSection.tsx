@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sprout, ArrowUpDown } from "lucide-react";
-import type { PromptWithCritique } from "@/lib/supabase/prompts";
+import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { SeedlingCard } from "./SeedlingCard";
 import { CardErrorBoundary } from "./CardErrorBoundary";
 import { LoadingState } from "@/components/shared/LoadingState";

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getPromptsByStatus, searchPrompts, type PromptWithCritique, type PromptFilters } from '@/lib/supabase/prompts';
-import { isSupabaseConfigured } from '@/lib/supabase/client';
+import { getPromptsByStatus, searchPrompts, type PromptWithCritique, type PromptFilters } from '@/lib/pglite/prompts';
 import type { PromptStatus, PromptFile, DriveFile } from '@/lib/types';
 import matter from 'gray-matter';
 
@@ -22,8 +21,6 @@ interface UseLibrarianReturn {
   optimisticRemove: (promptId: string) => void;
   rollback: () => void;
 }
-
-const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
 
 async function fetchPromptsFromDrive(status?: PromptStatus): Promise<PromptWithCritique[]> {
   try {
@@ -102,10 +99,8 @@ export function useLibrarian(options: UseLibrarianOptions = {}): UseLibrarianRet
       setLoading(true);
       setError(null);
 
-      const useSupabase = isSupabaseConfigured() || isDevMode;
-
-      if (useSupabase && status) {
-        const data = await getPromptsByStatus('current-user', status);
+      if (status) {
+        const data = await getPromptsByStatus('dev-user', status);
         
         if (filters && Object.keys(filters).length > 0) {
           let filteredData = [...data];
@@ -132,8 +127,8 @@ export function useLibrarian(options: UseLibrarianOptions = {}): UseLibrarianRet
         } else {
           setPrompts(data);
         }
-      } else if (useSupabase && filters?.searchQuery) {
-        const data = await searchPrompts('current-user', filters.searchQuery, filters);
+      } else if (filters?.searchQuery) {
+        const data = await searchPrompts('dev-user', filters.searchQuery, filters);
         
         if (status) {
           setPrompts(data.filter(p => p.status === status));
@@ -151,7 +146,7 @@ export function useLibrarian(options: UseLibrarianOptions = {}): UseLibrarianRet
       setError(errorMessage);
       console.error('Error in useLibrarian:', err);
       
-      if (enableDriveFallback && isSupabaseConfigured()) {
+      if (enableDriveFallback) {
         try {
           console.log('Falling back to Drive...');
           const data = await fetchPromptsFromDrive(status);

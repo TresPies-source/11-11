@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
-import { updatePromptStatus } from "@/lib/supabase/prompts";
+import { updatePromptStatus } from "@/lib/pglite/prompts";
 import { useToast } from "@/hooks/useToast";
 import type { PromptStatus } from "@/lib/types";
 import { ANIMATION_EASE } from "@/lib/constants";

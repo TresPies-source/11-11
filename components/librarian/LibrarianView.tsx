@@ -73,27 +73,9 @@ export function LibrarianView() {
     [activePrompts, transitionStatus, optimisticRemoveActive, refreshSaved, showSuccess, showError]
   );
 
-  const loading = loadingActive && loadingSaved;
-  const error = errorActive || errorSaved;
+  const criticalError = errorActive && errorSaved;
 
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <BookHeart className="h-8 w-8 text-pink-600" />
-            The Librarian&apos;s Home
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Cultivate your prompts, grow your library
-          </p>
-        </div>
-        <LoadingState count={8} />
-      </div>
-    );
-  }
-
-  if (error) {
+  if (criticalError) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
@@ -107,12 +89,12 @@ export function LibrarianView() {
         </div>
         <ErrorState
           title="Unable to load The Librarian's Home"
-          message={error}
+          message={criticalError}
           onRetry={() => {
-            if (errorActive) retryActive();
-            if (errorSaved) retrySaved();
+            retryActive();
+            retrySaved();
           }}
-          loading={loading}
+          loading={false}
         />
       </div>
     );

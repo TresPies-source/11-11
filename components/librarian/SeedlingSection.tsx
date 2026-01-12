@@ -148,7 +148,7 @@ export function SeedlingSection({
                 aria-pressed={isActive}
                 aria-label={`Filter by ${range.label}`}
                 className={cn(
-                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2",
+                  "px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2",
                   isActive
                     ? "bg-green-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"

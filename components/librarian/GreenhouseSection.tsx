@@ -199,7 +199,7 @@ export function GreenhouseSection({
                   aria-pressed={isSelected}
                   aria-label={`Filter by tag: ${tag}`}
                   className={cn(
-                    "px-3 py-1 rounded-full text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2",
+                    "px-3 py-3 min-h-[44px] rounded-full text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2",
                     isSelected
                       ? "bg-pink-600 text-white ring-2 ring-pink-300"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"

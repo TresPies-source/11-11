@@ -46,7 +46,7 @@ export function WorkspaceSelector({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 px-3 py-3 min-h-[44px] rounded-md hover:bg-gray-100 transition-colors"
       >
         <FolderOpen className="h-4 w-4 text-gray-600" />
         <span className="text-sm font-medium text-gray-700 hidden sm:inline">

@@ -3,16 +3,44 @@
 import { useState, memo, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, AlertCircle, Lightbulb } from "lucide-react";
-import { CritiqueResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+// Accept either snake_case (from DB) or camelCase (from CritiqueResult type)
 interface CritiqueDetailsProps {
-  critique: CritiqueResult;
+  critique: {
+    score?: number;
+    conciseness_score?: number;
+    specificity_score?: number;
+    context_score?: number;
+    task_decomposition_score?: number;
+    concisenessScore?: number;
+    specificityScore?: number;
+    contextScore?: number;
+    taskDecompositionScore?: number;
+    feedback?: {
+      conciseness?: {
+        issues: string[];
+        suggestions: string[];
+      };
+      specificity?: {
+        issues: string[];
+        suggestions: string[];
+      };
+      context?: {
+        issues: string[];
+        suggestions: string[];
+      };
+      taskDecomposition?: {
+        issues: string[];
+        suggestions: string[];
+      };
+    };
+  };
   className?: string;
 }
 
 interface DimensionData {
-  key: keyof CritiqueResult['feedback'];
+  key: string;
   label: string;
   score: number;
   issues: string[];
@@ -39,30 +67,30 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
     {
       key: 'conciseness',
       label: 'Conciseness',
-      score: critique.concisenessScore,
-      issues: critique.feedback.conciseness.issues,
-      suggestions: critique.feedback.conciseness.suggestions,
+      score: critique.concisenessScore ?? critique.conciseness_score ?? 0,
+      issues: critique.feedback?.conciseness?.issues ?? [],
+      suggestions: critique.feedback?.conciseness?.suggestions ?? [],
     },
     {
       key: 'specificity',
       label: 'Specificity',
-      score: critique.specificityScore,
-      issues: critique.feedback.specificity.issues,
-      suggestions: critique.feedback.specificity.suggestions,
+      score: critique.specificityScore ?? critique.specificity_score ?? 0,
+      issues: critique.feedback?.specificity?.issues ?? [],
+      suggestions: critique.feedback?.specificity?.suggestions ?? [],
     },
     {
       key: 'context',
       label: 'Context',
-      score: critique.contextScore,
-      issues: critique.feedback.context.issues,
-      suggestions: critique.feedback.context.suggestions,
+      score: critique.contextScore ?? critique.context_score ?? 0,
+      issues: critique.feedback?.context?.issues ?? [],
+      suggestions: critique.feedback?.context?.suggestions ?? [],
     },
     {
       key: 'taskDecomposition',
       label: 'Task Decomposition',
-      score: critique.taskDecompositionScore,
-      issues: critique.feedback.taskDecomposition.issues,
-      suggestions: critique.feedback.taskDecomposition.suggestions,
+      score: critique.taskDecompositionScore ?? critique.task_decomposition_score ?? 0,
+      issues: critique.feedback?.taskDecomposition?.issues ?? [],
+      suggestions: critique.feedback?.taskDecomposition?.suggestions ?? [],
     },
   ], [critique]);
 

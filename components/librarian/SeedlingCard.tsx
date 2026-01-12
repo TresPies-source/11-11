@@ -3,10 +3,11 @@
 import { useState, memo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Sprout } from "lucide-react";
+import { Sprout, ChevronDown } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/supabase/prompts";
 import { cn } from "@/lib/utils";
 import { CritiqueScore } from "./CritiqueScore";
+import { CritiqueDetails } from "./CritiqueDetails";
 
 interface SeedlingCardProps {
   prompt: PromptWithCritique;
@@ -21,6 +22,7 @@ export const SeedlingCard = memo(function SeedlingCard({
 }: SeedlingCardProps) {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const title = prompt.title;
   const description =
@@ -109,8 +111,39 @@ export const SeedlingCard = memo(function SeedlingCard({
 
         <p className="text-sm text-gray-600 mb-3 line-clamp-3">{description}</p>
 
-        <div className="mb-3">
+        <div className="mb-3 space-y-2">
           <CritiqueScore score={critiqueScore} size="sm" showLabel={true} />
+          
+          {prompt.latestCritique && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDetails(!showDetails);
+                }}
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                aria-expanded={showDetails}
+                aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
+              >
+                <span className="font-medium">View Details</span>
+                <ChevronDown 
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-200",
+                    showDetails && "rotate-180"
+                  )} 
+                />
+              </button>
+              
+              {showDetails && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="pt-2"
+                >
+                  <CritiqueDetails critique={prompt.latestCritique} />
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -121,7 +154,7 @@ export const SeedlingCard = memo(function SeedlingCard({
           aria-label={isSaving ? `Saving ${title} to greenhouse` : `Save ${title} to greenhouse`}
           aria-busy={isSaving}
           className={cn(
-            "w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-all duration-100 text-sm font-medium",
+            "w-full flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-md transition-all duration-100 text-sm font-medium",
             isSaving
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-green-600 text-white hover:bg-green-700 active:scale-95 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"

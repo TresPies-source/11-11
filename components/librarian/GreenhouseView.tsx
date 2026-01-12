@@ -9,16 +9,33 @@ import { SearchInput } from "@/components/shared/SearchInput";
 import { EmptySearchState } from "@/components/shared/EmptySearchState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
-import { Sprout } from "lucide-react";
+import { Sprout, X } from "lucide-react";
 
 export function GreenhouseView() {
   const { prompts, loading, error, retry } = useLibrary();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const { filteredPrompts } = usePromptSearch({
+  const { filteredPrompts: searchFilteredPrompts } = usePromptSearch({
     prompts,
     searchTerm: debouncedSearch,
   });
+
+  const filteredPrompts = selectedTags.length > 0
+    ? searchFilteredPrompts.filter((prompt) =>
+        selectedTags.every((tag) => prompt.metadata?.tags?.includes(tag))
+      )
+    : searchFilteredPrompts;
+
+  const handleTagClick = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const clearTagFilters = () => {
+    setSelectedTags([]);
+  };
 
   if (loading) {
     return (
@@ -98,15 +115,47 @@ export function GreenhouseView() {
         />
       </div>
 
-      {filteredPrompts.length === 0 && searchTerm ? (
+      {selectedTags.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span className="text-sm text-gray-600 font-medium">Filtering by:</span>
+          {selectedTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => handleTagClick(tag)}
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-200 active:scale-95 transition-all duration-100"
+              aria-label={`Remove filter: ${tag}`}
+            >
+              {tag}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+          <button
+            onClick={clearTagFilters}
+            className="text-sm text-gray-500 hover:text-gray-700 underline"
+            aria-label="Clear all tag filters"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {filteredPrompts.length === 0 && (searchTerm || selectedTags.length > 0) ? (
         <EmptySearchState
-          searchTerm={searchTerm}
-          onClear={() => setSearchTerm("")}
+          searchTerm={searchTerm || `tags: ${selectedTags.join(", ")}`}
+          onClear={() => {
+            setSearchTerm("");
+            clearTagFilters();
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPrompts.map((prompt) => (
-            <PromptCard key={prompt.id} prompt={prompt} variant="greenhouse" />
+            <PromptCard 
+              key={prompt.id} 
+              prompt={prompt} 
+              variant="greenhouse"
+              onTagClick={handleTagClick}
+            />
           ))}
         </div>
       )}

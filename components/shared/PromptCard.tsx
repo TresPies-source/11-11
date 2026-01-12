@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, PlayCircle, Download } from "lucide-react";
+import { Copy, Check, PlayCircle, Download, Edit } from "lucide-react";
 import { PromptFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
@@ -11,9 +11,10 @@ import { useToast } from "@/hooks/useToast";
 interface PromptCardProps {
   prompt: PromptFile;
   variant: "library" | "gallery" | "greenhouse" | "commons";
+  onTagClick?: (tag: string) => void;
 }
 
-export function PromptCard({ prompt, variant }: PromptCardProps) {
+export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
   const router = useRouter();
   const toast = useToast();
   const [copied, setCopied] = useState(false);
@@ -38,6 +39,10 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
   };
 
   const handleRunInChat = () => {
+    router.push(`/?loadPrompt=${prompt.id}`);
+  };
+
+  const handleEdit = () => {
     router.push(`/?loadPrompt=${prompt.id}`);
   };
 
@@ -129,9 +134,16 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {tags.map((tag, index) => (
-              <motion.span
+              <motion.button
                 key={index}
-                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTagClick?.(tag);
+                }}
+                className={cn(
+                  "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700",
+                  onTagClick && "cursor-pointer hover:bg-blue-100 active:scale-95 transition-all duration-100"
+                )}
                 variants={tagVariants}
                 initial="hidden"
                 animate="visible"
@@ -140,9 +152,11 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
                   scale: 1.05,
                   backgroundColor: "rgb(219 234 254)",
                 }}
+                aria-label={`Filter by tag: ${tag}`}
+                disabled={!onTagClick}
               >
                 {tag}
-              </motion.span>
+              </motion.button>
             ))}
           </div>
         )}
@@ -150,13 +164,24 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
 
       <div className="mt-auto pt-3 border-t border-gray-100">
         {normalizedVariant === "greenhouse" ? (
-          <button
-            onClick={handleRunInChat}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium"
-          >
-            <PlayCircle className="h-4 w-4" />
-            Run in Chat
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleEdit}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 active:scale-95 transition-all duration-100 text-sm font-medium"
+              aria-label={`Edit ${title}`}
+            >
+              <Edit className="h-4 w-4" />
+              Edit
+            </button>
+            <button
+              onClick={handleRunInChat}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium"
+              aria-label={`Run ${title} in chat`}
+            >
+              <PlayCircle className="h-4 w-4" />
+              Run in Chat
+            </button>
+          </div>
         ) : (
           <button
             onClick={handleFork}

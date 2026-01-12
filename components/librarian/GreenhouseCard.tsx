@@ -3,11 +3,12 @@
 import { useState, memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, PlayCircle, Pencil } from "lucide-react";
+import { Copy, Check, PlayCircle, Pencil, ChevronDown } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/supabase/prompts";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
 import { CritiqueScore } from "./CritiqueScore";
+import { CritiqueDetails } from "./CritiqueDetails";
 
 interface GreenhouseCardProps {
   prompt: PromptWithCritique;
@@ -26,6 +27,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
   const router = useRouter();
   const toast = useToast();
   const [copied, setCopied] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const title = prompt.title;
   const description =
@@ -156,12 +158,43 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
           </div>
         )}
 
-        <div className="ml-10">
+        <div className="ml-10 space-y-2">
           <CritiqueScore
             score={prompt.latestCritique?.score ?? 0}
             size="sm"
             showLabel={false}
           />
+          
+          {prompt.latestCritique && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDetails(!showDetails);
+                }}
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                aria-expanded={showDetails}
+                aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
+              >
+                <span className="font-medium">View Details</span>
+                <ChevronDown 
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-200",
+                    showDetails && "rotate-180"
+                  )} 
+                />
+              </button>
+              
+              {showDetails && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="pt-2"
+                >
+                  <CritiqueDetails critique={prompt.latestCritique} />
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 

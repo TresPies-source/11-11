@@ -105,9 +105,73 @@ export interface PromptMetadata {
   version?: string;
 }
 
+export type PromptStatus = 'draft' | 'active' | 'saved' | 'archived';
+
+export interface Prompt {
+  id: string;
+  userId: string;
+  title: string;
+  content: string;
+  status: PromptStatus;
+  driveFileId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  metadata: PromptMetadata;
+}
+
+export interface CritiqueResult {
+  id: string;
+  promptId: string;
+  score: number;
+  concisenessScore: number;
+  specificityScore: number;
+  contextScore: number;
+  taskDecompositionScore: number;
+  feedback: CritiqueFeedback;
+  createdAt: string;
+}
+
+export interface CritiqueFeedback {
+  conciseness: {
+    score: number;
+    issues: string[];
+    suggestions: string[];
+  };
+  specificity: {
+    score: number;
+    issues: string[];
+    suggestions: string[];
+  };
+  context: {
+    score: number;
+    issues: string[];
+    suggestions: string[];
+  };
+  taskDecomposition: {
+    score: number;
+    issues: string[];
+    suggestions: string[];
+  };
+}
+
+export interface PromptFilters {
+  status?: PromptStatus;
+  tags?: string[];
+  minScore?: number;
+  maxScore?: number;
+}
+
+export interface PromptSortOptions {
+  field: 'updatedAt' | 'createdAt' | 'title' | 'critiqueScore';
+  direction: 'asc' | 'desc';
+}
+
 export interface PromptFile extends DriveFile {
   metadata?: PromptMetadata;
   rawContent?: string;
+  status?: PromptStatus;
+  critiqueScore?: number;
+  critiqueDetails?: CritiqueResult;
 }
 
 export type ContextBusEvent =

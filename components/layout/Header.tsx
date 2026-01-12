@@ -20,6 +20,7 @@ export function Header() {
   const navLinks = [
     { href: "/library", label: "Library" },
     { href: "/gallery", label: "Gallery" },
+    { href: "/librarian", label: "Librarian" },
   ];
 
   return (

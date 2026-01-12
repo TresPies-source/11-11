@@ -1,6 +1,6 @@
 # 11-11: The Sustainable Intelligence OS
 
-**Version:** 0.1.0 (Sprint 1 - UI Shell Complete)
+**Version:** 0.1.1 (The Librarian's Home)
 
 11-11 is a "Hardworking Workbench" for prompt engineering and a "Global Commons" for collective intelligence. It's a sustainable platform built for calm, patient work—designed to be orchestrated by AI agents and used by humans.
 
@@ -36,6 +36,26 @@ npm run dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the UI Shell.
+
+### Supabase Setup (Optional for Librarian Features)
+
+The Librarian's Home requires Supabase for prompt storage and critique tracking:
+
+1. **Create a Supabase project** at [supabase.com](https://supabase.com)
+2. **Run the database migration:**
+   - Navigate to SQL Editor in your Supabase dashboard
+   - Copy contents of `lib/supabase/migrations/001_initial_schema.sql`
+   - Execute the query to create tables and policies
+3. **Configure environment variables in `.env.local`:**
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   ```
+   Get these values from: Supabase Dashboard > Settings > API
+4. **Verify setup:** Visit `/librarian` to see your prompt workspace
+
+**Dev Mode:** If Supabase is not configured, the application falls back to mock data automatically.
 
 ### Development Mode
 
@@ -88,7 +108,7 @@ npm run lint         # Run ESLint
 npm run type-check   # Run TypeScript compiler (no emit)
 ```
 
-## 🧩 Key Features (Sprint 1)
+## 🧩 Key Features
 
 ### ✅ Command Center UI Shell
 - **Resizable Panels:** Drag-to-resize layout with localStorage persistence
@@ -101,6 +121,13 @@ npm run type-check   # Run TypeScript compiler (no emit)
 - **Agent Personas:** Manus, Supervisor, Librarian, Scribe, Navigator, Thinker
 - **Responsive Grid:** 1-3 columns based on viewport width
 - **Panel Controls:** Minimize, maximize, close with smooth animations
+
+### ✅ The Librarian's Home (v0.1)
+- **Seedling Section:** Work-in-progress prompts with real-time critique scores
+- **Greenhouse Section:** Personal library of saved prompts with search/filtering
+- **Reactive Critique Engine:** Rule-based scoring (Conciseness, Specificity, Context, Task Decomposition)
+- **Status Management:** Seamless transitions between draft, active, saved, and archived states
+- **Supabase Integration:** Persistent storage with automatic fallback to mock data
 
 ### ✅ Header & Navigation
 - **Workspace Selector:** Switch between workspaces (mock)
@@ -139,6 +166,7 @@ All transitions follow the "Hardworking" calm aesthetic:
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **Framework** | Next.js 14 (App Router) | Modern React framework with SSR |
+| **Database** | Supabase | PostgreSQL database with real-time subscriptions |
 | **Styling** | Tailwind CSS | Utility-first styling |
 | **Animations** | Framer Motion | Smooth, performant animations |
 | **Icons** | Lucide React | Clean, consistent iconography |
@@ -178,7 +206,13 @@ Currently, the application uses manual testing and type checking. Future sprints
 - Multi-agent workspace with chat interface
 - Mock authentication and file tree
 
-### 🚧 Sprint 2: Hybrid Storage (v0.2) - **PLANNED**
+### ✅ The Librarian's Home (v0.1) - **COMPLETE**
+- Seedling and Greenhouse sections for prompt management
+- Reactive critique engine with rule-based scoring
+- Supabase integration with automatic fallback to mock data
+- Status transitions and search/filtering
+
+### 📋 Sprint 2: Hybrid Storage (v0.2) - **PLANNED**
 - Google Drive API integration
 - GitHub API (Octokit) integration
 - Real-time sync status indicators
@@ -190,13 +224,9 @@ Currently, the application uses manual testing and type checking. Future sprints
 - Auto-save to Google Drive/GitHub
 - Conflict resolution UI
 
-### 📋 Sprint 4: The Librarian (v0.4) - **PLANNED**
-- Semantic search via Supabase pgvector
-- Proactive prompt suggestions
-- Tag-based filtering and organization
-
-### 📋 Sprint 5: The Commons (v0.5) - **PLANNED**
+### 📋 Future: The Global Commons - **PLANNED**
 - Global prompt gallery (Wikipedia of Prompts)
+- Semantic search via Supabase pgvector
 - One-click publish with public flag
 - Collaborative forking and remixing
 
@@ -219,6 +249,6 @@ TBD (Expected: MIT or Apache 2.0)
 Built with the philosophy of "Planning with Files" and the vision of a **Sustainable Intelligence Platform**.
 
 **Author:** Manus AI (Dojo)  
-**Status:** Sprint 1 Complete  
-**Version:** 0.1.0  
-**Last Updated:** January 10, 2026
+**Status:** The Librarian's Home (v0.1) Complete  
+**Version:** 0.1.1  
+**Last Updated:** January 12, 2026

@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { BookHeart, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { BookHeart, Sparkles, Leaf, Globe, ArrowRight } from "lucide-react";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
 import { useToast } from "@/hooks/useToast";
@@ -11,6 +12,7 @@ import { GreenhouseSection } from "./GreenhouseSection";
 import { LibrarianErrorBoundary } from "./LibrarianErrorBoundary";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { cn } from "@/lib/utils";
 
 export function LibrarianView() {
   const [savingPromptIds, setSavingPromptIds] = useState<Set<string>>(new Set());
@@ -134,11 +136,73 @@ export function LibrarianView() {
         </p>
       </motion.header>
 
+      <motion.nav
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4"
+        aria-label="Librarian navigation"
+      >
+        <Link
+          href="/librarian/greenhouse"
+          className={cn(
+            "group relative overflow-hidden rounded-lg border-2 border-green-200",
+            "bg-gradient-to-br from-green-50 to-emerald-50",
+            "p-6 transition-all duration-300",
+            "hover:border-green-300 hover:shadow-lg hover:scale-[1.02]",
+            "focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-2">
+                <Leaf className="h-6 w-6 text-green-600" />
+                My Greenhouse
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Your cultivated prompts ready to bloom
+              </p>
+              <p className="text-green-700 font-medium text-sm mt-2">
+                {savedPrompts.length} {savedPrompts.length === 1 ? 'prompt' : 'prompts'} saved
+              </p>
+            </div>
+            <ArrowRight className="h-6 w-6 text-green-600 transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
+        </Link>
+
+        <Link
+          href="/librarian/commons"
+          className={cn(
+            "group relative overflow-hidden rounded-lg border-2 border-blue-200",
+            "bg-gradient-to-br from-blue-50 to-indigo-50",
+            "p-6 transition-all duration-300",
+            "hover:border-blue-300 hover:shadow-lg hover:scale-[1.02]",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-2">
+                <Globe className="h-6 w-6 text-blue-600" />
+                The Global Commons
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Discover prompts shared by the community
+              </p>
+              <p className="text-blue-700 font-medium text-sm mt-2">
+                Explore public prompts
+              </p>
+            </div>
+            <ArrowRight className="h-6 w-6 text-blue-600 transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
+        </Link>
+      </motion.nav>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <motion.section
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm"
           aria-label="Seedlings - Active prompts"
         >
@@ -160,7 +224,7 @@ export function LibrarianView() {
         <motion.section
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm"
           aria-label="Greenhouse - Saved prompts"
         >

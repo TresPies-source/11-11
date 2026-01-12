@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/useToast";
 
 interface PromptCardProps {
   prompt: PromptFile;
-  variant: "library" | "gallery";
+  variant: "library" | "gallery" | "greenhouse" | "commons";
 }
 
 export function PromptCard({ prompt, variant }: PromptCardProps) {
@@ -18,6 +18,8 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
   const toast = useToast();
   const [copied, setCopied] = useState(false);
   const [forking, setForking] = useState(false);
+
+  const normalizedVariant = variant === "library" ? "greenhouse" : variant === "gallery" ? "commons" : variant;
 
   const title = prompt.metadata?.title || prompt.name.replace(/\.md$/, "");
   const description =
@@ -147,7 +149,7 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
       </div>
 
       <div className="mt-auto pt-3 border-t border-gray-100">
-        {variant === "library" ? (
+        {normalizedVariant === "greenhouse" ? (
           <button
             onClick={handleRunInChat}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium"
@@ -165,7 +167,7 @@ export function PromptCard({ prompt, variant }: PromptCardProps) {
             )}
           >
             <Download className="h-4 w-4" />
-            {forking ? "Forking..." : "Fork to Library"}
+            {forking ? "Forking..." : "Fork to Greenhouse"}
           </button>
         )}
       </div>

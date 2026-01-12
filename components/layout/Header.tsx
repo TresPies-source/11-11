@@ -18,8 +18,6 @@ export function Header() {
   };
 
   const navLinks = [
-    { href: "/library", label: "Library" },
-    { href: "/gallery", label: "Gallery" },
     { href: "/librarian", label: "Librarian" },
   ];
 
@@ -44,7 +42,7 @@ export function Header() {
 
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
             return (
               <Link
                 key={link.href}

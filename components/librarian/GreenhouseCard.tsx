@@ -65,11 +65,11 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
 
   const handleEdit = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/library?edit=${prompt.id}`);
+    router.push(`/librarian/greenhouse?edit=${prompt.id}`);
   }, [router, prompt.id]);
 
   const handleCardClick = useCallback(() => {
-    router.push(`/library?edit=${prompt.id}`);
+    router.push(`/librarian/greenhouse?edit=${prompt.id}`);
   }, [router, prompt.id]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {

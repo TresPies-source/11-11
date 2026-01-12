@@ -1,44 +1,28 @@
-# The Librarian Agent v0.1: Product Requirements Document (PRD) - Updated
+# The Librarian Agent v0.3: Product Requirements Document (PRD)
 
 **Author:** Manus AI (Dojo)
 **Status:** Draft
-**Date:** January 11, 2026
+**Date:** January 12, 2026
 
 ## 1. Overview
 
 The Librarian is an AI-native agent that serves as a guide and collaborator for prompt engineers within the 11-11 Sustainable Intelligence OS. It provides proactive suggestions, reactive critiques, and automated organization to help users craft better prompts and discover new ideas.
 
-## 2. The "Librarian's Home" Page
+## 2. The Unified "Librarian" Namespace
 
-The primary user interface for The Librarian is a dedicated page called "The Librarian's Home." This page is a dynamic, visual, and interactive space designed to feel like a "garden of prompts." It is divided into three main sections:
+To create a seamless and intuitive user experience, the `/library` and `/gallery` pages will be deprecated and their functionality will be integrated into a unified `/librarian` namespace. This will create a single, powerful destination for all prompt management and discovery activities.
 
-### 2.1. The "Seedling" Section: Your Active Prompts
+### 2.1. `/librarian`: The Librarian's Home
 
-- **User Problem:** I need a clear overview of my current work-in-progress prompts and their quality.
-- **User Story:** As a prompt engineer, I want to see all of my active prompts in one place, with a quick visual indicator of their quality, so I can easily track my work and prioritize my efforts.
-- **Features:**
-    - Each active prompt is represented as a "seedling" card.
-    - The card displays a snippet of the prompt, its current critique score, and a visual indicator of its growth.
-    - Clicking on a seedling takes the user to the editor, with The Librarian's critique and suggestions already loaded.
+This will be the main landing page for The Librarian, providing a high-level overview of the user's prompt garden. It will feature the "Seedling" section for active prompts and a summary of the user's personal library.
 
-### 2.2. The "Greenhouse" Section: Your Personal Library
+### 2.2. `/librarian/greenhouse`: Your Personal Library
 
-- **User Problem:** I need a way to organize and browse my collection of mature, well-crafted prompts.
-- **User Story:** As a prompt engineer, I want to save my best prompts to a personal library, with a beautiful and inspiring visual representation, so I can easily find and reuse them later.
-- **Features:**
-    - Each saved prompt is a "flowering plant" card, with an AI-generated image representing the prompt's essence.
-    - The Greenhouse is searchable and filterable.
-    - Users can organize their plants into "garden beds" (collections).
-    - Users can share their garden beds with others.
+This page will replace the existing `/library` page and will be dedicated to the user's personal collection of mature, well-crafted prompts. It will feature the "Greenhouse" UI, with AI-generated imagery and advanced filtering and organization capabilities.
 
-### 2.3. The "Global Commons" Section: The Wikipedia of Prompts
+### 2.3. `/librarian/commons`: The Global Commons
 
-- **User Problem:** I want to discover new ideas and learn from the work of other prompt engineers.
-- **User Story:** As a prompt engineer, I want to explore a vast, community-driven collection of prompts, so I can discover new techniques, get inspiration, and collaborate with others.
-- **Features:**
-    - A 2D map UI where each prompt is a point of light.
-    - Users can zoom, pan, and see prompts clustered by topic or theme.
-    - Clicking on a point of light reveals the prompt and its history (creator, forks, evolution).
+This page will replace the existing `/gallery` page and will be dedicated to the community-driven "Wikipedia of Prompts." It will feature the 2D map UI, allowing users to explore and discover prompts from around the world.
 
 ## 3. The Librarian's Role & Features
 

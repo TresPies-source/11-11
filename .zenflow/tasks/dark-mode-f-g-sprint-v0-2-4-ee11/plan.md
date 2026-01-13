@@ -149,6 +149,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 7: Update Priority 2 Components (Librarian)
+<!-- chat-id: 3169fed1-2df9-4c90-970f-0233453a8f63 -->
 
 **Objective:** Migrate Librarian components to theme-aware classes
 

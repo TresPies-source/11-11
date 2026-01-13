@@ -97,6 +97,7 @@ Technical specification created in `spec.md` covering:
 ---
 
 ### [ ] Step: Phase 3 - Integration with Existing Features
+<!-- chat-id: d53b5d4f-7772-4891-b35b-ba73ceec2e39 -->
 
 **Goal:** Retrofit Supervisor, Cost Guard, and Handoffs to log trace events.
 

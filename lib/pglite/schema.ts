@@ -11,6 +11,10 @@ CREATE TABLE IF NOT EXISTS prompts (
   status TEXT NOT NULL CHECK (status IN ('draft', 'active', 'saved', 'archived')),
   status_history JSONB DEFAULT '[]'::jsonb,
   drive_file_id TEXT,
+  published_at TIMESTAMPTZ,
+  visibility TEXT NOT NULL DEFAULT 'private' CHECK (visibility IN ('private', 'unlisted', 'public')),
+  author_name TEXT,
+  author_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -59,6 +63,8 @@ CREATE INDEX IF NOT EXISTS idx_prompts_user_status ON prompts(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_prompts_updated_at ON prompts(updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_prompts_drive_file_id ON prompts(drive_file_id);
 CREATE INDEX IF NOT EXISTS idx_prompts_status_history ON prompts USING GIN(status_history);
+CREATE INDEX IF NOT EXISTS idx_prompts_visibility_published ON prompts(visibility, published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_prompts_author_id ON prompts(author_id);
 
 -- Critiques indexes
 CREATE INDEX IF NOT EXISTS idx_critiques_prompt_id ON critiques(prompt_id);

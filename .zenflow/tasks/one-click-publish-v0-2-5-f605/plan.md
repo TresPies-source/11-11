@@ -52,6 +52,7 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 ---
 
 ### [ ] Step: Database Schema Migration
+<!-- chat-id: b2ee09c5-a8fe-45ce-9e50-c86d35350aef -->
 
 Update PGlite database schema to support public prompts with visibility controls.
 

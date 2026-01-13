@@ -280,6 +280,7 @@ Created comprehensive technical specification at `spec.md` covering:
 ---
 
 ### [ ] Step 8: Enhanced File Tree with Context Menu
+<!-- chat-id: d6e3e52e-6044-413c-a234-68989022adb4 -->
 
 **Objective:** Add context menu and inline rename to FileTree
 

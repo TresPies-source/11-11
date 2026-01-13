@@ -353,6 +353,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 15: Regression Testing
+<!-- chat-id: b5c2d685-ec17-421b-a48d-a104f5163928 -->
 
 **Objective:** Ensure no existing features broken.
 

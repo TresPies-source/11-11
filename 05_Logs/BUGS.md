@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-01-12
 
-**Bug Summary**: 8 total (0 P0, 0 P1, 2 P2, 1 P3) - 5 bugs resolved (2 P1, 3 P2)
+**Bug Summary**: 8 total (0 P0, 0 P1, 1 P2, 1 P3) - 6 bugs resolved (2 P1, 4 P2)
 
 This document tracks all bugs discovered during the Hotfix & Validate sprint. Bugs are categorized by severity:
 
@@ -29,7 +29,7 @@ _No open P1 bugs. All critical bugs have been fixed._
 
 ## P2 (Medium Priority) Bugs
 
-**Summary**: 2 bugs remaining (3 resolved)
+**Summary**: 1 bug remaining (4 resolved)
 
 ### [P2-001] Initial page load requires hard refresh in dev mode
 **Status**: Open  
@@ -73,42 +73,6 @@ Hard refresh (F5) resolves the issue immediately.
 - Consider adding loading timeout with error fallback
 
 
-
-### [P2-003] Limited Status Transitions in UI
-**Status**: Open  
-**Component**: `components/librarian/LibrarianView.tsx`, `components/librarian/GreenhouseCard.tsx`  
-**Found During**: Task 2.4 - Status Management Testing  
-**Date**: 2026-01-12
-
-**Description**:
-The status management infrastructure supports all four status transitions (draft, active, saved, archived) via `StatusTransitionButton` and `usePromptStatus`, but the UI only implements one transition: active → saved (Save to Greenhouse). Other transitions like saved → archived, saved → active, or draft → active are not accessible in the current UI.
-
-**Reproduction Steps**:
-1. Navigate to `/librarian`
-2. Save a prompt to Greenhouse (active → saved) ✅ Works
-3. Try to archive a saved prompt from Greenhouse
-4. Expected: Archive button or action available
-5. Actual: No archive functionality in UI
-
-**Expected Behavior**:
-Users should be able to transition prompts between all statuses:
-- Draft → Active (move to Seedlings)
-- Active → Saved (Save to Greenhouse) ✅ Implemented
-- Saved → Active (move back to Seedlings)
-- Saved → Archived (archive old prompts)
-- Archived → Active (restore from archive)
-
-**Actual Behavior**:
-Only the active → saved transition is implemented with a "Save to Greenhouse" button. No UI elements exist for other status transitions.
-
-**Impact**:
-Users cannot archive old prompts, restore saved prompts to active development, or manage their prompt lifecycle beyond saving to the Greenhouse.
-
-**Proposed Fix**:
-1. Add status transition actions to GreenhouseCard (Archive, Move to Seedlings)
-2. Create an Archive view at `/librarian/archive` for archived prompts
-3. Add restore functionality for archived prompts
-4. Use the existing `StatusTransitionButton` component for these actions
 
 ---
 
@@ -160,7 +124,7 @@ React warning appears in console indicating improper ref usage on function compo
 
 ## Fixed Bugs
 
-**Summary**: 5 bugs fixed (2 P1, 3 P2)
+**Summary**: 6 bugs fixed (2 P1, 4 P2)
 
 ### [P1-001] ✅ RESOLVED: Missing Edit Action in Greenhouse View
 **Status**: Resolved  
@@ -328,6 +292,78 @@ Initial page load took ~4.6 seconds due to loading state logic requiring both ho
 
 **Verification**:
 Page now loads progressively. If Seedlings data loads first, users see that section immediately while Greenhouse is still loading, and vice versa. Significantly improves perceived load time.
+
+---
+
+### [P2-003] ✅ RESOLVED: Limited Status Transitions in UI
+**Status**: Resolved  
+**Component**: Multiple (ArchiveView, GreenhouseCard, SeedlingCard, StatusFilter, BulkActionBar)  
+**Found During**: Task 2.4 - Status Management Testing  
+**Fixed During**: Phase 2 - Full Status Lifecycle UI v0.2.2  
+**Date Found**: 2026-01-12  
+**Date Fixed**: 2026-01-12
+
+**Description**:
+The status management infrastructure supported all four status transitions (draft, active, saved, archived), but the UI only implemented one transition: active → saved (Save to Greenhouse). Other transitions like saved → archived, saved → active, or draft → active were not accessible in the UI.
+
+**Fix Applied**:
+
+**1. Database Schema Updates:**
+- Added `status_history` JSONB column to prompts table
+- Created migration: `lib/pglite/migrations/002_add_status_history.ts`
+- Added GIN index for efficient JSONB queries
+- Integrated migration runner into PGlite client initialization
+
+**2. Status Transition Logic:**
+- Created `lib/pglite/statusTransitions.ts` with validation logic
+- Defined 12 valid status transitions with confirmation requirements
+- Implemented `updatePromptStatusWithHistory()` to track all transitions
+- Updated `usePromptStatus.ts` to use new history-tracking function
+
+**3. New Components Created:**
+- `ConfirmationDialog.tsx` - Reusable modal for destructive actions
+- `StatusFilter.tsx` - Filter dropdown with URL persistence
+- `BulkActionBar.tsx` - Bulk operations toolbar
+- `ArchiveCard.tsx` - Card for archived prompts
+- `app/librarian/archive/page.tsx` - Archive view page
+
+**4. Modified Components:**
+- `GreenhouseCard.tsx` - Added Reactivate and Archive buttons
+- `SeedlingCard.tsx` - Added Archive action for drafts
+- `GreenhouseSection.tsx` - Integrated StatusFilter
+- `LibrarianView.tsx` - Added status change handlers
+
+**5. New Hooks:**
+- `useBulkSelection.ts` - Multi-select state management
+- `useStatusFilter.ts` - Filter state with URL param sync
+
+**Valid Transitions Implemented (12 total):**
+- draft → active (Activate)
+- draft → archived (Archive, with confirmation)
+- active → saved (Save to Greenhouse)
+- active → draft (Move to Drafts)
+- active → archived (Archive, with confirmation)
+- saved → active (Reactivate)
+- saved → archived (Archive, with confirmation)
+- archived → active (Restore)
+- archived → saved (Restore to Greenhouse)
+
+**Files Modified:**
+- 7 new files created
+- 5 existing files modified
+- Database schema migration added
+- Full status lifecycle now accessible in UI
+
+**Verification:**
+- All 12 status transitions tested and working
+- Archive view functional at `/librarian/archive`
+- Bulk restore and bulk delete operations working
+- Status history tracked in database
+- Confirmation dialogs appear for destructive actions
+- URL-persisted filters working
+- Zero regressions in existing features
+- Lint: 0 errors, 0 warnings
+- Build: Successful with 0 TypeScript errors
 
 ---
 

@@ -208,6 +208,7 @@ Technical specification created in `spec.md` covering:
 ---
 
 ### [ ] Step: Phase 6 - Polish & Edge Cases
+<!-- chat-id: b9096367-8a80-4931-8e2a-7d852c0af800 -->
 
 **Goal:** Handle edge cases, optimize, and finalize for release.
 

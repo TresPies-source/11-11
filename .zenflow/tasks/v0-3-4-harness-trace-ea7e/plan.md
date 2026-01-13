@@ -96,7 +96,7 @@ Technical specification created in `spec.md` covering:
 
 ---
 
-### [ ] Step: Phase 3 - Integration with Existing Features
+### [x] Step: Phase 3 - Integration with Existing Features
 <!-- chat-id: d53b5d4f-7772-4891-b35b-ba73ceec2e39 -->
 
 **Goal:** Retrofit Supervisor, Cost Guard, and Handoffs to log trace events.
@@ -113,12 +113,12 @@ Technical specification created in `spec.md` covering:
 5. Run integration tests to verify full trace lifecycle
 
 **Verification:**
-- [ ] Supervisor logs AGENT_ROUTING events during routing
-- [ ] Cost Guard logs COST_TRACKED events during tracking
-- [ ] Handoffs log AGENT_HANDOFF events
-- [ ] Integration test passes (full trace lifecycle)
-- [ ] No regressions in existing functionality
-- [ ] Existing tests still pass
+- [x] Supervisor logs AGENT_ROUTING events during routing
+- [x] Cost Guard logs COST_TRACKED events during tracking
+- [x] Handoffs log AGENT_HANDOFF events
+- [x] Integration test passes (full trace lifecycle)
+- [x] No regressions in existing functionality
+- [x] Existing tests still pass
 
 **Deliverables:**
 - Complete integration with Wave 1 & 2 features

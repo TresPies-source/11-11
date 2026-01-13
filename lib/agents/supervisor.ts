@@ -20,6 +20,7 @@ import {
 } from '../openai/types';
 import { getDB } from '../pglite/client';
 import { trackRoutingCost, trackRoutingCostSimple } from './cost-tracking';
+import { startSpan, endSpan, logEvent, isTraceActive } from '../harness/trace';
 
 const AgentSchema = z.object({
   id: z.string().min(1),
@@ -316,23 +317,60 @@ export async function routeQuery(
     throw new RoutingError('No agents available for routing');
   }
 
-  if (!query || query.trim().length === 0) {
-    const defaultAgent = getDefaultAgent();
-    return {
-      agent_id: defaultAgent.id,
-      agent_name: defaultAgent.name,
-      confidence: 1.0,
-      reasoning: 'Empty query - routing to default agent',
-      fallback: true,
-    };
-  }
-
-  if (!canUseOpenAI()) {
-    console.log('[Routing] Using keyword-based fallback (no API key)');
-    return routeQueryKeywordFallback(query, available_agents);
-  }
+  let spanId: string | undefined;
+  const startTime = Date.now();
 
   try {
+    if (isTraceActive()) {
+      spanId = startSpan('AGENT_ROUTING', {
+        query,
+        context_length: conversation_context.length,
+        available_agents: available_agents.map(a => a.id),
+      });
+    }
+
+    if (!query || query.trim().length === 0) {
+      const defaultAgent = getDefaultAgent();
+      const result = {
+        agent_id: defaultAgent.id,
+        agent_name: defaultAgent.name,
+        confidence: 1.0,
+        reasoning: 'Empty query - routing to default agent',
+        fallback: true,
+      };
+
+      if (spanId) {
+        endSpan(spanId, {
+          agent_id: result.agent_id,
+          confidence: result.confidence,
+          fallback: result.fallback,
+        }, {
+          duration_ms: Date.now() - startTime,
+          agent_id: result.agent_id,
+        });
+      }
+
+      return result;
+    }
+
+    if (!canUseOpenAI()) {
+      console.log('[Routing] Using keyword-based fallback (no API key)');
+      const result = routeQueryKeywordFallback(query, available_agents);
+
+      if (spanId) {
+        endSpan(spanId, {
+          agent_id: result.agent_id,
+          confidence: result.confidence,
+          fallback: result.fallback,
+        }, {
+          duration_ms: Date.now() - startTime,
+          agent_id: result.agent_id,
+        });
+      }
+
+      return result;
+    }
+
     const decision = await routeQueryWithLLM(
       query,
       conversation_context,
@@ -341,7 +379,7 @@ export async function routeQuery(
 
     if (decision.confidence < CONFIDENCE_THRESHOLD) {
       const defaultAgent = getDefaultAgent();
-      return {
+      const result = {
         agent_id: defaultAgent.id,
         agent_name: defaultAgent.name,
         confidence: decision.confidence,
@@ -349,11 +387,60 @@ export async function routeQuery(
         fallback: true,
         usage: decision.usage,
       };
+
+      if (spanId) {
+        endSpan(spanId, {
+          agent_id: result.agent_id,
+          confidence: result.confidence,
+          fallback: result.fallback,
+        }, {
+          duration_ms: Date.now() - startTime,
+          agent_id: result.agent_id,
+          token_count: decision.usage?.total_tokens,
+        });
+      }
+
+      return result;
+    }
+
+    if (spanId) {
+      endSpan(spanId, {
+        agent_id: decision.agent_id,
+        confidence: decision.confidence,
+        fallback: decision.fallback,
+      }, {
+        duration_ms: Date.now() - startTime,
+        agent_id: decision.agent_id,
+        confidence: decision.confidence,
+        token_count: decision.usage?.total_tokens,
+      });
     }
 
     return decision;
   } catch (error) {
     console.error('[Routing] LLM routing failed:', error);
+
+    if (isTraceActive()) {
+      logEvent('ERROR', {
+        query,
+        error_type: 'routing_error',
+      }, {
+        error: true,
+      }, {
+        error_message: error instanceof Error ? error.message : String(error),
+        duration_ms: Date.now() - startTime,
+      });
+    }
+
+    if (spanId) {
+      endSpan(spanId, {
+        error: true,
+      }, {
+        duration_ms: Date.now() - startTime,
+        error_message: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     const defaultAgent = getDefaultAgent();
     return {
       agent_id: defaultAgent.id,

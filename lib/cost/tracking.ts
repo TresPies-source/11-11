@@ -14,6 +14,7 @@ import {
   getCurrentMonth,
 } from '@/lib/pglite/cost';
 import type { CostRecordInsert } from '@/lib/pglite/types';
+import { logEvent, isTraceActive } from '@/lib/harness/trace';
 
 export { getCurrentMonth };
 
@@ -76,6 +77,21 @@ export interface TrackCostResult {
  */
 export async function trackCost(input: TrackCostInput): Promise<TrackCostResult> {
   try {
+    if (isTraceActive()) {
+      logEvent('COST_TRACKED', {
+        operation: input.operation_type,
+        model: input.model,
+      }, {
+        tokens: input.total_tokens,
+        cost: input.cost_usd,
+        prompt_tokens: input.prompt_tokens,
+        completion_tokens: input.completion_tokens,
+      }, {
+        token_count: input.total_tokens,
+        cost_usd: input.cost_usd,
+      });
+    }
+
     const costRecord: CostRecordInsert = {
       user_id: input.user_id,
       session_id: input.session_id || null,

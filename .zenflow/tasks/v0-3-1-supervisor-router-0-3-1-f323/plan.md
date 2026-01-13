@@ -448,6 +448,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 12: Unit Tests
+<!-- chat-id: ac680b7c-80fe-4dbf-8d71-fa17ba2f69d9 -->
 
 **Goal:** Write comprehensive unit tests for all routing logic
 

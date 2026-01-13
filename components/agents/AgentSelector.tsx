@@ -107,9 +107,9 @@ export function AgentSelector({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-              className="absolute top-full left-0 mt-2 w-96 max-h-[320px] z-20"
+              className="absolute top-full left-0 mt-2 w-96 max-h-[320px] overflow-hidden z-20"
             >
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-y-auto h-full">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-y-auto h-[320px]">
                 <div className="p-2 space-y-1">
                   <button
                     onClick={() => handleSelect("auto")}

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { validateFileName } from "@/lib/validation";
+import { useDebounce } from "@/hooks/useDebounce";
 import { X, File, Folder, Loader2 } from "lucide-react";
 
 interface CreateFileModalProps {
@@ -28,6 +29,8 @@ export function CreateFileModal({
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  
+  const debouncedName = useDebounce(name, 300);
 
   useEffect(() => {
     setMounted(true);
@@ -88,14 +91,14 @@ export function CreateFileModal({
   }, [isOpen, name, error, onClose, handleSubmit]);
 
   useEffect(() => {
-    if (name.trim()) {
-      const validation = validateFileName(name);
+    if (debouncedName.trim()) {
+      const validation = validateFileName(debouncedName);
       if (!validation.valid) {
         setError(validation.error || "Invalid name");
         return;
       }
 
-      const normalizedName = name.trim().toLowerCase();
+      const normalizedName = debouncedName.trim().toLowerCase();
       const isDuplicate = existingNames.some(
         (existingName) => existingName.toLowerCase() === normalizedName
       );
@@ -109,7 +112,7 @@ export function CreateFileModal({
     } else {
       setError(null);
     }
-  }, [name, existingNames, type]);
+  }, [debouncedName, existingNames, type]);
 
   if (!mounted) return null;
 

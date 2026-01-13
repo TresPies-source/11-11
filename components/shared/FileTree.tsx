@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
@@ -57,30 +57,48 @@ export function FileTree({
   }>({ isOpen: false, node: null });
   const [renamingNodeId, setRenamingNodeId] = useState<string | null>(null);
 
-  const handleCreateFile = (parentNode: FileNode) => {
+  const handleCreateFile = useCallback((parentNode: FileNode) => {
     setCreateModalState({ isOpen: true, type: "file", parentNode });
     contextMenu.closeContextMenu();
-  };
+  }, [contextMenu]);
 
-  const handleCreateFolder = (parentNode: FileNode) => {
+  const handleCreateFolder = useCallback((parentNode: FileNode) => {
     setCreateModalState({ isOpen: true, type: "folder", parentNode });
     contextMenu.closeContextMenu();
-  };
+  }, [contextMenu]);
 
-  const handleRename = (node: FileNode) => {
+  const handleRename = useCallback((node: FileNode) => {
     setRenamingNodeId(node.id);
     contextMenu.closeContextMenu();
-  };
+  }, [contextMenu]);
 
-  const handleDelete = (node: FileNode) => {
+  const handleDelete = useCallback((node: FileNode) => {
     setDeleteDialogState({ isOpen: true, node });
     contextMenu.closeContextMenu();
-  };
+  }, [contextMenu]);
 
-  const getExistingNames = (parentNode: FileNode | null): string[] => {
+  const getExistingNames = useCallback((parentNode: FileNode | null): string[] => {
     if (!parentNode || !parentNode.children) return [];
     return parentNode.children.map(child => child.name);
-  };
+  }, []);
+
+  const contextMenuItems = useMemo(
+    () =>
+      contextMenu.targetNode
+        ? getContextMenuItems(
+            contextMenu.targetNode,
+            () => handleCreateFile(contextMenu.targetNode!),
+            () => handleCreateFolder(contextMenu.targetNode!),
+            () => handleRename(contextMenu.targetNode!),
+            () => handleDelete(contextMenu.targetNode!)
+          )
+        : [],
+    [contextMenu.targetNode, handleCreateFile, handleCreateFolder, handleRename, handleDelete]
+  );
+
+  const handleFinishRename = useCallback(() => {
+    setRenamingNodeId(null);
+  }, []);
 
   return (
     <>
@@ -95,24 +113,14 @@ export function FileTree({
         onContextMenu={contextMenu.openContextMenu}
         renamingNodeId={renamingNodeId}
         onRename={handleRename}
-        onFinishRename={() => setRenamingNodeId(null)}
+        onFinishRename={handleFinishRename}
         onDelete={handleDelete}
       />
 
       <ContextMenu
         isOpen={contextMenu.isOpen}
         position={contextMenu.position}
-        items={
-          contextMenu.targetNode
-            ? getContextMenuItems(
-                contextMenu.targetNode,
-                () => handleCreateFile(contextMenu.targetNode!),
-                () => handleCreateFolder(contextMenu.targetNode!),
-                () => handleRename(contextMenu.targetNode!),
-                () => handleDelete(contextMenu.targetNode!)
-              )
-            : []
-        }
+        items={contextMenuItems}
         onClose={contextMenu.closeContextMenu}
       />
 
@@ -163,7 +171,7 @@ interface FileTreeNodesProps {
   onDelete: (node: FileNode) => void;
 }
 
-function FileTreeNodes({
+const FileTreeNodes = memo(function FileTreeNodes({
   nodes,
   level,
   selectedId,
@@ -198,7 +206,7 @@ function FileTreeNodes({
       ))}
     </div>
   );
-}
+});
 
 function getContextMenuItems(
   node: FileNode,
@@ -275,7 +283,7 @@ interface FileTreeNodeProps {
   onDelete: (node: FileNode) => void;
 }
 
-function FileTreeNode({
+const FileTreeNode = memo(function FileTreeNode({
   node,
   level,
   selectedId,
@@ -300,7 +308,7 @@ function FileTreeNode({
   const renameInputRef = useState<HTMLInputElement | null>(null)[0];
   const fileOps = useFileOperations();
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
     if (isRenaming || isOperationInProgress) return;
 
     const now = Date.now();
@@ -319,14 +327,14 @@ function FileTreeNode({
     } else {
       onSelect?.(node);
     }
-  };
+  }, [isRenaming, isOperationInProgress, lastClickTime, node, onRename, onToggleExpand, onSelect]);
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
     if (isOperationInProgress) return;
     onContextMenu(e, node);
-  };
+  }, [isOperationInProgress, onContextMenu, node]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (isOperationInProgress) return;
 
     if (!isRenaming && isSelected) {
@@ -338,16 +346,16 @@ function FileTreeNode({
         onDelete(node);
       }
     }
-  };
+  }, [isOperationInProgress, isRenaming, isSelected, node, onRename, onDelete]);
 
-  const handleRenameSubmit = async () => {
+  const handleRenameSubmit = useCallback(async () => {
     if (renameValue.trim() && renameValue !== node.name) {
       await fileOps.renameFile(node, renameValue.trim());
     }
     onFinishRename();
-  };
+  }, [renameValue, node, fileOps, onFinishRename]);
 
-  const handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleRenameSubmit();
@@ -356,7 +364,7 @@ function FileTreeNode({
       setRenameValue(node.name);
       onFinishRename();
     }
-  };
+  }, [handleRenameSubmit, node.name, onFinishRename]);
 
   const getSourceIcon = () => {
     switch (node.source) {
@@ -476,4 +484,4 @@ function FileTreeNode({
       </AnimatePresence>
     </div>
   );
-}
+});

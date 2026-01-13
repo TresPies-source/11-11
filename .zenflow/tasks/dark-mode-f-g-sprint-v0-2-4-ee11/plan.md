@@ -276,6 +276,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 12: Performance Validation
+<!-- chat-id: 856252ee-703f-4e31-9b4a-99197b7b2074 -->
 
 **Objective:** Verify theme switching performance meets requirements
 

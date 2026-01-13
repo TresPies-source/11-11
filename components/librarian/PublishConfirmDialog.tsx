@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, X } from "lucide-react";
 import { ANIMATION_EASE } from "@/lib/constants";
@@ -19,6 +20,11 @@ export function PublishConfirmDialog({
   onCancel,
 }: PublishConfirmDialogProps) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleConfirm = () => {
     if (dontShowAgain) {
@@ -27,7 +33,9 @@ export function PublishConfirmDialog({
     onConfirm();
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -116,6 +124,7 @@ export function PublishConfirmDialog({
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

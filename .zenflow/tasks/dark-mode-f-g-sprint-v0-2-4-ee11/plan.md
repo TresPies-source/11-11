@@ -88,7 +88,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 4: Create Theme Toggle Component
+### [x] Step 4: Create Theme Toggle Component
 <!-- chat-id: 82f8f104-08a5-4a9d-bc87-3c3750015f94 -->
 
 **Objective:** Build theme toggle UI with Sun/Moon icon
@@ -100,12 +100,13 @@ Do not make assumptions on important decisions — get clarification first.
 - `components/layout/Header.tsx` - Add ThemeToggle before SyncStatus
 
 **Verification:**
-- Toggle appears in Header
-- Icon changes on click (Sun ↔ Moon)
-- Smooth animation (200ms)
-- Keyboard accessible (Tab + Enter)
-- aria-label present
-- Manual test: Click toggle switches theme
+- ✅ Toggle appears in Header
+- ✅ Icon changes on click (Sun ↔ Moon)
+- ✅ Smooth animation (200ms)
+- ✅ Keyboard accessible (Tab + Enter)
+- ✅ aria-label present
+- ✅ Manual test: Click toggle switches theme
+- ✅ `npm run build` passes
 
 ---
 

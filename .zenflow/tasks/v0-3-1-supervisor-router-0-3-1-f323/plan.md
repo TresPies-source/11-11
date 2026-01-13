@@ -81,6 +81,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 3: OpenAI Client & Agent Types
+<!-- chat-id: bfc91d06-50ba-4722-a32e-f3ae4f8c1e98 -->
 
 **Goal:** Set up OpenAI client and TypeScript types
 

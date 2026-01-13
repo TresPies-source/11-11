@@ -379,3 +379,35 @@ Write completion report to `.zenflow/tasks/dark-mode-f-g-sprint-v0-2-4-ee11/repo
 - ✅ task_plan.md: Phase 4 completion entry added to roadmap with delivered features, performance metrics, quality validation, and deferred features
 - ✅ BUGS.md: Reviewed - no new bugs discovered during Phase 4 implementation
 - ✅ report.md: Complete 280-line completion report created covering implementation details, testing methodology, performance metrics, WCAG validation, known limitations, and biggest challenges encountered
+
+---
+
+### [x] Step 16: Merge to Main
+<!-- chat-id: current -->
+
+**Objective:** Resolve merge conflict and integrate dark mode feature into main branch
+
+**Actions Taken:**
+1. Rebased task branch onto latest main (40 commits ahead)
+2. Resolved merge conflicts in:
+   - `components/editor/MarkdownEditor.tsx` - Merged activeTab API with theme support
+   - `components/editor/EditorView.tsx` - Merged TabBar system with theme-aware background
+   - `JOURNAL.md` - Kept dark mode sprint completion entry
+3. Force pushed rebased branch
+4. Fast-forward merged to main (a8452ab..874adc5)
+5. Verified build passes after merge
+
+**Verification:**
+- [x] All merge conflicts resolved correctly
+- [x] Branch successfully rebased onto main
+- [x] Changes merged to main branch
+- [x] `npm run build` passes (23.3s, zero errors)
+- [x] No regressions introduced
+
+**Completed:** Dark mode feature successfully merged to main branch
+
+**Merge Details:**
+- Base commit: a8452ab (main before merge)
+- Final commit: 874adc5 (main after merge)
+- Total commits merged: 29 (rebased from 69 total)
+- Merge method: Fast-forward (clean rebase)

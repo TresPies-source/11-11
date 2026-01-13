@@ -5,10 +5,18 @@ import { MarkdownEditor } from "./MarkdownEditor";
 import { TabBar } from "./TabBar";
 import { TabDropdown } from "./TabDropdown";
 import { useRepository } from "@/hooks/useRepository";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 export function EditorView() {
   const { tabs, activeTabId, switchTab, closeTab } = useRepository();
   const [isMobile, setIsMobile] = useState(false);
+
+  useKeyboardShortcuts({
+    tabs,
+    activeTabId,
+    onCloseTab: closeTab,
+    onSwitchTab: switchTab,
+  });
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode, useEffect } from "react";
+import { createContext, useContext, ReactNode, useEffect, useMemo } from "react";
 import { useSyncStatus } from "@/hooks/useSyncStatus";
 import type { SyncOperation, SyncStatusState } from "@/lib/types";
 
@@ -24,12 +24,12 @@ export function SyncStatusProvider({ children }: SyncStatusProviderProps) {
     console.log('[SyncStatus] Shared context initialized');
   }, []);
 
-  const contextValue: SyncStatusContextValue = {
+  const contextValue: SyncStatusContextValue = useMemo(() => ({
     status,
     addOperation,
     retryLastFailed,
     clearOperations,
-  };
+  }), [status, addOperation, retryLastFailed, clearOperations]);
 
   return (
     <SyncStatusContext.Provider value={contextValue}>

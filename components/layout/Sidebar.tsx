@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FolderOpen, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -78,7 +78,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
   const [fileTree, setFileTree] = useState<FileNode[]>(mockFileTree);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const openFileIds = new Set(tabs.map(tab => tab.fileId));
+  
+  const openFileIds = useMemo(() => {
+    return new Set(tabs.map(tab => tab.fileId));
+  }, [tabs]);
 
   useEffect(() => {
     async function loadFiles() {
@@ -130,10 +133,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
     });
   };
 
-  const handleSelect = async (node: FileNode) => {
+  const handleSelect = useCallback(async (node: FileNode) => {
     setSelectedId(node.id);
     await openTab(node);
-  };
+  }, [openTab]);
   return (
     <div className="h-full bg-white border-r border-gray-200 flex flex-col">
       <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4">

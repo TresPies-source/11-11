@@ -147,6 +147,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       
       validateRestoredTabs(savedState.tabs, savedState.activeTabId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

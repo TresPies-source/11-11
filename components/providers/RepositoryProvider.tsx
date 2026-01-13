@@ -2,8 +2,9 @@
 
 import { createContext, useContext, ReactNode, useState, useCallback } from "react";
 import { FileNode, SyncStatusState } from "@/lib/types";
-import { useContextBus } from "@/hooks/useContextBus";
+import { useContextBus, useContextBusSubscription } from "@/hooks/useContextBus";
 import { useSyncStatusContext } from "@/components/providers/SyncStatusProvider";
+import { useToast } from "@/hooks/useToast";
 
 export interface RepositoryContextValue {
   activeFile: FileNode | null;
@@ -39,10 +40,31 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   const { emit } = useContextBus();
+  const toast = useToast();
   const { status: syncStatus, addOperation } = useSyncStatusContext();
   const isDirty = fileContent !== savedContent;
 
   console.log('[RepositoryProvider] Using shared SyncStatus context');
+
+  // Handle file rename events
+  useContextBusSubscription("FILE_RENAMED", useCallback(({ fileId, newName }) => {
+    if (activeFile?.id === fileId) {
+      setActiveFileState((prev) => prev ? { ...prev, name: newName } : null);
+      toast.info(`File renamed to "${newName}"`);
+    }
+  }, [activeFile?.id, toast]));
+
+  // Handle file delete events
+  useContextBusSubscription("FILE_DELETED", useCallback(({ fileId, fileName }) => {
+    if (activeFile?.id === fileId) {
+      setActiveFileState(null);
+      setFileContentState("");
+      setSavedContent("");
+      setError(null);
+      setLastSaved(null);
+      toast.info(`"${fileName}" deleted - editor closed`);
+    }
+  }, [activeFile?.id, toast]));
 
   const setActiveFile = useCallback(async (file: FileNode | null) => {
     setActiveFileState(file);

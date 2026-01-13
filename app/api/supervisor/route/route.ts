@@ -63,7 +63,10 @@ export async function POST(request: NextRequest) {
             tokens_used: result.usage.total_tokens,
             cost_usd: result.usage.total_tokens * 0.00000025,
           }
-        : null,
+        : {
+            tokens_used: 0,
+            cost_usd: 0,
+          },
     });
   } catch (error) {
     console.error('[Supervisor API] Error routing query:', error);

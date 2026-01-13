@@ -316,6 +316,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 9: API Endpoints
+<!-- chat-id: 5e157a03-b114-435e-85ac-5fb88b643ad9 -->
 
 **Goal:** Create REST API for routing and agent listing
 

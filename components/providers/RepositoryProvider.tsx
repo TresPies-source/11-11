@@ -1,25 +1,49 @@
 "use client";
 
-import { createContext, useContext, ReactNode, useState, useCallback } from "react";
-import { FileNode, SyncStatusState } from "@/lib/types";
+import { createContext, useContext, ReactNode, useState, useCallback, useEffect } from "react";
+import { FileNode, SyncStatusState, EditorTab } from "@/lib/types";
 import { useContextBus } from "@/hooks/useContextBus";
 import { useSyncStatusContext } from "@/components/providers/SyncStatusProvider";
+import {
+  generateTabId,
+  saveTabStateToStorage,
+  loadTabStateFromStorage,
+  createTabFromFile,
+  findTabByFileId,
+  updateTabContent,
+  markTabAsSaved,
+  canOpenMoreTabs,
+  getDirtyTabs,
+} from "@/lib/tabUtils";
+import { MAX_EDITOR_TABS } from "@/lib/constants";
 
 export interface RepositoryContextValue {
-  activeFile: FileNode | null;
-  fileContent: string;
-  isDirty: boolean;
+  tabs: EditorTab[];
+  activeTabId: string | null;
+  activeTab: EditorTab | null;
   isLoading: boolean;
   isSaving: boolean;
-  lastSaved: Date | null;
   error: string | null;
   syncStatus: SyncStatusState;
   
+  openTab: (file: FileNode) => Promise<void>;
+  closeTab: (tabId: string, force?: boolean) => Promise<boolean>;
+  switchTab: (tabId: string) => void;
+  closeAllTabs: (force?: boolean) => Promise<void>;
+  closeOtherTabs: (tabId: string, force?: boolean) => Promise<void>;
+  updateTabContent: (tabId: string, content: string) => void;
+  saveTab: (tabId: string) => Promise<void>;
+  saveAllTabs: () => Promise<void>;
+  discardChanges: (tabId?: string) => void;
+  retrySave: (tabId?: string) => Promise<void>;
+  
+  activeFile: FileNode | null;
   setActiveFile: (file: FileNode | null) => void;
+  fileContent: string;
+  isDirty: boolean;
+  lastSaved: Date | null;
   setFileContent: (content: string) => void;
   saveFile: () => Promise<void>;
-  discardChanges: () => void;
-  retrySave: () => Promise<void>;
 }
 
 export const RepositoryContext = createContext<RepositoryContextValue | undefined>(undefined);
@@ -29,29 +53,55 @@ interface RepositoryProviderProps {
 }
 
 export function RepositoryProvider({ children }: RepositoryProviderProps) {
-  const [activeFile, setActiveFileState] = useState<FileNode | null>(null);
-  const [fileContent, setFileContentState] = useState<string>("");
-  const [savedContent, setSavedContent] = useState<string>("");
-  const [rollbackContent, setRollbackContent] = useState<string>("");
+  const [tabs, setTabs] = useState<EditorTab[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [savedContents, setSavedContents] = useState<Map<string, string>>(new Map());
+  const [fileNodeMap, setFileNodeMap] = useState<Map<string, FileNode>>(new Map());
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { emit } = useContextBus();
   const { status: syncStatus, addOperation } = useSyncStatusContext();
-  const isDirty = fileContent !== savedContent;
+
+  const activeTab = tabs.find(tab => tab.id === activeTabId) || null;
+  const activeFile = activeTab ? fileNodeMap.get(activeTab.fileId) || null : null;
 
   console.log('[RepositoryProvider] Using shared SyncStatus context');
 
-  const setActiveFile = useCallback(async (file: FileNode | null) => {
-    setActiveFileState(file);
-    setFileContentState("");
-    setSavedContent("");
-    setError(null);
-    setLastSaved(null);
+  useEffect(() => {
+    const savedState = loadTabStateFromStorage();
+    if (savedState && savedState.tabs.length > 0) {
+      setTabs(savedState.tabs);
+      setActiveTabId(savedState.activeTabId);
+      
+      const contents = new Map<string, string>();
+      savedState.tabs.forEach(tab => {
+        contents.set(tab.id, tab.content);
+      });
+      setSavedContents(contents);
+    }
+  }, []);
 
-    if (!file || file.type !== "file") {
+  useEffect(() => {
+    if (tabs.length > 0) {
+      saveTabStateToStorage(tabs, activeTabId);
+    }
+  }, [tabs, activeTabId]);
+
+  const openTab = useCallback(async (file: FileNode) => {
+    if (file.type !== "file") {
+      return;
+    }
+
+    const existingTab = findTabByFileId(tabs, file.id);
+    if (existingTab) {
+      setActiveTabId(existingTab.id);
+      return;
+    }
+
+    if (!canOpenMoreTabs(tabs.length)) {
+      setError(`Maximum ${MAX_EDITOR_TABS} tabs allowed`);
       return;
     }
 
@@ -75,8 +125,11 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       const data = await response.json();
       const content = data.content || "";
       
-      setFileContentState(content);
-      setSavedContent(content);
+      const newTab = createTabFromFile(file, content);
+      setTabs(prev => [...prev, newTab]);
+      setActiveTabId(newTab.id);
+      setSavedContents(prev => new Map(prev).set(newTab.id, content));
+      setFileNodeMap(prev => new Map(prev).set(file.id, file));
 
       addOperation({
         type: 'fetch',
@@ -87,8 +140,6 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to load file";
       setError(errorMessage);
-      setFileContentState("");
-      setSavedContent("");
 
       addOperation({
         type: 'fetch',
@@ -100,103 +151,232 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [addOperation]);
+  }, [tabs, addOperation]);
 
-  const setFileContent = useCallback((content: string) => {
-    setFileContentState(content);
-  }, []);
+  const closeTab = useCallback(async (tabId: string, force: boolean = false): Promise<boolean> => {
+    const tab = tabs.find(t => t.id === tabId);
+    if (!tab) {
+      return true;
+    }
 
-  const saveFile = useCallback(async () => {
-    if (!activeFile || !isDirty) {
+    if (tab.isDirty && !force) {
+      return false;
+    }
+
+    setTabs(prev => {
+      const filtered = prev.filter(t => t.id !== tabId);
+      
+      if (activeTabId === tabId && filtered.length > 0) {
+        const tabIndex = prev.findIndex(t => t.id === tabId);
+        const nextTab = filtered[Math.min(tabIndex, filtered.length - 1)];
+        setActiveTabId(nextTab.id);
+      } else if (filtered.length === 0) {
+        setActiveTabId(null);
+      }
+      
+      return filtered;
+    });
+
+    setSavedContents(prev => {
+      const next = new Map(prev);
+      next.delete(tabId);
+      return next;
+    });
+
+    return true;
+  }, [tabs, activeTabId]);
+
+  const switchTab = useCallback((tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId);
+    if (tab) {
+      setActiveTabId(tabId);
+    }
+  }, [tabs]);
+
+  const closeAllTabs = useCallback(async (force: boolean = false) => {
+    if (!force && getDirtyTabs(tabs).length > 0) {
+      return;
+    }
+
+    setTabs([]);
+    setActiveTabId(null);
+    setSavedContents(new Map());
+  }, [tabs]);
+
+  const closeOtherTabs = useCallback(async (tabId: string, force: boolean = false) => {
+    const keepTab = tabs.find(t => t.id === tabId);
+    if (!keepTab) {
+      return;
+    }
+
+    const otherTabs = tabs.filter(t => t.id !== tabId);
+    if (!force && otherTabs.some(t => t.isDirty)) {
+      return;
+    }
+
+    setTabs([keepTab]);
+    setActiveTabId(tabId);
+    setSavedContents(prev => {
+      const next = new Map();
+      const content = prev.get(tabId);
+      if (content !== undefined) {
+        next.set(tabId, content);
+      }
+      return next;
+    });
+  }, [tabs]);
+
+  const updateTabContentFn = useCallback((tabId: string, content: string) => {
+    setTabs(prev => prev.map(tab => {
+      if (tab.id !== tabId) return tab;
+      
+      const savedContent = savedContents.get(tabId) || '';
+      return updateTabContent(tab, content, savedContent);
+    }));
+  }, [savedContents]);
+
+  const saveTab = useCallback(async (tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId);
+    if (!tab || !tab.isDirty) {
       return;
     }
 
     setIsSaving(true);
     setError(null);
 
-    setRollbackContent(savedContent);
-    setSavedContent(fileContent);
-
     addOperation({
       type: 'save',
       status: 'pending',
-      fileId: activeFile.id,
-      fileName: activeFile.name,
+      fileId: tab.fileId,
+      fileName: tab.fileName,
     });
 
     try {
-      const response = await fetch(`/api/drive/content/${activeFile.id}`, {
+      const response = await fetch(`/api/drive/content/${tab.fileId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: fileContent }),
+        body: JSON.stringify({ content: tab.content }),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to save file: ${response.statusText}`);
       }
       
-      const now = new Date();
-      setRollbackContent("");
-      setLastSaved(now);
+      setTabs(prev => prev.map(t => 
+        t.id === tabId ? markTabAsSaved(t) : t
+      ));
+      
+      setSavedContents(prev => new Map(prev).set(tabId, tab.content));
 
       addOperation({
         type: 'save',
         status: 'success',
-        fileId: activeFile.id,
-        fileName: activeFile.name,
+        fileId: tab.fileId,
+        fileName: tab.fileName,
       });
 
-      if (activeFile.name === "task_plan.md") {
-        console.log(`[ContextBus] Emitting PLAN_UPDATED event for ${activeFile.name} at ${now.toISOString()}`);
+      if (tab.fileName === "task_plan.md") {
+        const now = new Date();
+        console.log(`[ContextBus] Emitting PLAN_UPDATED event for ${tab.fileName} at ${now.toISOString()}`);
         emit('PLAN_UPDATED', {
-          content: fileContent,
+          content: tab.content,
           timestamp: now
         });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to save file";
       setError(errorMessage);
-      setSavedContent(rollbackContent);
 
       addOperation({
         type: 'save',
         status: 'error',
-        fileId: activeFile.id,
-        fileName: activeFile.name,
+        fileId: tab.fileId,
+        fileName: tab.fileName,
         error: errorMessage,
       });
     } finally {
       setIsSaving(false);
     }
-  }, [activeFile, fileContent, isDirty, emit, addOperation, savedContent, rollbackContent]);
+  }, [tabs, emit, addOperation]);
 
-  const discardChanges = useCallback(() => {
-    setFileContentState(savedContent);
-    setError(null);
-  }, [savedContent]);
+  const saveAllTabsFn = useCallback(async () => {
+    const dirtyTabs = getDirtyTabs(tabs);
+    
+    for (const tab of dirtyTabs) {
+      await saveTab(tab.id);
+    }
+  }, [tabs, saveTab]);
 
-  const retrySave = useCallback(async () => {
-    if (!activeFile || !error) return;
+  const discardChangesFn = useCallback((tabId?: string) => {
+    const targetTabId = tabId || activeTabId;
+    if (!targetTabId) return;
+    
+    const savedContent = savedContents.get(targetTabId);
+    if (savedContent === undefined) return;
+
+    setTabs(prev => prev.map(tab => {
+      if (tab.id !== targetTabId) return tab;
+      return updateTabContent(tab, savedContent, savedContent);
+    }));
     setError(null);
-    await saveFile();
-  }, [activeFile, error, saveFile]);
+  }, [savedContents, activeTabId]);
+
+  const retrySaveFn = useCallback(async (tabId?: string) => {
+    if (!error) return;
+    const targetTabId = tabId || activeTabId;
+    if (!targetTabId) return;
+    
+    setError(null);
+    await saveTab(targetTabId);
+  }, [error, saveTab, activeTabId]);
+
+  const setActiveFile = useCallback(async (file: FileNode | null) => {
+    if (file) {
+      await openTab(file);
+    }
+  }, [openTab]);
+
+  const setFileContent = useCallback((content: string) => {
+    if (activeTabId) {
+      updateTabContentFn(activeTabId, content);
+    }
+  }, [activeTabId, updateTabContentFn]);
+
+  const saveFile = useCallback(async () => {
+    if (activeTabId) {
+      await saveTab(activeTabId);
+    }
+  }, [activeTabId, saveTab]);
 
   const value: RepositoryContextValue = {
-    activeFile,
-    fileContent,
-    isDirty,
+    tabs,
+    activeTabId,
+    activeTab,
     isLoading,
     isSaving,
-    lastSaved,
     error,
     syncStatus,
+    
+    openTab,
+    closeTab,
+    switchTab,
+    closeAllTabs,
+    closeOtherTabs,
+    updateTabContent: updateTabContentFn,
+    saveTab,
+    saveAllTabs: saveAllTabsFn,
+    discardChanges: discardChangesFn,
+    retrySave: retrySaveFn,
+    
+    activeFile,
     setActiveFile,
+    fileContent: activeTab?.content || '',
+    isDirty: activeTab?.isDirty || false,
+    lastSaved: activeTab?.lastModified || null,
     setFileContent,
     saveFile,
-    discardChanges,
-    retrySave,
   };
 
   return (
@@ -204,4 +384,12 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       {children}
     </RepositoryContext.Provider>
   );
+}
+
+export function useRepository() {
+  const context = useContext(RepositoryContext);
+  if (context === undefined) {
+    throw new Error('useRepository must be used within a RepositoryProvider');
+  }
+  return context;
 }

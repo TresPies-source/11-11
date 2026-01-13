@@ -2286,6 +2286,346 @@ if (isDev) {
 
 ---
 
+## Phase 5: One-Click Publish (Global Commons Foundation)
+
+**Date:** January 12-13, 2026  
+**Objective:** Enable users to publish prompts to the Global Commons with a single toggle, laying the foundation for the "Wikipedia of Prompts"
+
+### Build Log
+
+#### Overview
+Phase 5 implements the core infrastructure for the Global Commons—a collaborative, open-source library of prompts where users can share their best work and learn from others. This phase focuses on the publish/unpublish workflow, public prompt discovery, and copy-to-library functionality.
+
+#### Database Schema Updates
+
+**New Columns Added to `prompts` Table:**
+```typescript
+interface Prompt {
+  // ... existing fields
+  published_at: string | null;      // ISO 8601 timestamp, NULL if not published
+  visibility: 'private' | 'unlisted' | 'public';  // Visibility state
+  author_name: string;               // Display name of prompt author
+  author_id: string;                 // User ID for ownership verification
+}
+```
+
+**Indexes for Performance:**
+- `idx_prompts_visibility_published`: Composite index on `(visibility, published_at DESC)` for efficient public prompts queries
+- `idx_prompts_author_id`: Index on `author_id` for filtering user's public prompts
+
+**Migration Strategy:**
+- Existing prompts backfilled with `visibility = 'private'`
+- `author_name` and `author_id` populated from session data
+- `published_at` defaults to `NULL` (unpublished state)
+
+---
+
+### Architecture Decisions
+
+#### Privacy Model
+
+**Ownership Rules:**
+- Only prompt owner can toggle public/private status
+- Owner can unpublish at any time (revert to private)
+- Public prompts are read-only for non-owners
+- Non-owners cannot modify or delete public prompts
+
+**Visibility States:**
+1. **private** (default): Only visible to owner
+2. **unlisted**: Accessible via direct link, not in public listings (future use)
+3. **public**: Visible to all users in Global Commons
+
+**First-Publish Confirmation:**
+- Confirmation dialog shown on first publish per user
+- Stored in localStorage: `hasConfirmedPublish`
+- Dialog explains prompt will be visible to all users
+
+---
+
+#### Commons Architecture
+
+**Public Prompts Discovery:**
+- Dedicated route: `/librarian/commons`
+- API endpoint: `GET /api/librarian/public`
+- Query params: `filter` (all | mine), `sort` (recent | popular | score)
+- Returns prompts with `visibility = 'public'` ordered by criteria
+
+**Sorting Options:**
+1. **Recent** (default): `ORDER BY published_at DESC`
+2. **Popular**: `ORDER BY score DESC, published_at DESC` (score-based popularity)
+3. **Highest Score**: `ORDER BY score DESC`
+
+**Filtering Options:**
+1. **All Public Prompts**: Returns all public prompts from any user
+2. **My Public Prompts**: Returns only current user's public prompts (`author_id = current_user.id`)
+
+**Performance Optimization:**
+- Composite index on `(visibility, published_at)` enables efficient queries
+- Pagination support (default: 50 prompts per page)
+- Author name denormalized to avoid JOIN queries
+
+---
+
+#### Copy Mechanism
+
+**"Copy to My Library" Flow:**
+1. User clicks "Copy to My Library" on a public prompt
+2. API endpoint: `POST /api/librarian/copy`
+3. Server creates new prompt with:
+   - All content copied from source
+   - `visibility = 'private'` (copies are always private)
+   - New unique ID generated
+   - `author_id` and `author_name` set to current user
+   - `published_at = NULL` (not published)
+   - `copied_from` field tracks source prompt ID (for future attribution)
+
+**Copy Rules:**
+- Users can copy any public prompt (including their own)
+- Copies are independent (changes don't affect original)
+- Original prompt remains unchanged
+- Copying does not require owner permission (public = copiable)
+
+---
+
+### Component Structure
+
+#### New Components
+
+**PublicToggle** (`components/librarian/PublicToggle.tsx`)
+- Toggle switch for making prompts public/private
+- Shows confirmation dialog on first publish
+- Disabled state for prompts owned by others
+- Optimistic UI updates with error rollback
+- Integrated with Seedling and Greenhouse cards
+
+**PublicBadge** (`components/librarian/PublicBadge.tsx`)
+- Visual indicator for public prompts
+- Displays "🌍 Public" badge with green styling
+- Positioned on prompt cards for quick identification
+
+**PublishConfirmDialog** (`components/librarian/PublishConfirmDialog.tsx`)
+- First-publish confirmation dialog
+- Explains prompt will be visible to all users
+- "Don't show again" handled via localStorage
+- Cancel/Confirm actions with clear button styling
+
+**CopyToLibraryButton** (`components/librarian/CopyToLibraryButton.tsx`)
+- Button to copy public prompts to user's library
+- Loading state during copy operation
+- Success toast notification on completion
+- Automatic navigation to Greenhouse after copy
+
+#### Updated Components
+
+**SeedlingCard** (`components/librarian/SeedlingCard.tsx`)
+- Integrated PublicToggle for active prompts
+- Shows PublicBadge if prompt is public
+- Toggle only visible/enabled for prompt owner
+
+**GreenhouseCard** (`components/librarian/GreenhouseCard.tsx`)
+- Integrated PublicToggle for saved prompts
+- Shows PublicBadge if prompt is public
+- Toggle only visible/enabled for prompt owner
+
+**CommonsView** (`components/librarian/CommonsView.tsx`)
+- Filter dropdown: "All Public Prompts" | "My Public Prompts"
+- Sort dropdown: "Recent" | "Popular" | "Highest Score"
+- Uses PromptCard component with Commons variant
+- Displays author attribution ("by @username")
+- Shows publish date (relative time)
+- Empty state when no public prompts exist
+
+**PromptCard** (`components/shared/PromptCard.tsx`)
+- New `variant` prop: `default` | `commons`
+- Commons variant shows:
+  - Author attribution (unless current user)
+  - Publish date (relative format)
+  - CopyToLibraryButton (for non-owners)
+  - Read-only indicator (for non-owners)
+
+---
+
+### API Endpoints
+
+#### Publish/Unpublish
+
+**POST /api/librarian/publish**
+- Sets `visibility = 'public'`
+- Sets `published_at = NOW()`
+- Updates `author_name` and `author_id` from session
+- Returns updated prompt
+
+**POST /api/librarian/unpublish**
+- Sets `visibility = 'private'`
+- Clears `published_at = NULL`
+- Returns updated prompt
+
+**Authorization:** Both endpoints verify ownership before mutation
+
+#### Public Prompts Query
+
+**GET /api/librarian/public**
+- Query params:
+  - `filter`: `all` (default) | `mine`
+  - `sort`: `recent` (default) | `popular` | `score`
+  - `limit`: pagination limit (default: 50)
+  - `offset`: pagination offset (default: 0)
+- Returns array of public prompts with author metadata
+- Filters based on `visibility = 'public'`
+- Applies sorting and filtering as specified
+
+#### Copy Prompt
+
+**POST /api/librarian/copy**
+- Body: `{ sourceId: string }`
+- Verifies source prompt is public
+- Creates new prompt with copied content
+- Returns newly created prompt
+- Automatically sets `visibility = 'private'` for copy
+
+---
+
+### State Management
+
+#### Prompt State Updates
+
+**Updated Prompt Interface:**
+```typescript
+interface Prompt {
+  id: string;
+  title: string;
+  content: string;
+  score: number;
+  status: 'draft' | 'active' | 'saved' | 'archived';
+  
+  // New fields for Global Commons
+  published_at: string | null;
+  visibility: 'private' | 'unlisted' | 'public';
+  author_name: string;
+  author_id: string;
+  copied_from?: string; // Optional: tracks source if copied
+}
+```
+
+#### Custom Hooks
+
+**usePublicToggle** (`hooks/usePublicToggle.ts`)
+- Manages publish/unpublish state transitions
+- Handles confirmation dialog for first publish
+- Implements optimistic UI updates
+- Rollback on API error
+
+**useCopyPrompt** (`hooks/useCopyPrompt.ts`)
+- Manages copy-to-library operation
+- Loading states and error handling
+- Success toast notifications
+- Navigation after successful copy
+
+**usePublicPrompts** (`hooks/usePublicPrompts.ts`)
+- Fetches public prompts from API
+- Manages filter and sort state
+- Pagination support
+- Automatic refetch on filter/sort changes
+
+---
+
+### Seed Data Updates
+
+**Public Prompts in Seed Data:**
+- 8 public prompts added with varied authors
+- Realistic publish dates (spread over past 30 days)
+- Mix of high-scoring (70-95) and mid-scoring (50-69) prompts
+- Diverse content: system prompts, creative writing, technical docs
+- Author names: "Alice Chen", "Bob Martinez", "Charlie Kim", etc.
+
+**Seed Strategy:**
+- Public prompts seeded in addition to private prompts
+- Enables immediate testing of Commons view on first run
+- Demonstrates filter/sort functionality with realistic data
+
+---
+
+### Technical Achievements
+
+✅ **Core Features Complete:**
+- One-click publish/unpublish toggle with confirmation
+- Public prompts display in `/librarian/commons`
+- Copy-to-library functionality for public prompts
+- Filter by "All" or "My Public Prompts"
+- Sort by Recent, Popular, or Highest Score
+- Privacy rules enforced (ownership verification)
+
+✅ **Quality Standards Met:**
+- Zero ESLint warnings/errors
+- Zero TypeScript type errors
+- Production build succeeds
+- Database schema migration successful
+- Seed data populates correctly
+
+✅ **User Experience:**
+- First-publish confirmation dialog
+- Public badge on published prompts
+- Author attribution on public prompts
+- Relative timestamps ("2 days ago")
+- Smooth toggle transitions with optimistic UI
+- Toast notifications for copy success
+
+✅ **Security & Privacy:**
+- Ownership verification on all mutating operations
+- Read-only enforcement for non-owners
+- Users can unpublish at any time
+- Copies are always private by default
+
+---
+
+### Known Limitations
+
+#### Deferred to Future Phases (v0.3+):
+1. **Likes/Favorites:** Public prompts cannot be liked or favorited yet
+2. **Comments:** No commenting system for public prompts
+3. **Moderation:** No report/flag system for inappropriate content
+4. **License Selection:** All prompts default to MIT license (no custom licenses)
+5. **View Count Tracking:** Not tracking how many times prompts are viewed
+6. **Search:** No search across public prompts (filter/sort only)
+7. **Tags/Categories:** No tagging or categorization for public prompts
+8. **Version History:** Public prompts don't track edit history after publish
+
+#### Current Constraints:
+1. **Edit After Publish:** Published prompts can still be edited by owner (changes apply immediately, no versioning)
+2. **Unpublish Impact:** Unpublishing removes prompt from Commons immediately (no grace period)
+3. **Copy Attribution:** Copied prompts track source ID but don't display attribution in UI yet
+4. **Pagination:** Basic pagination implemented but no infinite scroll
+
+---
+
+### Sprint Completion
+
+**Status:** ✅ Complete  
+**Date:** January 13, 2026  
+
+**All Acceptance Criteria Met:**
+- ✅ Public toggle works with confirmation dialog
+- ✅ Database schema updated with required columns
+- ✅ Public prompts display in Commons view
+- ✅ Privacy rules enforced (only owner can publish/unpublish)
+- ✅ "Copy to My Library" creates independent copy
+- ✅ Filter works: "My Public Prompts" vs "All Public Prompts"
+- ✅ Sort works: Recent, Popular, Highest Score
+- ✅ Public badge displays on published prompts
+- ✅ Lint check passes
+- ✅ Type check passes
+- ✅ Production build succeeds
+
+**Documentation Updated:**
+- ✅ JOURNAL.md includes Commons architecture decisions
+- ✅ Database schema changes documented
+- ✅ Privacy model and copy mechanism documented
+- ✅ API endpoints documented
+
+**Next Phase:** Community features (likes, comments, moderation) deferred to v0.3+
+
+---
+
 <<<<<<< HEAD
 ## Phase 2: Full Status Lifecycle UI (v0.2.2)
 
@@ -3322,67 +3662,5 @@ const { theme } = useTheme();
 - 1 new script added (contrast-check.js)
 
 **Next Sprint:** Foundation & Growth Sprint v0.2.5 (One-Click Publish to Global Commons)
-
----
-
-## Phase 5: One-Click Publish (Global Commons Foundation)
-
-**Date:** January 12-13, 2026  
-**Objective:** Enable users to publish prompts to the Global Commons with a single toggle, laying the foundation for the "Wikipedia of Prompts"
-
-### Build Log
-
-#### Overview
-Phase 5 implements the core infrastructure for the Global Commons—a collaborative, open-source library of prompts where users can share their best work and learn from others. This phase focuses on the publish/unpublish workflow, public prompt discovery, and copy-to-library functionality.
-
-#### Database Schema Updates
-
-**New Columns Added to `prompts` Table:**
-```typescript
-interface Prompt {
-  // ... existing fields
-  published_at: string | null;      // ISO 8601 timestamp, NULL if not published
-  visibility: 'private' | 'unlisted' | 'public';  // Visibility state
-  author_name: string;               // Display name of prompt author
-  author_id: string;                 // User ID for ownership verification
-}
-```
-
-**Indexes for Performance:**
-- `idx_prompts_visibility_published`: Composite index on `(visibility, published_at DESC)` for efficient public prompts queries
-- `idx_prompts_author_id`: Index on `author_id` for filtering user's public prompts
-
-**Migration Strategy:**
-- Existing prompts backfilled with `visibility = 'private'`
-- `author_name` and `author_id` populated from session data
-- `published_at` defaults to `NULL` (unpublished state)
-
----
-
-### Sprint Completion
-
-**Status:** ✅ Complete  
-**Date:** January 13, 2026  
-
-**All Acceptance Criteria Met:**
-- ✅ Public toggle works with confirmation dialog
-- ✅ Database schema updated with required columns
-- ✅ Public prompts display in Commons view
-- ✅ Privacy rules enforced (only owner can publish/unpublish)
-- ✅ "Copy to My Library" creates independent copy
-- ✅ Filter works: "My Public Prompts" vs "All Public Prompts"
-- ✅ Sort works: Recent, Popular, Highest Score
-- ✅ Public badge displays on published prompts
-- ✅ Lint check passes
-- ✅ Type check passes
-- ✅ Production build succeeds
-
-**Documentation Updated:**
-- ✅ JOURNAL.md includes Commons architecture decisions
-- ✅ Database schema changes documented
-- ✅ Privacy model and copy mechanism documented
-- ✅ API endpoints documented
-
-**Next Phase:** Community features (likes, comments, moderation) deferred to v0.3+
 
 ---

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { updatePromptStatus } from '@/lib/pglite/prompts';
+import { updatePromptStatusWithHistory } from '@/lib/pglite/prompts';
+import { useSession } from '@/components/providers/MockSessionProvider';
 import matter from 'gray-matter';
 import type { PromptStatus } from '@/lib/types';
 
@@ -14,6 +15,7 @@ interface UsePromptStatusReturn {
 export function usePromptStatus(): UsePromptStatusReturn {
   const [transitioning, setTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useSession();
   
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -71,7 +73,11 @@ export function usePromptStatus(): UsePromptStatusReturn {
       setTransitioning(true);
       setError(null);
 
-      await updatePromptStatus(promptId, newStatus);
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      await updatePromptStatusWithHistory(promptId, newStatus, user.id);
 
       if (driveFileId) {
         try {
@@ -105,7 +111,7 @@ export function usePromptStatus(): UsePromptStatusReturn {
         abortControllerRef.current = null;
       }
     }
-  }, [updateDriveMetadata]);
+  }, [user, updateDriveMetadata]);
 
   return {
     transitioning,

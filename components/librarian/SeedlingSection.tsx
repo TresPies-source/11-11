@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sprout, ArrowUpDown } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
+import type { PromptStatus } from "@/lib/pglite/types";
 import { SeedlingCard } from "./SeedlingCard";
 import { CardErrorBoundary } from "./CardErrorBoundary";
 import { LoadingState } from "@/components/shared/LoadingState";
@@ -16,6 +17,7 @@ interface SeedlingSectionProps {
   error?: string | null;
   onRetry?: () => void;
   onSaveToGreenhouse?: (promptId: string) => void;
+  onStatusChange?: (promptId: string, newStatus: PromptStatus) => Promise<void>;
   savingPromptIds?: Set<string>;
 }
 
@@ -27,6 +29,7 @@ export function SeedlingSection({
   error = null,
   onRetry,
   onSaveToGreenhouse,
+  onStatusChange,
   savingPromptIds = new Set(),
 }: SeedlingSectionProps) {
   const [sortBy, setSortBy] = useState<SortOption>("recent");
@@ -205,6 +208,7 @@ export function SeedlingSection({
                 <SeedlingCard
                   prompt={prompt}
                   onSaveToGreenhouse={onSaveToGreenhouse}
+                  onStatusChange={onStatusChange}
                   isSaving={savingPromptIds.has(prompt.id)}
                 />
               </CardErrorBoundary>

@@ -1,11 +1,19 @@
 export type PromptStatus = 'draft' | 'active' | 'saved' | 'archived';
 
+export interface StatusHistoryEntry {
+  from: PromptStatus;
+  to: PromptStatus;
+  timestamp: string;
+  user_id: string;
+}
+
 export interface PromptRow {
   id: string;
   user_id: string;
   title: string;
   content: string;
   status: PromptStatus;
+  status_history: StatusHistoryEntry[];
   drive_file_id: string | null;
   created_at: string;
   updated_at: string;

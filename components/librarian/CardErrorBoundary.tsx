@@ -6,7 +6,7 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 
 interface CardErrorBoundaryProps {
   children: ReactNode;
-  cardType: "seedling" | "greenhouse";
+  cardType: "seedling" | "greenhouse" | "archive";
 }
 
 export function CardErrorBoundary({ children, cardType }: CardErrorBoundaryProps) {

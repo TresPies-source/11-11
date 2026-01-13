@@ -3,16 +3,19 @@
 import { useState, memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, PlayCircle, Pencil, ChevronDown } from "lucide-react";
+import { Copy, Check, PlayCircle, Pencil, ChevronDown, RefreshCw, Archive } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
+import { usePromptStatus } from "@/hooks/usePromptStatus";
+import { ConfirmationDialog } from "./ConfirmationDialog";
 import { CritiqueScore } from "./CritiqueScore";
 import { CritiqueDetails } from "./CritiqueDetails";
 
 interface GreenhouseCardProps {
   prompt: PromptWithCritique;
   searchQuery?: string;
+  onStatusChange?: () => void;
 }
 
 const tagColors = [
@@ -23,11 +26,13 @@ const tagColors = [
   "bg-amber-50 text-amber-700",
 ];
 
-export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery }: GreenhouseCardProps) {
+export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery, onStatusChange }: GreenhouseCardProps) {
   const router = useRouter();
   const toast = useToast();
+  const { transitionStatus, transitioning } = usePromptStatus();
   const [copied, setCopied] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
   const title = prompt.title;
   const description =
@@ -80,6 +85,33 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
       handleCardClick();
     }
   }, [handleCardClick]);
+
+  const handleReactivate = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const driveFileId = prompt.drive_file_id || null;
+    const success = await transitionStatus(prompt.id, "active", driveFileId);
+    
+    if (success) {
+      toast.success("🌱 Reactivated to Seedlings!");
+      onStatusChange?.();
+    } else {
+      toast.error("Failed to reactivate prompt");
+    }
+  }, [prompt.id, prompt.drive_file_id, transitionStatus, toast, onStatusChange]);
+
+  const handleArchive = useCallback(async () => {
+    const driveFileId = prompt.drive_file_id || null;
+    const success = await transitionStatus(prompt.id, "archived", driveFileId);
+    
+    if (success) {
+      toast.success("📦 Archived successfully");
+      setShowArchiveConfirm(false);
+      onStatusChange?.();
+    } else {
+      toast.error("Failed to archive prompt");
+      setShowArchiveConfirm(false);
+    }
+  }, [prompt.id, prompt.drive_file_id, transitionStatus, toast, onStatusChange]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -198,13 +230,14 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
         </div>
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100">
+      <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
         <div className="flex gap-2">
           <button
             onClick={handleRunInChat}
             aria-label={`Run ${title} in chat`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Run in Chat"
+            disabled={transitioning}
           >
             <PlayCircle className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Run</span>
@@ -215,12 +248,13 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
             onClick={handleQuickCopy}
             aria-label={copied ? `Copied ${title} to clipboard` : `Copy ${title} to clipboard`}
             className={cn(
-              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-all duration-100 text-sm font-medium active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2",
+              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-all duration-100 text-sm font-medium active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
               copied
                 ? "bg-green-100 text-green-700 focus-visible:ring-green-500"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:ring-gray-500"
             )}
             title="Copy to Clipboard"
+            disabled={transitioning}
           >
             {copied ? (
               <>
@@ -240,15 +274,56 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
           <button
             onClick={handleEdit}
             aria-label={`Edit ${title}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Edit Prompt"
+            disabled={transitioning}
           >
             <Pencil className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Edit</span>
             <span className="sr-only sm:hidden">Edit prompt</span>
           </button>
         </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={handleReactivate}
+            aria-label={`Reactivate ${title}`}
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Reactivate to Seedlings"
+            disabled={transitioning}
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Reactivate</span>
+            <span className="sr-only sm:hidden">Reactivate to seedlings</span>
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowArchiveConfirm(true);
+            }}
+            aria-label={`Archive ${title}`}
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Archive Prompt"
+            disabled={transitioning}
+          >
+            <Archive className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Archive</span>
+            <span className="sr-only sm:hidden">Archive prompt</span>
+          </button>
+        </div>
       </div>
+
+      <ConfirmationDialog
+        open={showArchiveConfirm}
+        title="Archive Prompt"
+        message="Archive this prompt? You can restore it later from the archive view."
+        confirmLabel="Archive"
+        cancelLabel="Cancel"
+        variant="warning"
+        onConfirm={handleArchive}
+        onCancel={() => setShowArchiveConfirm(false)}
+      />
     </motion.div>
   );
 });

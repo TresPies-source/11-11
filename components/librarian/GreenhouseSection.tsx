@@ -16,6 +16,7 @@ interface GreenhouseSectionProps {
   loading?: boolean;
   error?: string | null;
   onRetry?: () => void;
+  onRefresh?: () => void;
 }
 
 type SortOption = "recent" | "title-asc" | "score-desc";
@@ -25,6 +26,7 @@ export function GreenhouseSection({
   loading = false,
   error = null,
   onRetry,
+  onRefresh,
 }: GreenhouseSectionProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("recent");
@@ -261,6 +263,7 @@ export function GreenhouseSection({
                 <GreenhouseCard
                   prompt={prompt}
                   searchQuery={searchQuery}
+                  onStatusChange={onRefresh}
                 />
               </CardErrorBoundary>
             ))}

@@ -1,7 +1,8 @@
 import { getDB } from './client';
-import type { PromptRow, PromptInsert, PromptUpdate, PromptStatus } from './types';
+import type { PromptRow, PromptInsert, PromptUpdate, PromptStatus, StatusHistoryEntry } from './types';
 import type { DriveFile } from '@/lib/types';
 import matter from 'gray-matter';
+import { isValidTransition } from './statusTransitions';
 
 export interface PromptFilters {
   tags?: string[];
@@ -193,6 +194,46 @@ export async function updatePromptStatus(
     SET status = $1, updated_at = NOW()
     WHERE id = $2
   `, [status, promptId]);
+}
+
+export async function updatePromptStatusWithHistory(
+  promptId: string,
+  newStatus: PromptStatus,
+  userId: string
+): Promise<void> {
+  const db = await getDB();
+  
+  const currentResult = await db.query(
+    'SELECT status, status_history FROM prompts WHERE id = $1',
+    [promptId]
+  );
+  
+  if (currentResult.rows.length === 0) {
+    throw new Error('Prompt not found');
+  }
+  
+  const row = currentResult.rows[0] as { status: PromptStatus; status_history: StatusHistoryEntry[] };
+  const currentStatus = row.status;
+  
+  if (!isValidTransition(currentStatus, newStatus)) {
+    throw new Error(`Invalid transition from ${currentStatus} to ${newStatus}`);
+  }
+  
+  const historyEntry: StatusHistoryEntry = {
+    from: currentStatus,
+    to: newStatus,
+    timestamp: new Date().toISOString(),
+    user_id: userId,
+  };
+  
+  await db.query(`
+    UPDATE prompts 
+    SET 
+      status = $1, 
+      status_history = status_history || $2::jsonb,
+      updated_at = NOW()
+    WHERE id = $3
+  `, [newStatus, JSON.stringify([historyEntry]), promptId]);
 }
 
 export async function deletePrompt(promptId: string): Promise<void> {

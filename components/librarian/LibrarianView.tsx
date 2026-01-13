@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BookHeart, Sparkles, Leaf, Globe, ArrowRight } from "lucide-react";
+import type { PromptStatus } from "@/lib/pglite/types";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
 import { useToast } from "@/hooks/useToast";
@@ -34,6 +35,7 @@ export function LibrarianView() {
     error: errorSaved,
     retry: retrySaved,
     refresh: refreshSaved,
+    optimisticRemove: optimisticRemoveSaved,
   } = useLibrarian({ status: "saved" });
 
   const { transitionStatus } = usePromptStatus();
@@ -71,6 +73,44 @@ export function LibrarianView() {
       }
     },
     [activePrompts, transitionStatus, optimisticRemoveActive, refreshSaved, showSuccess, showError]
+  );
+
+  const handleGreenhouseStatusChange = useCallback(async () => {
+    await Promise.all([refreshSaved(), refreshActive()]);
+  }, [refreshSaved, refreshActive]);
+
+  const handleSeedlingStatusChange = useCallback(
+    async (promptId: string, newStatus: PromptStatus) => {
+      const prompt = activePrompts.find((p) => p.id === promptId);
+      if (!prompt) return;
+
+      try {
+        const driveFileId = prompt.drive_file_id || null;
+        const success = await transitionStatus(promptId, newStatus, driveFileId);
+
+        if (success) {
+          optimisticRemoveActive(promptId);
+          
+          const statusLabels: Record<PromptStatus, string> = {
+            draft: "Draft",
+            active: "Active",
+            saved: "Greenhouse",
+            archived: "Archive"
+          };
+          showSuccess(`Moved to ${statusLabels[newStatus]}!`);
+          
+          setTimeout(async () => {
+            await Promise.all([refreshActive(), refreshSaved()]);
+          }, 300);
+        } else {
+          showError("Failed to update status. Please try again.");
+        }
+      } catch (err) {
+        console.error("Error updating status:", err);
+        showError("Failed to update status. Please try again.");
+      }
+    },
+    [activePrompts, transitionStatus, optimisticRemoveActive, refreshActive, refreshSaved, showSuccess, showError]
   );
 
   const criticalError = errorActive && errorSaved;
@@ -198,6 +238,7 @@ export function LibrarianView() {
               error={errorActive}
               onRetry={retryActive}
               onSaveToGreenhouse={handleSaveToGreenhouse}
+              onStatusChange={handleSeedlingStatusChange}
               savingPromptIds={savingPromptIds}
             />
           </LibrarianErrorBoundary>
@@ -219,6 +260,7 @@ export function LibrarianView() {
               loading={loadingSaved}
               error={errorSaved}
               onRetry={retrySaved}
+              onRefresh={handleGreenhouseStatusChange}
             />
           </LibrarianErrorBoundary>
         </motion.section>

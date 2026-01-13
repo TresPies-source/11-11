@@ -38,8 +38,10 @@ export function AgentSelector({
   const [agents, setAgents] = useState<Agent[]>(availableAgents);
 
   useEffect(() => {
-    const fetchAgents = async () => {
-      if (availableAgents.length === 0) {
+    if (availableAgents.length > 0) {
+      setAgents(availableAgents);
+    } else {
+      const fetchAgents = async () => {
         try {
           const response = await fetch("/api/supervisor/agents");
           if (response.ok) {
@@ -49,18 +51,18 @@ export function AgentSelector({
         } catch (error) {
           console.error("Failed to fetch agents:", error);
         }
-      }
-    };
+      };
 
-    fetchAgents();
+      fetchAgents();
+    }
   }, [availableAgents]);
 
+  const autoRouteAgent = { id: "auto", name: "Auto-Route", description: "Automatically route to the best agent" };
+  
   const selectedAgent =
     selectedAgentId === "auto"
-      ? { id: "auto", name: "Auto-Route", description: "Automatically route to the best agent" }
-      : agents.find((a) => a.id === selectedAgentId) || agents[0];
-
-  if (!selectedAgent) return null;
+      ? autoRouteAgent
+      : agents.find((a) => a.id === selectedAgentId) || agents[0] || autoRouteAgent;
 
   const Icon = AGENT_ICONS[selectedAgent.id as keyof typeof AGENT_ICONS] || Brain;
   const colorClass = AGENT_COLORS[selectedAgent.id as keyof typeof AGENT_COLORS] || 
@@ -105,10 +107,10 @@ export function AgentSelector({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-              className="absolute top-full left-0 mt-2 w-96 z-20"
+              className="absolute top-full left-0 mt-2 w-96 max-h-[320px] z-20"
             >
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden">
-                <div className="p-2 space-y-1 max-h-[500px] overflow-y-auto">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-y-auto h-full">
+                <div className="p-2 space-y-1">
                   <button
                     onClick={() => handleSelect("auto")}
                     className={cn(

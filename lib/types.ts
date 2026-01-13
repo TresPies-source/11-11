@@ -205,3 +205,11 @@ export type ContextBusEvent =
   | { type: 'SYNC_STATUS_CHANGED'; payload: { status: 'synced' | 'syncing' | 'error' } };
 
 export type ActiveTab = "editor" | "multi-agent";
+
+export type Theme = "light" | "dark";
+
+export interface ThemeContextValue {
+  theme: Theme;
+  toggleTheme: () => void;
+  systemTheme: Theme;
+}

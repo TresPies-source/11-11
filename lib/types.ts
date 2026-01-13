@@ -95,6 +95,30 @@ export interface RepositoryState {
   error: string | null;
 }
 
+export interface EditorTab {
+  id: string;
+  fileId: string;
+  fileName: string;
+  filePath: string;
+  content: string;
+  isDirty: boolean;
+  lastModified: Date;
+}
+
+export interface TabsPersistenceState {
+  tabs: Array<{
+    id: string;
+    fileId: string;
+    fileName: string;
+    filePath: string;
+    content: string;
+    isDirty: boolean;
+    lastModified: string;
+  }>;
+  activeTabId: string | null;
+  timestamp: number;
+}
+
 export interface PromptMetadata {
   title?: string;
   description?: string;

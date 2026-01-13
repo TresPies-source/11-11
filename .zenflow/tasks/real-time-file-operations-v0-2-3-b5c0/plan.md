@@ -142,7 +142,7 @@ Created comprehensive technical specification at `spec.md` covering:
 
 ---
 
-### [ ] Step 4: File Creation Modal
+### [x] Step 4: File Creation Modal
 <!-- chat-id: 1b176481-af76-44dc-9e6b-9063ad028734 -->
 
 **Objective:** Create modal for file and folder creation with validation
@@ -170,14 +170,15 @@ Created comprehensive technical specification at `spec.md` covering:
    - "A file/folder with this name already exists"
 
 **Verification:**
-- [ ] Modal appears centered on screen
-- [ ] Input auto-focuses on open
-- [ ] Real-time validation works
-- [ ] Submit disabled when invalid
-- [ ] Enter key submits form
-- [ ] Escape key closes modal
-- [ ] Accessible with screen reader
-- [ ] Visual validation screenshot
+- [x] Modal appears centered on screen
+- [x] Input auto-focuses on open
+- [x] Real-time validation works
+- [x] Submit disabled when invalid
+- [x] Enter key submits form
+- [x] Escape key closes modal
+- [x] Accessible with screen reader
+- [x] Type check passes
+- [x] Lint check passes with no warnings
 
 ---
 

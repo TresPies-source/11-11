@@ -166,6 +166,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 6: Fallback Logic
+<!-- chat-id: baf7fec2-37fa-4c0e-b5ca-55914efdc3a2 -->
 
 **Goal:** Implement comprehensive fallback handling
 

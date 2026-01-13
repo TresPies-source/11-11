@@ -100,7 +100,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 4: Create Tab Component
+### [x] Step 4: Create Tab Component
 <!-- chat-id: 1172676e-cb3e-4645-a32c-028ab2b17849 -->
 
 **Objective:** Build individual tab UI component.

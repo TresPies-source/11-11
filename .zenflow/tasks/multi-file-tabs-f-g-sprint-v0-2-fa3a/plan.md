@@ -149,6 +149,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 6: Create TabContextMenu Component
+<!-- chat-id: ec05e993-1c0b-4ffd-ba59-55eb39af6192 -->
 
 **Objective:** Build right-click context menu for tab actions.
 

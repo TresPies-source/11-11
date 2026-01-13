@@ -73,6 +73,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 3: Implement FOUC Prevention & Integrate Provider
+<!-- chat-id: 1377d13d-f338-47b5-b890-12a148ca2c1d -->
 
 **Objective:** Prevent flash of unstyled content and wire up theme provider
 

@@ -212,6 +212,7 @@ Created comprehensive technical specification at `spec.md` covering:
 ---
 
 ### [ ] Step 6: File Tree Provider
+<!-- chat-id: 2706cb3f-8be4-4548-81c9-0343bdf1499a -->
 
 **Objective:** Create centralized file tree state management
 

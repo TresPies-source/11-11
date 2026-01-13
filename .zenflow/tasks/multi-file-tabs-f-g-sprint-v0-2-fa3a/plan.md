@@ -171,6 +171,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 7: Create TabDropdown Component (Mobile)
+<!-- chat-id: b15c4261-b07a-45e9-ab96-b6f8b64afbf4 -->
 
 **Objective:** Build dropdown selector for mobile devices.
 

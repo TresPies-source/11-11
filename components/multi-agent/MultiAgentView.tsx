@@ -105,7 +105,7 @@ export function MultiAgentView() {
     setSessions((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleSendMessage = (id: string, content: string) => {
+  const handleSendMessage = (id: string, content: string, agentId?: string) => {
     const userMessage: ChatMessage = {
       id: `msg-${Date.now()}-user`,
       role: "user",
@@ -129,10 +129,14 @@ export function MultiAgentView() {
       const session = sessions.find((s) => s.id === id);
       const persona = AGENT_PERSONAS.find((p) => p.id === session?.persona);
 
+      const agentName = agentId 
+        ? agentId.charAt(0).toUpperCase() + agentId.slice(1) + " Agent"
+        : persona?.name;
+
       const responses = [
         `I understand. Let me help you with that.`,
         `That's an interesting question. ${persona?.description}`,
-        `I'm processing your request. This aligns with my role in ${persona?.description.toLowerCase()}.`,
+        `I'm processing your request${agentId ? ` as ${agentName}` : ""}.`,
         `Let me analyze this for you...`,
         `Working on it. I'll provide a comprehensive response shortly.`,
       ];
@@ -142,7 +146,7 @@ export function MultiAgentView() {
         role: "assistant",
         content: responses[Math.floor(Math.random() * responses.length)],
         timestamp: new Date(),
-        persona: session?.persona,
+        persona: agentId || session?.persona,
       };
 
       setSessions((prev) =>

@@ -126,7 +126,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 5: Create TabBar Component
+### [x] Step 5: Create TabBar Component
 <!-- chat-id: cc64a28f-ab5d-4b69-8bf2-15e2b1d7a12d -->
 
 **Objective:** Build tab bar container with horizontal scroll.

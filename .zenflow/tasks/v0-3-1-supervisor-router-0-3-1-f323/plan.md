@@ -43,6 +43,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 1: Environment & Dependencies Setup
+<!-- chat-id: 6df12a95-74ce-41dd-bdd8-9228c5806201 -->
 
 **Goal:** Install required dependencies and configure environment
 

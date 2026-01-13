@@ -20,6 +20,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
     setSelectedId,
     expandedIds,
     toggleExpand,
+    operationsInProgress,
     isLoading,
     error,
   } = useFileTree();
@@ -86,6 +87,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                   onSelect={handleSelect}
                   expandedIds={expandedIds}
                   onToggleExpand={toggleExpand}
+                  operationsInProgress={operationsInProgress}
                 />
               )}
             </motion.div>

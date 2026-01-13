@@ -18,7 +18,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: bb484c5d-2b89-485e-841a-151eade0609c -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +51,135 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Database Schema Migration
 
-Implement the task according to the technical specification and general engineering best practices.
+Update PGlite database schema to support public prompts with visibility controls.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Tasks**:
+- Update `lib/pglite/schema.ts` with new columns (published_at, visibility, author_name, author_id)
+- Add indexes for performance (visibility + published_at, author_id)
+- Update `lib/pglite/types.ts` with new TypeScript interfaces
+- Create migration/backfill logic for existing prompts
+- Update `lib/pglite/prompts.ts` to use new columns in queries
+
+**Verification**:
+- Run dev server and check console for migration success
+- Inspect PGlite database to verify columns exist
+- Verify existing prompts have backfilled values
+- Zero TypeScript errors
+
+---
+
+### [ ] Step: API Routes Implementation
+
+Create API endpoints for publish, unpublish, public listing, and copy operations.
+
+**Tasks**:
+- Create `app/api/librarian/publish/route.ts`
+- Create `app/api/librarian/unpublish/route.ts`
+- Create `app/api/librarian/public/route.ts` (with filters/sort)
+- Create `app/api/librarian/copy/route.ts`
+- Implement ownership verification in all routes
+- Add error handling and validation
+
+**Verification**:
+- Test each endpoint with mock data
+- Verify ownership rules enforced
+- Check response types match TypeScript interfaces
+- Test error cases (not found, unauthorized)
+
+---
+
+### [ ] Step: Core UI Components
+
+Build reusable components for public toggle, badge, dialogs, and buttons.
+
+**Tasks**:
+- Create `components/librarian/PublicToggle.tsx`
+- Create `components/librarian/PublicBadge.tsx`
+- Create `components/librarian/PublishConfirmDialog.tsx`
+- Create `components/librarian/CopyToLibraryButton.tsx`
+- Create `hooks/usePublicToggle.ts`
+- Create `hooks/useCopyPrompt.ts`
+
+**Verification**:
+- Components render without errors
+- Toggle shows confirmation dialog on first use
+- Badge displays correctly with proper styling
+- Copy button shows loading state
+- All components are keyboard accessible
+
+---
+
+### [ ] Step: Component Integration
+
+Integrate public toggle and badge into existing prompt cards and views.
+
+**Tasks**:
+- Update `components/librarian/SeedlingCard.tsx` with PublicToggle
+- Update `components/librarian/GreenhouseCard.tsx` with PublicToggle
+- Update `components/shared/PromptCard.tsx` for commons variant
+- Update `components/librarian/CommonsView.tsx` with filters and sort
+- Update `hooks/useGallery.ts` to fetch from new API endpoint
+
+**Verification**:
+- Toggle appears on all prompt cards
+- Badge displays on public prompts
+- Commons view shows public prompts from all users
+- Filter and sort controls work correctly
+- Author attribution displayed properly
+
+---
+
+### [ ] Step: Seed Data & Testing
+
+Update seed data with public prompts and perform end-to-end testing.
+
+**Tasks**:
+- Update `lib/pglite/seed.ts` with 5-10 public prompts
+- Add varied author names and publish dates
+- Test publish → unpublish flow
+- Test copy prompt to library flow
+- Test filter (all vs mine) and sort
+- Test privacy rules (non-owner cannot edit)
+
+**Verification**:
+- Seed data loads successfully on first run
+- All user flows work end-to-end
+- Privacy rules enforced correctly
+- No console errors or warnings
+- All prompts display correctly in UI
+
+---
+
+### [ ] Step: Documentation & Cleanup
+
+Document changes and ensure code quality standards are met.
+
+**Tasks**:
+- Update `JOURNAL.md` with architecture decisions
+- Document database schema changes
+- Document privacy model and copy mechanism
+- Run `npm run lint` and fix all errors
+- Run `npm run build` and fix type errors
+- Capture screenshots for verification
+
+**Verification**:
+- Zero lint errors
+- Zero TypeScript errors
+- Production build succeeds
+- JOURNAL.md updated with Commons architecture
+- Screenshots captured showing all features
+
+---
+
+### [ ] Step: Final Report
+
+Write completion report summarizing implementation and testing.
+
+**Tasks**:
+- Create `{@artifacts_path}/report.md`
+- Document what was implemented
+- Describe testing approach and results
+- List any challenges or issues encountered
+- Note any deferred features or future work

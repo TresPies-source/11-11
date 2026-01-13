@@ -304,6 +304,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 13: Implement localStorage Persistence
+<!-- chat-id: 23a86047-ed7f-4deb-aa95-70b8fff73db5 -->
 
 **Objective:** Persist and restore tab state across page reloads.
 

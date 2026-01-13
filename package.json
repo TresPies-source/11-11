@@ -20,7 +20,9 @@
     "test:librarian-handler": "tsx __tests__/agents/librarian-handler.test.ts",
     "test:librarian-routing": "tsx __tests__/agents/librarian-routing.test.ts",
     "test:auto-embed": "tsx lib/librarian/auto-embed.test.ts",
-    "batch-embed": "tsx scripts/batch-embed-prompts.ts"
+    "batch-embed": "tsx scripts/batch-embed-prompts.ts",
+    "test:harness": "tsx lib/harness/trace.test.ts",
+    "test:harness-retrieval": "tsx lib/harness/retrieval.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

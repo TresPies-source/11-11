@@ -8,6 +8,7 @@ import {
 } from './types';
 import { getAgentById, isValidAgentId } from './supervisor';
 import { invokeLibrarianAgent } from './librarian-handler';
+import { startSpan, endSpan, logEvent, isTraceActive } from '../harness/trace';
 
 export interface HandoffEvent {
   id: string;
@@ -21,34 +22,25 @@ export interface HandoffEvent {
   created_at: string;
 }
 
-export interface HarnessTraceEvent {
-  event_type: string;
-  from_agent?: string;
-  to_agent?: string;
-  reason?: string;
-  timestamp: string;
-  session_id?: string;
-  conversation_length?: number;
-  error?: string;
-  [key: string]: unknown;
-}
-
 export async function executeHandoff(context: HandoffContext): Promise<void> {
+  let spanId: string | undefined;
+  const startTime = Date.now();
+
   try {
     validateHandoffContext(context);
     await validateAgentAvailability(context.from_agent, context.to_agent);
+
+    if (isTraceActive()) {
+      spanId = startSpan('AGENT_HANDOFF', {
+        from_agent: context.from_agent,
+        to_agent: context.to_agent,
+        reason: context.reason,
+        conversation_length: context.conversation_history.length,
+        user_intent: context.user_intent,
+      });
+    }
     
     await storeHandoffEvent(context);
-    
-    await logHarnessEvent({
-      event_type: 'AGENT_HANDOFF',
-      from_agent: context.from_agent,
-      to_agent: context.to_agent,
-      reason: context.reason,
-      timestamp: new Date().toISOString(),
-      session_id: context.session_id,
-      conversation_length: context.conversation_history.length,
-    });
 
     const invocationContext: AgentInvocationContext = {
       conversation_history: context.conversation_history,
@@ -59,18 +51,42 @@ export async function executeHandoff(context: HandoffContext): Promise<void> {
 
     await invokeAgent(context.to_agent, invocationContext);
 
+    if (spanId) {
+      endSpan(spanId, {
+        success: true,
+        invoked_agent: context.to_agent,
+      }, {
+        duration_ms: Date.now() - startTime,
+      });
+    }
+
     console.log(`[HANDOFF] Successfully handed off from ${context.from_agent} to ${context.to_agent}`);
   } catch (error) {
-    await logHarnessEvent({
-      event_type: 'HANDOFF_FAILURE',
-      from_agent: context.from_agent,
-      to_agent: context.to_agent,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString(),
-      session_id: context.session_id,
-    }).catch((logError) => {
-      console.error('[HANDOFF] Failed to log handoff failure:', logError);
-    });
+    if (isTraceActive()) {
+      logEvent('ERROR', {
+        from_agent: context.from_agent,
+        to_agent: context.to_agent,
+        error_type: 'handoff_failure',
+      }, {
+        error: true,
+      }, {
+        error_message: error instanceof Error ? error.message : 'Unknown error',
+        duration_ms: Date.now() - startTime,
+      });
+    }
+
+    if (spanId) {
+      endSpan(spanId, {
+        error: true,
+      }, {
+        duration_ms: Date.now() - startTime,
+        error_message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+
+    if (error instanceof HandoffError) {
+      throw error;
+    }
 
     throw new HandoffError(
       `Failed to execute handoff from ${context.from_agent} to ${context.to_agent}`,
@@ -222,10 +238,6 @@ export async function getHandoffCount(
     console.error('[HANDOFF] Error getting handoff count:', error);
     return 0;
   }
-}
-
-export async function logHarnessEvent(event: HarnessTraceEvent): Promise<void> {
-  console.log('[HARNESS_TRACE]', JSON.stringify(event, null, 2));
 }
 
 export async function invokeAgent(

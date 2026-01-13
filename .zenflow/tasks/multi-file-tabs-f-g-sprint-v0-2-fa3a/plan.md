@@ -193,6 +193,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 8: Create ConfirmDialog Component
+<!-- chat-id: 0b9c1b09-b801-46af-85b0-1d33ae8a59fa -->
 
 **Objective:** Build reusable confirmation dialog for unsaved changes.
 

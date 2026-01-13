@@ -96,6 +96,7 @@ export function FileTree({
         renamingNodeId={renamingNodeId}
         onRename={handleRename}
         onFinishRename={() => setRenamingNodeId(null)}
+        onDelete={handleDelete}
       />
 
       <ContextMenu
@@ -159,6 +160,7 @@ interface FileTreeNodesProps {
   renamingNodeId: string | null;
   onRename: (node: FileNode) => void;
   onFinishRename: () => void;
+  onDelete: (node: FileNode) => void;
 }
 
 function FileTreeNodes({
@@ -173,6 +175,7 @@ function FileTreeNodes({
   renamingNodeId,
   onRename,
   onFinishRename,
+  onDelete,
 }: FileTreeNodesProps) {
   return (
     <div className="space-y-0.5">
@@ -190,6 +193,7 @@ function FileTreeNodes({
           renamingNodeId={renamingNodeId}
           onRename={onRename}
           onFinishRename={onFinishRename}
+          onDelete={onDelete}
         />
       ))}
     </div>
@@ -268,6 +272,7 @@ interface FileTreeNodeProps {
   renamingNodeId: string | null;
   onRename: (node: FileNode) => void;
   onFinishRename: () => void;
+  onDelete: (node: FileNode) => void;
 }
 
 function FileTreeNode({
@@ -282,6 +287,7 @@ function FileTreeNode({
   renamingNodeId,
   onRename,
   onFinishRename,
+  onDelete,
 }: FileTreeNodeProps) {
   const isExpanded = expandedIds?.has(node.id) ?? node.expanded ?? false;
   const isSelected = selectedId === node.id;
@@ -329,6 +335,7 @@ function FileTreeNode({
         onRename(node);
       } else if (e.key === "Delete") {
         e.preventDefault();
+        onDelete(node);
       }
     }
   };
@@ -462,6 +469,7 @@ function FileTreeNode({
               renamingNodeId={renamingNodeId}
               onRename={onRename}
               onFinishRename={onFinishRename}
+              onDelete={onDelete}
             />
           </motion.div>
         )}

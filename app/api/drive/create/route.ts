@@ -46,17 +46,21 @@ export async function POST(request: NextRequest) {
       const mockResponse = type === "file"
         ? {
             success: true,
-            fileId: mockId,
-            fileName: name.endsWith(".md") ? name : `${name}.md`,
-            modifiedTime: new Date().toISOString(),
-            type: "file",
+            file: {
+              id: mockId,
+              name: name.endsWith(".md") ? name : `${name}.md`,
+              modifiedTime: new Date().toISOString(),
+              type: "file",
+            },
           }
         : {
             success: true,
-            folderId: mockId,
-            folderName: name,
-            modifiedTime: new Date().toISOString(),
-            type: "folder",
+            file: {
+              id: mockId,
+              name,
+              modifiedTime: new Date().toISOString(),
+              type: "folder",
+            },
           };
 
       return NextResponse.json(mockResponse);
@@ -92,10 +96,12 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: result.success,
-        fileId: result.fileId,
-        fileName: result.fileName,
-        modifiedTime: result.modifiedTime,
-        type: "file",
+        file: {
+          id: result.fileId,
+          name: result.fileName,
+          modifiedTime: result.modifiedTime,
+          type: "file",
+        },
       });
     } else {
       const result = await driveClient.createFolder({
@@ -105,10 +111,12 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: result.success,
-        folderId: result.folderId,
-        folderName: result.folderName,
-        modifiedTime: result.modifiedTime,
-        type: "folder",
+        file: {
+          id: result.folderId,
+          name: result.folderName,
+          modifiedTime: result.modifiedTime,
+          type: "folder",
+        },
       });
     }
   } catch (error) {

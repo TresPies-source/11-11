@@ -361,14 +361,8 @@ export function useFileOperations() {
       removeNode(node.id);
 
       try {
-        const response = await fetch("/api/drive/delete", {
+        const response = await fetch(`/api/drive/delete?fileId=${encodeURIComponent(node.id)}`, {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fileId: node.id,
-          }),
         });
 
         if (!response.ok) {

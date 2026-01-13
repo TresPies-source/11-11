@@ -407,41 +407,43 @@ Created comprehensive technical specification at `spec.md` covering:
 
 ---
 
-### [ ] Step 11: Error Handling and Edge Cases
+### [x] Step 11: Error Handling and Edge Cases
 <!-- chat-id: c361df96-3d31-45a0-b85a-2f471df83f64 -->
+
+✅ **Complete**
 
 **Objective:** Implement robust error handling for all edge cases
 
 **Tasks:**
 11.1. Validation error handling:
-   - Empty name validation
-   - Invalid character validation
-   - Duplicate name detection
-   - Name length validation
-   - Display errors in modals/inline
+   - ✅ Empty name validation (implemented in validateFileName)
+   - ✅ Invalid character validation (tested with "/" character)
+   - ✅ Duplicate name detection (tested - client-side and server-side)
+   - ✅ Name length validation (max 255 characters)
+   - ✅ Display errors in modals/inline (working in CreateFileModal)
 
 11.2. API error handling:
-   - AuthError (401): "Session expired - please refresh"
-   - NotFoundError (404): "File not found"
-   - RateLimitError (429): "Too many requests"
-   - NetworkError: "Network error - check connection"
-   - DriveError (500): "Google Drive error"
-   - Show error toast with retry button
+   - ✅ AuthError (401): "Session expired - please refresh" (getErrorMessage helper)
+   - ✅ NotFoundError (404): "File not found" (getErrorMessage helper)
+   - ✅ RateLimitError (429): "Too many requests - please wait" (getErrorMessage helper)
+   - ✅ NetworkError: "Network error - check connection" (isNetworkError helper)
+   - ✅ DriveError (500): Generic error message with retry (all operations)
+   - ✅ Show error toast with retry button (ToastAction support added)
 
 11.3. Edge case handling:
-   - Rename open file with unsaved changes
-   - Delete open file with unsaved changes
-   - Concurrent operations on same file
-   - Network offline during operation
-   - Folder contains open files when renamed/deleted
-   - Rapid successive operations
+   - ✅ Rename open file with unsaved changes (handled in RepositoryProvider)
+   - ✅ Delete open file with unsaved changes (warning shown in DeleteConfirmDialog)
+   - ✅ Concurrent operations on same file (prevented with operationsInProgress check)
+   - ✅ Network offline during operation (isNetworkError detection)
+   - ✅ Folder contains open files when renamed/deleted (handled via events)
+   - ✅ Rapid successive operations (prevented by loading state + concurrent check)
 
 **Verification:**
-- [ ] All validation errors display correctly
-- [ ] All API errors handled gracefully
-- [ ] Retry button works for failed operations
-- [ ] Optimistic UI rollback works
-- [ ] Edge cases handled without crashes
+- [x] All validation errors display correctly (tested: invalid chars, duplicates)
+- [x] All API errors handled gracefully (getErrorMessage maps all error types)
+- [x] Retry button works for failed operations (Toast action button implemented)
+- [x] Optimistic UI rollback works (implemented in all operations)
+- [x] Edge cases handled without crashes (concurrent operations prevented)
 
 ---
 

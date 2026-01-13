@@ -13,6 +13,38 @@ interface FileOperationError {
   retry?: () => Promise<unknown>;
 }
 
+function isNetworkError(error: unknown): boolean {
+  if (error instanceof TypeError && error.message.includes("fetch")) {
+    return true;
+  }
+  return false;
+}
+
+function getErrorMessage(error: unknown, defaultMessage: string): string {
+  if (isNetworkError(error)) {
+    return "Network error - check your connection";
+  }
+  
+  if (error instanceof Error) {
+    if (error.message.includes("401") || error.message.includes("Unauthorized")) {
+      return "Session expired - please refresh";
+    }
+    if (error.message.includes("404") || error.message.includes("not found")) {
+      return "File not found";
+    }
+    if (error.message.includes("429") || error.message.includes("quota")) {
+      return "Too many requests - please wait";
+    }
+    if (error.message.includes("already exists") || error.message.includes("duplicate")) {
+      return error.message;
+    }
+    
+    return error.message;
+  }
+  
+  return defaultMessage;
+}
+
 export function useFileOperations() {
   const fileTreeContext = useContext(FileTreeContext);
   const { addOperation } = useSyncStatusContext();
@@ -33,6 +65,7 @@ export function useFileOperations() {
     refreshFileTree,
     startOperation,
     endOperation,
+    operationsInProgress,
   } = fileTreeContext;
 
   const setLoading = useCallback((operationId: string, loading: boolean) => {
@@ -132,7 +165,7 @@ export function useFileOperations() {
       } catch (error) {
         removeNode(tempId);
 
-        const errorMessage = error instanceof Error ? error.message : "Failed to create file";
+        const errorMessage = getErrorMessage(error, "Failed to create file");
         
         addOperation({
           type: "write",
@@ -147,7 +180,13 @@ export function useFileOperations() {
           retry: retryFn,
         });
 
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          duration: 5000,
+          action: {
+            label: "Retry",
+            onClick: retryFn,
+          },
+        });
 
         return null;
       } finally {
@@ -233,7 +272,7 @@ export function useFileOperations() {
       } catch (error) {
         removeNode(tempId);
 
-        const errorMessage = error instanceof Error ? error.message : "Failed to create folder";
+        const errorMessage = getErrorMessage(error, "Failed to create folder");
 
         addOperation({
           type: "write",
@@ -248,7 +287,13 @@ export function useFileOperations() {
           retry: retryFn,
         });
 
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          duration: 5000,
+          action: {
+            label: "Retry",
+            onClick: retryFn,
+          },
+        });
 
         return null;
       } finally {
@@ -261,6 +306,11 @@ export function useFileOperations() {
 
   const renameFile = useCallback(
     async (node: FileNode, newName: string): Promise<boolean> => {
+      if (operationsInProgress.has(node.id)) {
+        toast.error("Operation already in progress on this file");
+        return false;
+      }
+
       const operationId = `rename-${node.id}`;
       const previousName = node.name;
 
@@ -315,7 +365,7 @@ export function useFileOperations() {
       } catch (error) {
         updateNode(node.id, { name: previousName });
 
-        const errorMessage = error instanceof Error ? error.message : "Failed to rename";
+        const errorMessage = getErrorMessage(error, "Failed to rename");
 
         addOperation({
           type: "write",
@@ -331,7 +381,13 @@ export function useFileOperations() {
           retry: retryFn,
         });
 
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          duration: 5000,
+          action: {
+            label: "Retry",
+            onClick: retryFn,
+          },
+        });
 
         return false;
       } finally {
@@ -339,11 +395,16 @@ export function useFileOperations() {
         endOperation(node.id);
       }
     },
-    [updateNode, refreshFileTree, startOperation, endOperation, addOperation, emit, toast, setLoading, setError]
+    [updateNode, refreshFileTree, startOperation, endOperation, addOperation, emit, toast, setLoading, setError, operationsInProgress]
   );
 
   const deleteFile = useCallback(
     async (node: FileNode): Promise<boolean> => {
+      if (operationsInProgress.has(node.id)) {
+        toast.error("Operation already in progress on this file");
+        return false;
+      }
+
       const operationId = `delete-${node.id}`;
 
       setLoading(operationId, true);
@@ -396,7 +457,7 @@ export function useFileOperations() {
           addNode(parentId, previousState);
         }
 
-        const errorMessage = error instanceof Error ? error.message : "Failed to delete";
+        const errorMessage = getErrorMessage(error, "Failed to delete");
 
         addOperation({
           type: "write",
@@ -412,7 +473,13 @@ export function useFileOperations() {
           retry: retryFn,
         });
 
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          duration: 5000,
+          action: {
+            label: "Retry",
+            onClick: retryFn,
+          },
+        });
 
         return false;
       } finally {
@@ -420,7 +487,7 @@ export function useFileOperations() {
         endOperation(node.id);
       }
     },
-    [removeNode, addNode, refreshFileTree, startOperation, endOperation, addOperation, emit, toast, setLoading, setError]
+    [removeNode, addNode, refreshFileTree, startOperation, endOperation, addOperation, emit, toast, setLoading, setError, operationsInProgress]
   );
 
   return {

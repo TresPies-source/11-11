@@ -1,13 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ActiveTab } from "@/lib/types";
 import { PANEL_TRANSITION_DURATION, ANIMATION_EASE } from "@/lib/constants";
-import { EditorView } from "@/components/editor/EditorView";
-import { MultiAgentView } from "@/components/multi-agent/MultiAgentView";
+import { EditorSkeleton } from "@/components/editor/EditorSkeleton";
+import { MultiAgentSkeleton } from "@/components/multi-agent/MultiAgentSkeleton";
+
+const EditorView = dynamic(
+  () => import("@/components/editor/EditorView").then((mod) => ({ default: mod.EditorView })),
+  {
+    loading: () => <EditorSkeleton />,
+    ssr: false,
+  }
+);
+
+const MultiAgentView = dynamic(
+  () => import("@/components/multi-agent/MultiAgentView").then((mod) => ({ default: mod.MultiAgentView })),
+  {
+    loading: () => <MultiAgentSkeleton />,
+    ssr: false,
+  }
+);
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("multi-agent");

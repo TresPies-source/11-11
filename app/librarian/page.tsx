@@ -1,4 +1,13 @@
-import { LibrarianView } from "@/components/librarian/LibrarianView";
+import dynamic from "next/dynamic";
+import { LibrarianSkeleton } from "@/components/librarian/LibrarianSkeleton";
+
+const LibrarianView = dynamic(
+  () => import("@/components/librarian/LibrarianView").then((mod) => ({ default: mod.LibrarianView })),
+  {
+    loading: () => <LibrarianSkeleton />,
+    ssr: false,
+  }
+);
 
 export const metadata = {
   title: "The Librarian's Home | Prompt Library",

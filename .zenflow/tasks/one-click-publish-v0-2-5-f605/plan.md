@@ -115,6 +115,7 @@ Build reusable components for public toggle, badge, dialogs, and buttons.
 ---
 
 ### [ ] Step: Component Integration
+<!-- chat-id: a7a4a71d-9115-4f84-9df7-a795650986d8 -->
 
 Integrate public toggle and badge into existing prompt cards and views.
 

@@ -111,6 +111,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 5: Update Priority 1 Components (Layout & Core)
+<!-- chat-id: 13863de2-3ba0-4111-9f71-122cbf0a731c -->
 
 **Objective:** Migrate core layout components to theme-aware classes
 

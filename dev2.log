@@ -105,3 +105,4 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or 
 [Cost Estimation] Token estimation took 154.71ms (target: <50ms)
  POST /api/cost/estimate 200 in 165ms
  ✓ Compiled in 68ms
+ ✓ Compiled in 103ms (213 modules)

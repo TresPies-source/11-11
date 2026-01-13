@@ -296,3 +296,5 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or 
  ✓ Compiled in 183ms (816 modules)
  ✓ Compiled in 181ms (816 modules)
  ✓ Compiled in 167ms (816 modules)
+ ✓ Compiled in 139ms (213 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\.next\cache\webpack\edge-server-development\1.pack.gz_' -> 'C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\.next\cache\webpack\edge-server-development\1.pack.gz'

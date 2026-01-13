@@ -66,6 +66,35 @@ export interface DriveCreateFileResponse {
   modifiedTime: string;
 }
 
+export interface DriveCreateFolderParams {
+  parentId: string;
+  name: string;
+}
+
+export interface DriveCreateFolderResponse {
+  success: boolean;
+  folderId: string;
+  folderName: string;
+  modifiedTime: string;
+}
+
+export interface DriveRenameParams {
+  fileId: string;
+  newName: string;
+}
+
+export interface DriveRenameResponse {
+  success: boolean;
+  fileId: string;
+  newName: string;
+  modifiedTime: string;
+}
+
+export interface DriveDeleteResponse {
+  success: boolean;
+  fileId: string;
+}
+
 export class DriveError extends Error {
   constructor(
     message: string,

@@ -6,6 +6,11 @@ import {
   DriveUpdateResponse,
   DriveCreateFileParams,
   DriveCreateFileResponse,
+  DriveCreateFolderParams,
+  DriveCreateFolderResponse,
+  DriveRenameParams,
+  DriveRenameResponse,
+  DriveDeleteResponse,
   DriveListFilesResponse,
   RetryConfig,
   AuthError,
@@ -126,6 +131,73 @@ export class DriveClient {
           fileId: response.data.id || "",
           fileName: response.data.name || params.name,
           modifiedTime: response.data.modifiedTime || new Date().toISOString(),
+        };
+      } catch (error) {
+        this.handleError(error);
+      }
+    });
+  }
+
+  async createFolder(params: DriveCreateFolderParams): Promise<DriveCreateFolderResponse> {
+    return this.withRetry(async () => {
+      try {
+        const response = await this.drive.files.create({
+          requestBody: {
+            name: params.name,
+            parents: [params.parentId],
+            mimeType: "application/vnd.google-apps.folder",
+          },
+          fields: "id, name, modifiedTime",
+        });
+
+        return {
+          success: true,
+          folderId: response.data.id || "",
+          folderName: response.data.name || params.name,
+          modifiedTime: response.data.modifiedTime || new Date().toISOString(),
+        };
+      } catch (error) {
+        this.handleError(error);
+      }
+    });
+  }
+
+  async renameFile(params: DriveRenameParams): Promise<DriveRenameResponse> {
+    return this.withRetry(async () => {
+      try {
+        const response = await this.drive.files.update({
+          fileId: params.fileId,
+          requestBody: {
+            name: params.newName,
+          },
+          fields: "id, name, modifiedTime",
+        });
+
+        return {
+          success: true,
+          fileId: response.data.id || params.fileId,
+          newName: response.data.name || params.newName,
+          modifiedTime: response.data.modifiedTime || new Date().toISOString(),
+        };
+      } catch (error) {
+        this.handleError(error);
+      }
+    });
+  }
+
+  async deleteFile(fileId: string): Promise<DriveDeleteResponse> {
+    return this.withRetry(async () => {
+      try {
+        await this.drive.files.update({
+          fileId,
+          requestBody: {
+            trashed: true,
+          },
+        });
+
+        return {
+          success: true,
+          fileId,
         };
       } catch (error) {
         this.handleError(error);

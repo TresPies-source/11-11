@@ -38,11 +38,27 @@ export function TraceEventNode({ event, depth, onEventClick }: TraceEventNodePro
     return `${(ms / 1000).toFixed(2)}s`;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (hasChildren) {
+      if (e.key === "ArrowRight" && !expanded) {
+        e.preventDefault();
+        setExpanded(true);
+      } else if (e.key === "ArrowLeft" && expanded) {
+        e.preventDefault();
+        setExpanded(false);
+      }
+    }
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onEventClick?.(event);
+    }
+  };
+
   return (
     <div className={cn("relative", depth > 0 && "ml-6")}>
       <div
         className={cn(
-          "flex items-center gap-2 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
+          "flex items-center gap-2 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900",
           depth > 0 && "border-l-2 border-gray-200 dark:border-gray-700 pl-4"
         )}
         onClick={() => {
@@ -51,6 +67,11 @@ export function TraceEventNode({ event, depth, onEventClick }: TraceEventNodePro
           }
           onEventClick?.(event);
         }}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-expanded={hasChildren ? expanded : undefined}
+        aria-label={`${event.event_type} event at ${new Date(event.timestamp).toLocaleTimeString()}${hasChildren ? `, ${expanded ? "expanded" : "collapsed"}` : ""}`}
       >
         {hasChildren && (
           <button
@@ -59,16 +80,18 @@ export function TraceEventNode({ event, depth, onEventClick }: TraceEventNodePro
               setExpanded(!expanded);
             }}
             className="flex-shrink-0"
+            aria-label={expanded ? "Collapse children" : "Expand children"}
+            tabIndex={-1}
           >
             {expanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" />
             ) : (
-              <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" />
             )}
           </button>
         )}
 
-        {!hasChildren && <div className="w-4" />}
+        {!hasChildren && <div className="w-4" aria-hidden="true" />}
 
         <div
           className={cn(

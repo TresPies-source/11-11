@@ -218,22 +218,24 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 10: WCAG Contrast Validation
+### [x] Step 10: WCAG Contrast Validation
 <!-- chat-id: e4566220-fa2d-46c5-a1cf-8ab83d862afa -->
 
 **Objective:** Verify all colors meet WCAG 2.1 AA contrast requirements
 
 **Tools:**
-- Browser DevTools
-- axe DevTools extension
+- Automated script: `scripts/contrast-check.js`
+- WCAG 2.1 relative luminance calculation
 
 **Verification:**
-- [ ] Normal text meets 4.5:1 contrast in light mode
-- [ ] Normal text meets 4.5:1 contrast in dark mode
-- [ ] Large text meets 3:1 contrast in both modes
-- [ ] Focus indicators meet 3:1 contrast
-- [ ] Interactive elements (buttons, links) meet contrast requirements
-- Document any contrast issues in BUGS.md
+- [x] Normal text meets 4.5:1 contrast in light mode
+- [x] Normal text meets 4.5:1 contrast in dark mode
+- [x] Large text meets 3:1 contrast in both modes
+- [x] Focus indicators meet 3:1 contrast
+- [x] Interactive elements (buttons, links) meet contrast requirements
+- [x] All 18 contrast tests passed - full WCAG 2.1 AA compliance
+
+**Completed:** All colors adjusted and validated. Report: `.zenflow/tasks/dark-mode-f-g-sprint-v0-2-4-ee11/wcag-validation-report.md`
 
 ---
 

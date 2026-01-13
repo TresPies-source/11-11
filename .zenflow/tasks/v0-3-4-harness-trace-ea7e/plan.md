@@ -42,6 +42,7 @@ Technical specification created in `spec.md` covering:
 ---
 
 ### [ ] Step: Phase 1 - Core Infrastructure
+<!-- chat-id: ce583431-8e06-4c7a-94c1-85ea8dcf60e3 -->
 
 **Goal:** Establish tracing foundation with types, utilities, and database schema.
 

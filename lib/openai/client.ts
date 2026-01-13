@@ -1,3 +1,15 @@
+/**
+ * @deprecated This client is being phased out in favor of the unified LLM client (lib/llm/client.ts)
+ * 
+ * Migration Guide:
+ * - Use `llmClient.callWithFallback(agentName, messages)` instead of `createChatCompletion()`
+ * - New client supports DeepSeek (primary) + OpenAI (fallback) with automatic routing
+ * - Cost tracking and Harness Trace integration built-in
+ * 
+ * Kept for backward compatibility during v0.3.5 migration.
+ * Will be removed in v0.4.0 after all agents are migrated.
+ */
+
 import OpenAI from 'openai';
 import {
   OpenAIConfig,

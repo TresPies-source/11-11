@@ -12,12 +12,8 @@ import {
   type AgentId,
   type TokenUsage,
 } from './types';
-import { createJSONCompletion, canUseOpenAI } from '../openai/client';
-import {
-  DEFAULT_ROUTING_MODEL,
-  DEFAULT_ROUTING_TIMEOUT,
-  DEFAULT_ROUTING_TEMPERATURE,
-} from '../openai/types';
+import { llmClient, canUseProvider } from '../llm/client';
+import { getModelForAgent } from '../llm/registry';
 import { getDB } from '../pglite/client';
 import { trackRoutingCost, trackRoutingCostSimple } from './cost-tracking';
 import { startSpan, endSpan, logEvent, isTraceActive } from '../harness/trace';
@@ -240,12 +236,13 @@ async function routeQueryWithLLM(
   const prompt = buildRoutingPrompt(userQuery, conversationContext, availableAgents);
 
   try {
-    const { data, usage } = await createJSONCompletion(
+    const routingModel = getModelForAgent('supervisor');
+    const { data, usage } = await llmClient.createJSONCompletion(
+      routingModel,
       [{ role: 'user', content: prompt }],
       {
-        model: DEFAULT_ROUTING_MODEL,
-        temperature: DEFAULT_ROUTING_TEMPERATURE,
-        timeout: DEFAULT_ROUTING_TIMEOUT,
+        temperature: 0.3,
+        timeout: 30000,
       }
     );
 
@@ -353,7 +350,7 @@ export async function routeQuery(
       return result;
     }
 
-    if (!canUseOpenAI()) {
+    if (!canUseProvider('deepseek') && !canUseProvider('openai')) {
       console.log('[Routing] Using keyword-based fallback (no API key)');
       const result = routeQueryKeywordFallback(query, available_agents);
 
@@ -486,11 +483,12 @@ export async function saveRoutingDecision(
   const routing_decision_id = routingDecisionResult.rows[0].id;
 
   if (usage && usage.total_tokens > 0) {
+    const routingModel = getModelForAgent('supervisor');
     const routing_cost_id = await trackRoutingCost(
       routing_decision_id,
       context.session_id,
       usage,
-      DEFAULT_ROUTING_MODEL
+      routingModel
     );
 
     return {

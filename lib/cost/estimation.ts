@@ -31,9 +31,15 @@ function getEncoder(model: string) {
       const encoding = encoding_for_model(model as TiktokenModel);
       encoderCache.set(model, encoding);
     } catch (error) {
-      console.warn(`[Cost Estimation] Model ${model} not supported by tiktoken, falling back to gpt-4o`);
-      const encoding = encoding_for_model('gpt-4o');
-      encoderCache.set(model, encoding);
+      if (model.startsWith('deepseek')) {
+        console.warn(`[Cost Estimation] DeepSeek model ${model} not supported by tiktoken, using gpt-4o encoder`);
+        const encoding = encoding_for_model('gpt-4o');
+        encoderCache.set(model, encoding);
+      } else {
+        console.warn(`[Cost Estimation] Model ${model} not supported by tiktoken, falling back to gpt-4o`);
+        const encoding = encoding_for_model('gpt-4o');
+        encoderCache.set(model, encoding);
+      }
     }
   }
   return encoderCache.get(model)!;

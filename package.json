@@ -22,7 +22,12 @@
     "test:auto-embed": "tsx lib/librarian/auto-embed.test.ts",
     "batch-embed": "tsx scripts/batch-embed-prompts.ts",
     "test:harness": "tsx lib/harness/trace.test.ts",
-    "test:harness-retrieval": "tsx lib/harness/retrieval.test.ts"
+    "test:harness-retrieval": "tsx lib/harness/retrieval.test.ts",
+    "test:llm-registry": "tsx lib/llm/registry.test.ts",
+    "test:llm-client": "tsx lib/llm/client.test.ts",
+    "test:llm": "npm run test:llm-registry && npm run test:llm-client",
+    "test:llm-integration": "tsx __tests__/agents/llm-integration.test.ts",
+    "test:llm-performance": "tsx scripts/test-llm-performance.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

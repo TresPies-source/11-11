@@ -7,6 +7,7 @@ import {
 } from './types';
 import { routeQuery, getDefaultAgent, getAgentById, getAvailableAgents } from './supervisor';
 import { OpenAITimeoutError, OpenAIRateLimitError, OpenAIAuthError } from '../openai/types';
+import { LLMError, LLMAuthError, LLMRateLimitError, LLMTimeoutError } from '../llm/types';
 
 /**
  * Fallback reasons enum for better categorization and logging
@@ -21,6 +22,8 @@ export enum FallbackReason {
   UNKNOWN_ERROR = 'unknown_error',
   EMPTY_QUERY = 'empty_query',
   NO_API_KEY = 'no_api_key',
+  DEEPSEEK_ERROR = 'deepseek_error',
+  MODEL_FALLBACK = 'model_fallback',
 }
 
 /**
@@ -86,6 +89,12 @@ function createFallbackDecision(
       break;
     case FallbackReason.NO_API_KEY:
       reasoning = `No API key configured. Using keyword-based routing to ${defaultAgent.name}.`;
+      break;
+    case FallbackReason.DEEPSEEK_ERROR:
+      reasoning = `DeepSeek API error: ${errorMessage}. Falling back to ${defaultAgent.name}.`;
+      break;
+    case FallbackReason.MODEL_FALLBACK:
+      reasoning = `Model fallback triggered: ${errorMessage}. Falling back to ${defaultAgent.name}.`;
       break;
     case FallbackReason.UNKNOWN_ERROR:
     default:
@@ -247,13 +256,16 @@ export async function routeWithFallback(
     let fallbackReason = FallbackReason.UNKNOWN_ERROR;
     let errorMessage = error instanceof Error ? error.message : String(error);
     
-    if (error instanceof OpenAITimeoutError) {
+    // Handle LLM errors (DeepSeek, OpenAI)
+    if (error instanceof LLMTimeoutError || error instanceof OpenAITimeoutError) {
       fallbackReason = FallbackReason.TIMEOUT;
-    } else if (error instanceof OpenAIRateLimitError) {
+    } else if (error instanceof LLMRateLimitError || error instanceof OpenAIRateLimitError) {
       fallbackReason = FallbackReason.RATE_LIMIT;
-    } else if (error instanceof OpenAIAuthError) {
+    } else if (error instanceof LLMAuthError || error instanceof OpenAIAuthError) {
       fallbackReason = FallbackReason.API_ERROR;
       errorMessage = 'Invalid or missing API key';
+    } else if (error instanceof LLMError) {
+      fallbackReason = FallbackReason.DEEPSEEK_ERROR;
     } else if (error instanceof RoutingError) {
       fallbackReason = FallbackReason.API_ERROR;
     } else if (error instanceof AgentNotFoundError) {

@@ -9,6 +9,14 @@ export const DEFAULT_BUDGET: BudgetConfig = {
 };
 
 export const MODEL_PRICING: Record<string, { input_price_per_1m: number; output_price_per_1m: number }> = {
+  'deepseek-chat': {
+    input_price_per_1m: 0.28,
+    output_price_per_1m: 0.42,
+  },
+  'deepseek-reasoner': {
+    input_price_per_1m: 0.28,
+    output_price_per_1m: 0.42,
+  },
   'gpt-4o': {
     input_price_per_1m: 2.50,
     output_price_per_1m: 10.00,

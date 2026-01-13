@@ -58,6 +58,68 @@ NEXT_PUBLIC_DEV_MODE=true
 
 This allows you to work without setting up OAuth. A mock user session is automatically injected.
 
+### LLM Configuration (DeepSeek + OpenAI)
+
+11-11 uses a **multi-model LLM infrastructure** with DeepSeek 3.2 as the primary provider and OpenAI as fallback:
+
+#### DeepSeek API Setup (Primary Provider)
+
+1. **Get your DeepSeek API key:**
+   - Visit [https://platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+   - Sign up or log in
+   - Create a new API key
+   - Copy the key (starts with `sk-`)
+
+2. **Add to `.env.local`:**
+   ```env
+   DEEPSEEK_API_KEY=sk-your-deepseek-key-here
+   ```
+
+3. **Why DeepSeek?**
+   - **Agent-native design:** Trained on 1,800+ agent environments
+   - **Competitive performance:** Matches GPT-4o on reasoning and agentic tasks
+   - **Cost savings:** 20-35% cheaper than GPT-4o-mini (see table below)
+   - **Two-tier strategy:**
+     - `deepseek-chat` for general agent tasks (supervisor, librarian, cost-guard)
+     - `deepseek-reasoner` for complex reasoning (debugger, multi-step workflows)
+
+#### OpenAI API Setup (Fallback Provider)
+
+1. **Get your OpenAI API key:**
+   - Visit [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+   - Create a new API key
+   - Copy the key (starts with `sk-`)
+
+2. **Add to `.env.local`:**
+   ```env
+   OPENAI_API_KEY=sk-your-openai-key-here
+   ```
+
+3. **When is OpenAI used?**
+   - Automatic fallback when DeepSeek is unavailable (API errors, rate limits)
+   - Embeddings generation (`text-embedding-3-small`) for semantic search
+   - Dev mode keyword-based routing (when no API keys configured)
+
+#### Cost Comparison
+
+| Provider | Model | Input ($/1M tokens) | Output ($/1M tokens) | Best For |
+|----------|-------|---------------------|---------------------|----------|
+| **DeepSeek** (Primary) | deepseek-chat | $0.28 ($0.028 cached*) | $0.42 | General agent tasks |
+| **DeepSeek** (Primary) | deepseek-reasoner | $0.28 ($0.028 cached*) | $0.42 | Complex reasoning |
+| **OpenAI** (Fallback) | gpt-4o-mini | $0.15 | $0.60 | Fallback, embeddings |
+
+*90% cheaper with cache hits! DeepSeek's prompt caching can reduce costs to $0.028/1M tokens for cached inputs.
+
+**Real-world savings:** 20-35% cost reduction compared to using GPT-4o-mini for all tasks.
+
+#### Dev Mode Without API Keys
+
+If you don't configure API keys, the application still works in **dev mode**:
+- Supervisor router uses **keyword-based fallback** (no LLM calls)
+- Query routing based on simple pattern matching
+- Perfect for UI development and testing without API costs
+- Add API keys when ready to test real agent intelligence
+
 ## 📁 Project Structure
 
 ```

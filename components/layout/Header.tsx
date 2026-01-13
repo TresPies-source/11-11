@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Brain, LogIn, User } from "lucide-react";
 import { WorkspaceSelector } from "@/components/shared/WorkspaceSelector";
 import { SyncStatus } from "@/components/shared/SyncStatus";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { useSession } from "@/components/providers/MockSessionProvider";
 import { cn } from "@/lib/utils";
 
@@ -66,6 +67,8 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
+        
         <SyncStatus />
 
         <div className="h-6 w-px bg-gray-200 hidden sm:block" />

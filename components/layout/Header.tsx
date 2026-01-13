@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Brain, LogIn, User } from "lucide-react";
+import { Brain, LogIn, User, DollarSign } from "lucide-react";
 import { WorkspaceSelector } from "@/components/shared/WorkspaceSelector";
 import { SyncStatus } from "@/components/shared/SyncStatus";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
@@ -20,6 +20,7 @@ export function Header() {
 
   const navLinks = [
     { href: "/librarian", label: "Librarian" },
+    { href: "/cost-dashboard", label: "Cost Dashboard", icon: DollarSign },
   ];
 
   return (
@@ -44,17 +45,19 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5",
                   isActive
                     ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 )}
               >
+                {Icon && <Icon className="h-4 w-4" />}
                 {link.label}
               </Link>
             );

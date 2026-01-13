@@ -135,3 +135,71 @@ export interface CritiqueUpdate {
   feedback?: CritiqueFeedbackJson | null;
   created_at?: string;
 }
+
+export type OperationType = 'routing' | 'agent_execution' | 'search' | 'critique' | 'other';
+
+export interface CostRecordRow {
+  id: string;
+  user_id: string;
+  session_id: string | null;
+  query_id: string | null;
+  model: string;
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  cost_usd: number;
+  operation_type: OperationType;
+  created_at: string;
+}
+
+export interface CostRecordInsert {
+  id?: string;
+  user_id: string;
+  session_id?: string | null;
+  query_id?: string | null;
+  model: string;
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  cost_usd: number;
+  operation_type: OperationType;
+  created_at?: string;
+}
+
+export interface SessionRow {
+  id: string;
+  user_id: string;
+  total_tokens: number;
+  total_cost_usd: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SessionInsert {
+  id?: string;
+  user_id: string;
+  total_tokens?: number;
+  total_cost_usd?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface UserMonthlyUsageRow {
+  id: string;
+  user_id: string;
+  month: string;
+  total_tokens: number;
+  total_cost_usd: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserMonthlyUsageInsert {
+  id?: string;
+  user_id: string;
+  month: string;
+  total_tokens?: number;
+  total_cost_usd?: number;
+  created_at?: string;
+  updated_at?: string;
+}

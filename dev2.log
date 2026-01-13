@@ -1,0 +1,107 @@
+
+> 11-11@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+ ⚠ Port 3002 is in use, trying 3003 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3003
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1757ms
+ ✓ Compiled /middleware in 229ms (213 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+ ○ Compiling /api/cost/budget ...
+ ✓ Compiled /api/cost/budget in 976ms (217 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+[Cost Budget API] Running in dev mode with mock authentication
+[PGlite] Initializing database at: memory://
+[PGlite] Environment: Server
+[PGlite] First run detected - initializing schema...
+[PGlite] Initializing database schema...
+[PGlite] Error initializing schema: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received an instance of URL
+    at open (node:internal/fs/promises:636:10)
+    at Module.readFile (node:internal/fs/promises:1243:20)
+    at Er (webpack-internal:///(rsc)/./node_modules/@electric-sql/pglite/dist/chunk-3WWIVTCY.js:29:29473) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+[Cost Budget API] Error: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received an instance of URL
+    at open (node:internal/fs/promises:636:10)
+    at Module.readFile (node:internal/fs/promises:1243:20)
+    at Er (webpack-internal:///(rsc)/./node_modules/@electric-sql/pglite/dist/chunk-3WWIVTCY.js:29:29473) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+ GET /api/cost/budget 500 in 1112ms
+TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received an instance of URL
+    at open (node:internal/fs/promises:636:10)
+    at Module.readFile (node:internal/fs/promises:1243:20)
+    at Er (webpack-internal:///(rsc)/./node_modules/@electric-sql/pglite/dist/chunk-3WWIVTCY.js:29:29473) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+ ⨯ unhandledRejection: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received an instance of URL
+    at open (node:internal/fs/promises:636:10)
+    at Module.readFile (node:internal/fs/promises:1243:20)
+    at Er (webpack-internal:///(rsc)/./node_modules/@electric-sql/pglite/dist/chunk-3WWIVTCY.js:29:29473) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+ ⨯ unhandledRejection: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string or an instance of Buffer or URL. Received an instance of URL
+    at open (node:internal/fs/promises:636:10)
+    at Module.readFile (node:internal/fs/promises:1243:20)
+    at Er (webpack-internal:///(rsc)/./node_modules/@electric-sql/pglite/dist/chunk-3WWIVTCY.js:29:29473) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+ ✓ Compiled in 192ms (217 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+[Cost Budget API] Running in dev mode with mock authentication
+ GET /api/cost/budget 200 in 71ms
+ ○ Compiling /api/cost/records ...
+ ✓ Compiled /api/cost/records in 639ms (219 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+[Cost Records API] Running in dev mode with mock authentication
+ GET /api/cost/records 200 in 723ms
+ ✓ Compiled /api/cost/trends in 89ms (221 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+[Cost Trends API] Running in dev mode with mock authentication
+ GET /api/cost/trends 200 in 143ms
+ ✓ Compiled /api/cost/estimate in 147ms (303 modules)
+[NextAuth] Running in dev mode - authentication may use mock tokens
+[Auth] Migration to v5 successful
+[Cost Estimate API] Running in dev mode with mock authentication
+[Cost Estimate API] Error: SyntaxError: Unterminated string in JSON at position 25 (line 1 column 26)
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:5738:19)
+    at successSteps (node:internal/deps/undici/undici:5719:27)
+    at fullyReadBody (node:internal/deps/undici/undici:4609:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async consumeBody (node:internal/deps/undici/undici:5728:7)
+    at async POST (webpack-internal:///(rsc)/./app/api/cost/estimate/route.ts:41:22)
+    at async C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:57228
+    at async eT.execute (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:46851)
+    at async eT.handle (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:58760)
+    at async doRender (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:1496:28)
+    at async DevServer.renderPageComponent (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:1962:32)
+    at async DevServer.pipeImpl (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\base-server.js:818:17)
+    at async C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\lib\router-server.js:359:24)
+    at async requestHandlerImpl (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\cruzr\.zenflow\worktrees\v0-3-2-cost-guard-0-3-2-a8ca\node_modules\next\dist\server\lib\start-server.js:141:13)
+ POST /api/cost/estimate 500 in 220ms
+[Cost Estimate API] Running in dev mode with mock authentication
+[Cost Estimation] Token estimation took 154.71ms (target: <50ms)
+ POST /api/cost/estimate 200 in 165ms
+ ✓ Compiled in 68ms

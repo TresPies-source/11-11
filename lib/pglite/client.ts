@@ -2,8 +2,13 @@ import { PGlite } from '@electric-sql/pglite';
 import { initializeSchema, checkIfInitialized, MIGRATION_SQL } from './schema';
 import { seedDatabase } from './seed';
 import { applyMigration002 } from './migrations/002_add_status_history';
+import { applyMigration003 } from './migrations/003_add_cost_guard';
 
-const DB_PATH = 'idb://11-11-db';
+// Detect if we're running in browser or server
+const isBrowser = typeof window !== 'undefined';
+
+// Use IndexedDB in browser, memory in server (Next.js API routes)
+const DB_PATH = isBrowser ? 'idb://11-11-db' : 'memory://';
 export const DEFAULT_USER_ID = 'dev-user';
 
 let dbInstance: PGlite | null = null;
@@ -20,6 +25,7 @@ async function initializeDatabase(): Promise<PGlite> {
 
   initPromise = (async () => {
     console.log('[PGlite] Initializing database at:', DB_PATH);
+    console.log('[PGlite] Environment:', isBrowser ? 'Browser' : 'Server');
     
     const db = new PGlite(DB_PATH);
     
@@ -30,6 +36,10 @@ async function initializeDatabase(): Promise<PGlite> {
       await initializeSchema(db);
       console.log('[PGlite] Schema initialization complete');
       
+      console.log('[PGlite] Running initial migrations...');
+      await applyMigration003(db);
+      console.log('[PGlite] Initial migrations complete');
+      
       console.log('[PGlite] Seeding database with sample data...');
       await seedDatabase(db, DEFAULT_USER_ID);
       console.log('[PGlite] Database seeding complete');
@@ -38,6 +48,7 @@ async function initializeDatabase(): Promise<PGlite> {
       
       console.log('[PGlite] Running migrations...');
       await applyMigration002(db);
+      await applyMigration003(db);
       await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }

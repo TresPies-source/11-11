@@ -42,21 +42,21 @@ Created comprehensive technical specification at `spec.md` with:
 
 ---
 
-### [ ] Step 1: Environment & Dependencies Setup
+### [x] Step 1: Environment & Dependencies Setup
 <!-- chat-id: 6df12a95-74ce-41dd-bdd8-9228c5806201 -->
 
 **Goal:** Install required dependencies and configure environment
 
 **Tasks:**
-- [ ] Add `openai` package to dependencies
-- [ ] Add `zod` package for schema validation
-- [ ] Update `.env.example` with `OPENAI_API_KEY`
-- [ ] Create `.env.local` if needed (dev mode works without API key)
-- [ ] Run `npm install`
+- [x] Add `openai` package to dependencies
+- [x] Add `zod` package for schema validation
+- [x] Update `.env.example` with `OPENAI_API_KEY`
+- [x] Create `.env.local` if needed (dev mode works without API key)
+- [x] Run `npm install`
 
 **Verification:**
-- `npm run build` succeeds
-- No TypeScript errors
+- [x] `npm run build` succeeds
+- [x] No TypeScript errors
 
 ---
 

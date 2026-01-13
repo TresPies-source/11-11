@@ -125,15 +125,22 @@ export async function createPrompt(
   const db = await getDB();
   
   const result = await db.query(`
-    INSERT INTO prompts (user_id, title, content, status, drive_file_id)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO prompts (
+      user_id, title, content, status, drive_file_id,
+      published_at, visibility, author_name, author_id
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *
   `, [
     insert.user_id,
     insert.title,
     insert.content,
     insert.status,
-    insert.drive_file_id || null
+    insert.drive_file_id || null,
+    insert.published_at || null,
+    insert.visibility || 'private',
+    insert.author_name || null,
+    insert.author_id || insert.user_id
   ]);
 
   return result.rows[0] as PromptRow;
@@ -164,6 +171,22 @@ export async function updatePrompt(
   if (update.drive_file_id !== undefined) {
     fields.push(`drive_file_id = $${paramCount++}`);
     values.push(update.drive_file_id);
+  }
+  if (update.published_at !== undefined) {
+    fields.push(`published_at = $${paramCount++}`);
+    values.push(update.published_at);
+  }
+  if (update.visibility !== undefined) {
+    fields.push(`visibility = $${paramCount++}`);
+    values.push(update.visibility);
+  }
+  if (update.author_name !== undefined) {
+    fields.push(`author_name = $${paramCount++}`);
+    values.push(update.author_name);
+  }
+  if (update.author_id !== undefined) {
+    fields.push(`author_id = $${paramCount++}`);
+    values.push(update.author_id);
   }
 
   if (fields.length === 0) {
@@ -264,10 +287,11 @@ export async function syncDriveFile(
     
     const updateResult = await db.query(`
       UPDATE prompts
-      SET title = $1, content = $2, status = $3, updated_at = $4
-      WHERE id = $5
+      SET title = $1, content = $2, status = $3, updated_at = $4,
+          author_id = COALESCE(author_id, $5)
+      WHERE id = $6
       RETURNING *
-    `, [title, parsedContent, status, driveFile.modifiedTime, existingPrompt.id]);
+    `, [title, parsedContent, status, driveFile.modifiedTime, userId, existingPrompt.id]);
 
     if (metadata.description || metadata.tags || metadata.author || metadata.version) {
       await db.query(`
@@ -293,8 +317,8 @@ export async function syncDriveFile(
     return updateResult.rows[0] as PromptRow;
   } else {
     const insertResult = await db.query(`
-      INSERT INTO prompts (user_id, title, content, status, drive_file_id, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO prompts (user_id, title, content, status, drive_file_id, author_id, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `, [
       userId,
@@ -302,6 +326,7 @@ export async function syncDriveFile(
       parsedContent,
       status,
       driveFile.id,
+      userId,
       driveFile.modifiedTime,
       driveFile.modifiedTime
     ]);

@@ -1,5 +1,5 @@
 import { PGlite } from '@electric-sql/pglite';
-import { initializeSchema, checkIfInitialized } from './schema';
+import { initializeSchema, checkIfInitialized, MIGRATION_SQL } from './schema';
 import { seedDatabase } from './seed';
 import { applyMigration002 } from './migrations/002_add_status_history';
 
@@ -38,6 +38,7 @@ async function initializeDatabase(): Promise<PGlite> {
       
       console.log('[PGlite] Running migrations...');
       await applyMigration002(db);
+      await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }
     

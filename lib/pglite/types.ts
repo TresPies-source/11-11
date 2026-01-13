@@ -1,4 +1,5 @@
 export type PromptStatus = 'draft' | 'active' | 'saved' | 'archived';
+export type PromptVisibility = 'private' | 'unlisted' | 'public';
 
 export interface StatusHistoryEntry {
   from: PromptStatus;
@@ -15,6 +16,10 @@ export interface PromptRow {
   status: PromptStatus;
   status_history: StatusHistoryEntry[];
   drive_file_id: string | null;
+  published_at: string | null;
+  visibility: PromptVisibility;
+  author_name: string | null;
+  author_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -26,6 +31,10 @@ export interface PromptInsert {
   content: string;
   status: PromptStatus;
   drive_file_id?: string | null;
+  published_at?: string | null;
+  visibility?: PromptVisibility;
+  author_name?: string | null;
+  author_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -37,6 +46,10 @@ export interface PromptUpdate {
   content?: string;
   status?: PromptStatus;
   drive_file_id?: string | null;
+  published_at?: string | null;
+  visibility?: PromptVisibility;
+  author_name?: string | null;
+  author_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }

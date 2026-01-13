@@ -274,10 +274,10 @@ export async function seedDatabase(db: any, userId: string): Promise<void> {
 
   for (const seed of SEED_PROMPTS) {
     const promptResult = await db.query(`
-      INSERT INTO prompts (user_id, title, content, status)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO prompts (user_id, title, content, status, author_id, visibility)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id
-    `, [userId, seed.title, seed.content, seed.status]);
+    `, [userId, seed.title, seed.content, seed.status, userId, 'private']);
 
     const promptId = promptResult.rows[0].id;
 

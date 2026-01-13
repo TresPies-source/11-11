@@ -95,11 +95,63 @@ CREATE TRIGGER update_prompts_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 `;
 
+export const MIGRATION_SQL = `
+-- ============================================================
+-- MIGRATION: Add public prompts support (v0.2.5)
+-- ============================================================
+
+-- Add new columns if they don't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'prompts' AND column_name = 'published_at'
+  ) THEN
+    ALTER TABLE prompts ADD COLUMN published_at TIMESTAMPTZ;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'prompts' AND column_name = 'visibility'
+  ) THEN
+    ALTER TABLE prompts ADD COLUMN visibility TEXT NOT NULL DEFAULT 'private' 
+      CHECK (visibility IN ('private', 'unlisted', 'public'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'prompts' AND column_name = 'author_name'
+  ) THEN
+    ALTER TABLE prompts ADD COLUMN author_name TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'prompts' AND column_name = 'author_id'
+  ) THEN
+    ALTER TABLE prompts ADD COLUMN author_id TEXT;
+  END IF;
+END $$;
+
+-- Backfill author_id from user_id for existing prompts
+UPDATE prompts 
+SET author_id = user_id 
+WHERE author_id IS NULL;
+
+-- Create indexes if they don't exist
+CREATE INDEX IF NOT EXISTS idx_prompts_visibility_published ON prompts(visibility, published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_prompts_author_id ON prompts(author_id);
+`;
+
 export async function initializeSchema(db: any): Promise<void> {
   try {
     console.log('[PGlite] Initializing database schema...');
     await db.exec(SCHEMA_SQL);
     console.log('[PGlite] Schema initialized successfully');
+    
+    console.log('[PGlite] Running migrations...');
+    await db.exec(MIGRATION_SQL);
+    console.log('[PGlite] Migrations completed successfully');
   } catch (error) {
     console.error('[PGlite] Error initializing schema:', error);
     throw error;

@@ -138,8 +138,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
     await openTab(node);
   }, [openTab]);
   return (
-    <div className="h-full bg-white border-r border-gray-200 flex flex-col">
-      <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4">
+    <div className="h-full bg-background border-r border-border flex flex-col">
+      <div className="h-14 border-b border-border flex items-center justify-between px-4">
         <AnimatePresence mode="wait">
           {!collapsed && (
             <motion.div
@@ -150,8 +150,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
               transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
               className="flex items-center gap-2"
             >
-              <FolderOpen className="w-5 h-5 text-blue-600" />
-              <span className="font-semibold text-gray-900">Files</span>
+              <FolderOpen className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-foreground">Files</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -163,7 +163,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
             transition={{ delay: 0.1 }}
             className="flex items-center justify-center w-full"
           >
-            <FolderOpen className="w-5 h-5 text-blue-600" />
+            <FolderOpen className="w-5 h-5 text-primary" />
           </motion.div>
         )}
       </div>
@@ -180,13 +180,13 @@ export function Sidebar({ collapsed }: SidebarProps) {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                  <Loader2 className="w-6 h-6 text-primary animate-spin" />
                 </div>
               ) : error ? (
                 <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
                   <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
-                  <p className="text-sm text-gray-600 mb-1">Failed to load files</p>
-                  <p className="text-xs text-gray-500">Using local data</p>
+                  <p className="text-sm text-muted-foreground mb-1">Failed to load files</p>
+                  <p className="text-xs text-muted-foreground">Using local data</p>
                 </div>
               ) : (
                 <FileTree
@@ -207,11 +207,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
               exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-3 pt-2"
             >
-              <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
+              <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
+                  <Loader2 className="w-4 h-4 text-primary animate-spin" />
                 ) : (
-                  <div className="w-3 h-3 rounded-full bg-blue-600" />
+                  <div className="w-3 h-3 rounded-full bg-primary" />
                 )}
               </div>
             </motion.div>

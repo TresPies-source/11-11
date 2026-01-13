@@ -87,9 +87,9 @@ function FileTreeNode({
   const getSourceIcon = () => {
     switch (node.source) {
       case "google-drive":
-        return <Cloud className="w-3 h-3 text-blue-500" />;
+        return <Cloud className="w-3 h-3 text-blue-500 dark:text-blue-400" />;
       case "github":
-        return <GitBranch className="w-3 h-3 text-gray-700" />;
+        return <GitBranch className="w-3 h-3 text-gray-700 dark:text-gray-300" />;
       default:
         return null;
     }
@@ -100,8 +100,8 @@ function FileTreeNode({
       <motion.div
         className={cn(
           "flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer group transition-colors",
-          "hover:bg-gray-100",
-          isSelected && "bg-blue-50 hover:bg-blue-100"
+          "hover:bg-gray-100 dark:hover:bg-gray-800",
+          isSelected && "bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/40"
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={handleClick}
@@ -112,30 +112,30 @@ function FileTreeNode({
           <div className="flex items-center gap-1 flex-shrink-0">
             {hasChildren ? (
               isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-gray-600" />
+                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               ) : (
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               )
             ) : (
               <div className="w-4 h-4" />
             )}
             {isExpanded ? (
-              <FolderOpen className="w-4 h-4 text-blue-600" />
+              <FolderOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             ) : (
-              <Folder className="w-4 h-4 text-blue-600" />
+              <Folder className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             )}
           </div>
         ) : (
           <div className="flex items-center gap-1 flex-shrink-0">
             <div className="w-4 h-4" />
-            <File className="w-4 h-4 text-gray-500" />
+            <File className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           </div>
         )}
 
         <span
           className={cn(
             "text-sm truncate flex-1",
-            isSelected ? "text-blue-900 font-medium" : "text-gray-700"
+            isSelected ? "text-blue-900 font-medium dark:text-blue-100" : "text-gray-700 dark:text-gray-300"
           )}
         >
           {node.name}
@@ -146,7 +146,7 @@ function FileTreeNode({
             <div className="w-2 h-2 rounded-full bg-blue-500" title="Open in tab" />
           )}
           {node.isModified && (
-            <div className="w-2 h-2 rounded-full bg-orange-500" title="Modified" />
+            <div className="w-2 h-2 rounded-full bg-orange-500 dark:bg-orange-400" title="Modified" />
           )}
           {getSourceIcon()}
         </div>

@@ -71,29 +71,29 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-6 w-6 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-6 w-6 text-red-400 dark:text-red-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-red-800 font-medium text-base mb-2">
+              <h3 className="text-red-800 dark:text-red-300 font-medium text-base mb-2">
                 Something went wrong
               </h3>
-              <p className="text-red-600 text-sm mb-3">
+              <p className="text-red-600 dark:text-red-400 text-sm mb-3">
                 {this.state.error.message || "An unexpected error occurred"}
               </p>
               {process.env.NODE_ENV === "development" && this.state.errorInfo && (
                 <details className="mb-3">
-                  <summary className="text-red-700 text-xs font-medium cursor-pointer hover:text-red-800">
+                  <summary className="text-red-700 dark:text-red-400 text-xs font-medium cursor-pointer hover:text-red-800 dark:hover:text-red-300">
                     Error details (development only)
                   </summary>
-                  <pre className="mt-2 text-xs text-red-700 overflow-auto bg-red-100 p-2 rounded">
+                  <pre className="mt-2 text-xs text-red-700 dark:text-red-400 overflow-auto bg-red-100 dark:bg-red-900/30 p-2 rounded">
                     {this.state.errorInfo.componentStack}
                   </pre>
                 </details>
               )}
               <button
                 onClick={this.reset}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 dark:bg-red-700 text-white rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors text-sm font-medium"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Try Again

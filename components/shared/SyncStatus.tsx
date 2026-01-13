@@ -139,7 +139,7 @@ export function SyncStatus({ status }: SyncStatusProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 2 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="text-xs text-gray-600 hidden sm:inline"
+            className="text-xs text-gray-600 dark:text-gray-400 hidden sm:inline"
           >
             {getDriveStatusText()}
           </motion.span>
@@ -155,7 +155,7 @@ export function SyncStatus({ status }: SyncStatusProps) {
                 ease: "easeOut",
               }}
               onClick={handleRetry}
-              className="ml-1 p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="ml-1 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               aria-label="Retry sync"
             >
               <motion.div
@@ -204,7 +204,7 @@ export function SyncStatus({ status }: SyncStatusProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 2 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="text-xs text-gray-600 hidden sm:inline"
+            className="text-xs text-gray-600 dark:text-gray-400 hidden sm:inline"
           >
             {getStatusText(
               mockStatus.github.connected,

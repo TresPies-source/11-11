@@ -131,6 +131,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 6: Update Monaco Editor Theme
+<!-- chat-id: 64d41c03-8cf6-4a00-a89d-cca340e9290e -->
 
 **Objective:** Synchronize Monaco editor theme with application theme
 

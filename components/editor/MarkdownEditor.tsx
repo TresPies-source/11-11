@@ -4,10 +4,12 @@ import { useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { useRepository } from "@/hooks/useRepository";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useTheme } from "@/hooks/useTheme";
 
 export function MarkdownEditor() {
   const { activeTab, updateTabContent, saveTab } = useRepository();
   const debouncedContent = useDebounce(activeTab?.content || "", 500);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (activeTab && debouncedContent !== undefined) {
@@ -37,7 +39,7 @@ export function MarkdownEditor() {
       key={activeTab.id}
       height="100%"
       language="markdown"
-      theme="vs-light"
+      theme={theme === "dark" ? "vs-dark" : "vs"}
       value={activeTab.content}
       onChange={handleEditorChange}
       options={{

@@ -1,21 +1,45 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { MarkdownEditor } from "./MarkdownEditor";
+import { TabBar } from "./TabBar";
+import { TabDropdown } from "./TabDropdown";
 import { useRepository } from "@/hooks/useRepository";
 
 export function EditorView() {
-  const { activeFile, isDirty } = useRepository();
+  const { tabs, activeTabId, switchTab, closeTab } = useRepository();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    
+    setIsMobile(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      <div className="h-12 border-b border-gray-200 px-4 flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-700">
-          {activeFile?.name || "No file selected"}
-        </span>
-        {isDirty && (
-          <div className="w-2 h-2 rounded-full bg-orange-500" title="Unsaved changes" />
-        )}
-      </div>
+      {isMobile ? (
+        <TabDropdown
+          tabs={tabs}
+          activeTabId={activeTabId}
+          onSwitch={switchTab}
+          onClose={closeTab}
+        />
+      ) : (
+        <TabBar
+          tabs={tabs}
+          activeTabId={activeTabId}
+          onSwitch={switchTab}
+          onClose={closeTab}
+        />
+      )}
       <div className="flex-1 overflow-hidden">
         <MarkdownEditor />
       </div>

@@ -215,7 +215,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 9: Integrate TabBar into EditorView
+### [x] Step 9: Integrate TabBar into EditorView
 <!-- chat-id: 268b2603-d9db-4a75-bfa6-8c022a70b83b -->
 
 **Objective:** Replace single-file header with TabBar.

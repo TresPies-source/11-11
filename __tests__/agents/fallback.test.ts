@@ -104,7 +104,7 @@ async function runTests() {
   const decision5 = await routeWithFallback(context5);
   const validAgents = [AGENT_IDS.DOJO, AGENT_IDS.LIBRARIAN];
   assert(
-    validAgents.includes(decision5.agent_id),
+    validAgents.includes(decision5.agent_id as typeof AGENT_IDS.DOJO | typeof AGENT_IDS.LIBRARIAN),
     'Search query should route to Librarian or Dojo'
   );
 
@@ -119,7 +119,7 @@ async function runTests() {
   const decision6 = await routeWithFallback(context6);
   const validDebugAgents = [AGENT_IDS.DOJO, AGENT_IDS.DEBUGGER];
   assert(
-    validDebugAgents.includes(decision6.agent_id),
+    validDebugAgents.includes(decision6.agent_id as typeof AGENT_IDS.DOJO | typeof AGENT_IDS.DEBUGGER),
     'Conflict query should route to Debugger or Dojo'
   );
 
@@ -158,7 +158,7 @@ async function runTests() {
   };
   const decision8 = await routeWithFallback(context8);
   const allAgents = [AGENT_IDS.DOJO, AGENT_IDS.LIBRARIAN, AGENT_IDS.DEBUGGER];
-  assert(allAgents.includes(decision8.agent_id), 'Should handle very long queries');
+  assert(allAgents.includes(decision8.agent_id as typeof AGENT_IDS.DOJO | typeof AGENT_IDS.LIBRARIAN | typeof AGENT_IDS.DEBUGGER), 'Should handle very long queries');
 
   // Test 12: Long conversation context
   console.log('\n12. Testing long conversation context...');
@@ -216,7 +216,7 @@ async function runTests() {
     available_agents: availableAgents,
   };
   const decision13 = await routeWithFallback(context13);
-  assert(allAgents.includes(decision13.agent_id), 'Should handle mixed intent');
+  assert(allAgents.includes(decision13.agent_id as typeof AGENT_IDS.DOJO | typeof AGENT_IDS.LIBRARIAN | typeof AGENT_IDS.DEBUGGER), 'Should handle mixed intent');
 
   // Summary
   console.log(`\n${'='.repeat(50)}`);

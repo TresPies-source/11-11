@@ -69,7 +69,7 @@ Technical specification created in `spec.md` covering:
 
 ---
 
-### [ ] Step: Phase 2 - Retrieval & API Routes
+### [x] Step: Phase 2 - Retrieval & API Routes
 <!-- chat-id: 3a1b3cfe-c914-40a4-8a0b-e58b6a1c87a5 -->
 
 **Goal:** Enable trace retrieval via database queries and REST API.
@@ -83,11 +83,11 @@ Technical specification created in `spec.md` covering:
 6. Test API endpoints manually (curl/Postman) or with integration tests
 
 **Verification:**
-- [ ] Retrieval functions return correct data from database
-- [ ] API endpoints respond with proper JSON format
-- [ ] 404 errors for missing traces
-- [ ] Auth validation works (401/403 for unauthorized)
-- [ ] TypeScript compilation passes
+- [x] Retrieval functions return correct data from database
+- [x] API endpoints respond with proper JSON format
+- [x] 404 errors for missing traces
+- [x] Auth validation works (401/403 for unauthorized)
+- [x] TypeScript compilation passes
 
 **Deliverables:**
 - Working API endpoints for trace retrieval

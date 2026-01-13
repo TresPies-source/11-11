@@ -8,6 +8,12 @@ export {
   isTraceActive,
 } from './trace';
 
+export {
+  getTrace,
+  getSessionTraces,
+  getUserTraces,
+} from './retrieval';
+
 export type {
   HarnessTrace,
   HarnessEvent,

@@ -24,11 +24,11 @@ export function CommonsView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Globe className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Globe className="h-8 w-8 text-blue-600 dark:text-blue-500" />
             ✨ The Global Commons
           </h1>
-          <p className="text-gray-600 mt-2">Discover prompts shared by the community</p>
+          <p className="text-muted-foreground mt-2">Discover prompts shared by the community</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -39,11 +39,11 @@ export function CommonsView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Globe className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Globe className="h-8 w-8 text-blue-600 dark:text-blue-500" />
             ✨ The Global Commons
           </h1>
-          <p className="text-gray-600 mt-2">Discover prompts shared by the community</p>
+          <p className="text-muted-foreground mt-2">Discover prompts shared by the community</p>
         </div>
         <ErrorState
           title="Unable to load prompts"
@@ -59,18 +59,18 @@ export function CommonsView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Globe className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Globe className="h-8 w-8 text-blue-600 dark:text-blue-500" />
             ✨ The Global Commons
           </h1>
-          <p className="text-gray-600 mt-2">Discover prompts shared by the community</p>
+          <p className="text-muted-foreground mt-2">Discover prompts shared by the community</p>
         </div>
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-          <Globe className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-700 font-medium text-lg mb-2">
+        <div className="bg-secondary/50 border border-border rounded-lg p-12 text-center">
+          <Globe className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-foreground font-medium text-lg mb-2">
             No public prompts yet
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Be the first to share! Mark your prompts as public: true in frontmatter
           </p>
         </div>
@@ -81,11 +81,11 @@ export function CommonsView() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <Globe className="h-8 w-8" />
+        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+          <Globe className="h-8 w-8 text-blue-600 dark:text-blue-500" />
           ✨ The Global Commons
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground mt-2">
           Discover {prompts.length} public prompt{prompts.length !== 1 ? 's' : ''}
         </p>
       </div>

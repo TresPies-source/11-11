@@ -41,11 +41,11 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Sprout className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
             🌺 My Greenhouse
           </h1>
-          <p className="text-gray-600 mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -56,11 +56,11 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Sprout className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
             🌺 My Greenhouse
           </h1>
-          <p className="text-gray-600 mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
         </div>
         <ErrorState
           title="Unable to load prompts"
@@ -76,18 +76,18 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Sprout className="h-8 w-8" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
             🌺 My Greenhouse
           </h1>
-          <p className="text-gray-600 mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
         </div>
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-          <Sprout className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-700 font-medium text-lg mb-2">
+        <div className="bg-secondary/50 border border-border rounded-lg p-12 text-center">
+          <Sprout className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-foreground font-medium text-lg mb-2">
             Your greenhouse is empty
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Create your first prompt in the 03_Prompts folder or fork one from the Commons
           </p>
         </div>
@@ -98,11 +98,11 @@ export function GreenhouseView() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <Sprout className="h-8 w-8" />
+        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+          <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
           🌺 My Greenhouse
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground mt-2">
           Your cultivated collection of {prompts.length} prompt{prompts.length !== 1 ? 's' : ''}
         </p>
       </div>
@@ -117,12 +117,12 @@ export function GreenhouseView() {
 
       {selectedTags.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-sm text-gray-600 font-medium">Filtering by:</span>
+          <span className="text-sm text-muted-foreground font-medium">Filtering by:</span>
           {selectedTags.map((tag) => (
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-200 active:scale-95 transition-all duration-100"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/70 active:scale-95 transition-all duration-100"
               aria-label={`Remove filter: ${tag}`}
             >
               {tag}
@@ -131,7 +131,7 @@ export function GreenhouseView() {
           ))}
           <button
             onClick={clearTagFilters}
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
+            className="text-sm text-muted-foreground hover:text-foreground underline"
             aria-label="Clear all tag filters"
           >
             Clear all

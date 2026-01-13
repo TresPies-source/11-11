@@ -121,10 +121,10 @@ export const SeedlingCard = memo(function SeedlingCard({
       aria-label={`Seedling prompt: ${title}. Score: ${critiqueScore} out of 100. Status: ${prompt.status}${isProcessing ? '. Currently processing.' : ''}`}
       tabIndex={isProcessing ? -1 : 0}
       className={cn(
-        "group bg-white rounded-lg border border-gray-200 p-4 transition-all duration-200 flex flex-col h-full focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2",
+        "group bg-card rounded-lg border border-border p-4 transition-all duration-200 flex flex-col h-full focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background",
         isProcessing 
-          ? "opacity-60 cursor-wait border-green-400" 
-          : "hover:shadow-lg hover:border-green-300 cursor-pointer"
+          ? "opacity-60 cursor-wait border-green-400 dark:border-green-600" 
+          : "hover:shadow-lg hover:border-green-300 dark:hover:border-green-700 cursor-pointer"
       )}
       variants={cardVariants}
       initial="hidden"
@@ -150,15 +150,15 @@ export const SeedlingCard = memo(function SeedlingCard({
               transition={{ duration: 0.2 }}
               aria-hidden="true"
             >
-              <Sprout className="h-5 w-5 text-green-600 flex-shrink-0" />
+              <Sprout className="h-5 w-5 text-green-600 dark:text-green-500 flex-shrink-0" />
             </motion.div>
-            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2">
+            <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-2">
               {title}
             </h3>
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3">{description}</p>
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{description}</p>
 
         <div className="mb-3 space-y-2">
           <CritiqueScore score={critiqueScore} size="sm" showLabel={true} />
@@ -170,7 +170,7 @@ export const SeedlingCard = memo(function SeedlingCard({
                   e.stopPropagation();
                   setShowDetails(!showDetails);
                 }}
-                className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded transition-colors"
                 aria-expanded={showDetails}
                 aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
               >
@@ -196,7 +196,7 @@ export const SeedlingCard = memo(function SeedlingCard({
         </div>
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
+      <div className="mt-auto pt-3 border-t border-border space-y-2">
         {prompt.status === 'active' && onSaveToGreenhouse ? (
           <button
             onClick={handleSaveClick}
@@ -206,8 +206,8 @@ export const SeedlingCard = memo(function SeedlingCard({
             className={cn(
               "w-full flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-md transition-all duration-100 text-sm font-medium",
               isProcessing
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-green-600 text-white hover:bg-green-700 active:scale-95 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                : "bg-green-600 dark:bg-green-600 text-white hover:bg-green-700 dark:hover:bg-green-700 active:scale-95 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background"
             )}
           >
             <span className="text-base" aria-hidden="true">🌺</span>
@@ -219,22 +219,22 @@ export const SeedlingCard = memo(function SeedlingCard({
           const getButtonStyles = () => {
             if (transition.to === 'active') {
               return {
-                bg: "bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-500",
+                bg: "bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 focus-visible:ring-blue-500",
                 icon: <Play className="h-4 w-4" />,
               };
             } else if (transition.to === 'archived') {
               return {
-                bg: "bg-amber-600 hover:bg-amber-700 focus-visible:ring-amber-500",
+                bg: "bg-amber-600 dark:bg-amber-600 hover:bg-amber-700 dark:hover:bg-amber-700 focus-visible:ring-amber-500",
                 icon: <Archive className="h-4 w-4" />,
               };
             } else if (transition.to === 'draft') {
               return {
-                bg: "bg-gray-600 hover:bg-gray-700 focus-visible:ring-gray-500",
+                bg: "bg-gray-600 dark:bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 focus-visible:ring-gray-500",
                 icon: <FileText className="h-4 w-4" />,
               };
             }
             return {
-              bg: "bg-gray-600 hover:bg-gray-700 focus-visible:ring-gray-500",
+              bg: "bg-gray-600 dark:bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 focus-visible:ring-gray-500",
               icon: null,
             };
           };
@@ -250,8 +250,8 @@ export const SeedlingCard = memo(function SeedlingCard({
               className={cn(
                 "w-full flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-md transition-all duration-100 text-sm font-medium",
                 isProcessing
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : `${styles.bg} text-white active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2`
+                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                  : `${styles.bg} text-white active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background`
               )}
             >
               {styles.icon}

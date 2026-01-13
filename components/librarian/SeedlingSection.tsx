@@ -64,11 +64,11 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
             Seedlings
           </h2>
-          <p className="text-gray-600 mt-1">Active prompts in development</p>
+          <p className="text-muted-foreground mt-1">Active prompts in development</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -79,11 +79,11 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
             Seedlings
           </h2>
-          <p className="text-gray-600 mt-1">Active prompts in development</p>
+          <p className="text-muted-foreground mt-1">Active prompts in development</p>
         </div>
         <ErrorState
           title="Unable to load seedlings"
@@ -99,18 +99,18 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
             Seedlings
           </h2>
-          <p className="text-gray-600 mt-1">Active prompts in development</p>
+          <p className="text-muted-foreground mt-1">Active prompts in development</p>
         </div>
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-12 text-center">
-          <Sprout className="h-16 w-16 text-green-400 mx-auto mb-4" />
-          <p className="text-gray-700 font-medium text-lg mb-2">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border border-green-200 dark:border-green-800 rounded-lg p-12 text-center">
+          <Sprout className="h-16 w-16 text-green-400 dark:text-green-600 mx-auto mb-4" />
+          <p className="text-foreground font-medium text-lg mb-2">
             No seedlings yet
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Start working on a prompt to see it here
           </p>
         </div>
@@ -128,18 +128,18 @@ export function SeedlingSection({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Sprout className="h-6 w-6 text-green-600" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
           Seedlings
         </h2>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           {prompts.length} active prompt{prompts.length !== 1 ? "s" : ""} in development
         </p>
       </div>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter seedlings by score range">
-          <span className="text-sm text-gray-600 font-medium self-center" id="filter-label">
+          <span className="text-sm text-muted-foreground font-medium self-center" id="filter-label">
             Filter:
           </span>
           {scoreRanges.map((range) => {
@@ -151,10 +151,10 @@ export function SeedlingSection({
                 aria-pressed={isActive}
                 aria-label={`Filter by ${range.label}`}
                 className={cn(
-                  "px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2",
+                  "px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background",
                   isActive
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-green-600 dark:bg-green-600 text-white"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                 )}
               >
                 {range.label}
@@ -164,7 +164,7 @@ export function SeedlingSection({
         </div>
 
         <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 text-gray-500" aria-hidden="true" />
+          <ArrowUpDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <label htmlFor="seedling-sort" className="sr-only">
             Sort seedlings by
           </label>
@@ -173,7 +173,7 @@ export function SeedlingSection({
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
             aria-label="Sort seedlings by"
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+            className="px-3 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-background text-foreground"
           >
             <option value="recent">Recent</option>
             <option value="score-asc">Score (Low to High)</option>
@@ -183,13 +183,13 @@ export function SeedlingSection({
       </div>
 
       {sortedAndFilteredPrompts.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center" role="status">
-          <p className="text-gray-600">
+        <div className="bg-secondary/50 border border-border rounded-lg p-8 text-center" role="status">
+          <p className="text-muted-foreground">
             No seedlings match the selected filters
           </p>
           <button
             onClick={() => setScoreFilter({ min: 0, max: 100 })}
-            className="mt-3 text-sm text-green-600 hover:text-green-700 font-medium focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
+            className="mt-3 text-sm text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 font-medium focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background rounded-md px-2 py-1"
             aria-label="Clear all filters"
           >
             Clear filters

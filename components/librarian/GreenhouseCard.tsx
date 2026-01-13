@@ -19,11 +19,11 @@ interface GreenhouseCardProps {
 }
 
 const tagColors = [
-  "bg-blue-50 text-blue-700",
-  "bg-purple-50 text-purple-700",
-  "bg-pink-50 text-pink-700",
-  "bg-green-50 text-green-700",
-  "bg-amber-50 text-amber-700",
+  "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400",
+  "bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400",
+  "bg-pink-50 dark:bg-pink-950/50 text-pink-700 dark:text-pink-400",
+  "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400",
+  "bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400",
 ];
 
 export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery, onStatusChange }: GreenhouseCardProps) {
@@ -46,7 +46,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
     const parts = text.split(new RegExp(`(${query})`, "gi"));
     return parts.map((part, i) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <mark key={i} className="bg-yellow-200 text-gray-900 rounded px-0.5">
+        <mark key={i} className="bg-yellow-200 dark:bg-yellow-900/60 text-gray-900 dark:text-yellow-100 rounded px-0.5">
           {part}
         </mark>
       ) : (
@@ -140,7 +140,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
       role="article"
       aria-label={`Greenhouse prompt: ${title}. Score: ${critiqueScore} out of 100. ${tags.length > 0 ? `Tags: ${tags.join(", ")}` : ""}`}
       tabIndex={0}
-      className="group bg-white rounded-lg border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200 hover:border-green-300 flex flex-col h-full cursor-pointer focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2"
+      className="group bg-card rounded-lg border border-border p-4 hover:shadow-lg transition-shadow duration-200 hover:border-green-300 dark:hover:border-green-700 flex flex-col h-full cursor-pointer focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background"
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -158,13 +158,13 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
             <span className="text-2xl flex-shrink-0" role="img" aria-label="flowering prompt">
               🌺
             </span>
-            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2 flex-1">
+            <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-2 flex-1">
               {highlightText(title, searchQuery)}
             </h3>
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3 ml-10">
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-3 ml-10">
           {highlightText(description, searchQuery)}
         </p>
 
@@ -204,7 +204,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
                   e.stopPropagation();
                   setShowDetails(!showDetails);
                 }}
-                className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded transition-colors"
                 aria-expanded={showDetails}
                 aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
               >
@@ -230,12 +230,12 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
         </div>
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
+      <div className="mt-auto pt-3 border-t border-border space-y-2">
         <div className="flex gap-2">
           <button
             onClick={handleRunInChat}
             aria-label={`Run ${title} in chat`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 dark:bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
             title="Run in Chat"
             disabled={transitioning}
           >
@@ -248,10 +248,10 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
             onClick={handleQuickCopy}
             aria-label={copied ? `Copied ${title} to clipboard` : `Copy ${title} to clipboard`}
             className={cn(
-              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-all duration-100 text-sm font-medium active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-all duration-100 text-sm font-medium active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed",
               copied
-                ? "bg-green-100 text-green-700 focus-visible:ring-green-500"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:ring-gray-500"
+                ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 focus-visible:ring-green-500"
+                : "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-gray-500"
             )}
             title="Copy to Clipboard"
             disabled={transitioning}
@@ -274,7 +274,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
           <button
             onClick={handleEdit}
             aria-label={`Edit ${title}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
             title="Edit Prompt"
             disabled={transitioning}
           >

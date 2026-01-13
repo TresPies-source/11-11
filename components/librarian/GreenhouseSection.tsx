@@ -89,11 +89,11 @@ export function GreenhouseSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Flower2 className="h-6 w-6 text-pink-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Flower2 className="h-6 w-6 text-pink-600 dark:text-pink-500" />
             Greenhouse
           </h2>
-          <p className="text-gray-600 mt-1">Your curated prompt library</p>
+          <p className="text-muted-foreground mt-1">Your curated prompt library</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -104,11 +104,11 @@ export function GreenhouseSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Flower2 className="h-6 w-6 text-pink-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Flower2 className="h-6 w-6 text-pink-600 dark:text-pink-500" />
             Greenhouse
           </h2>
-          <p className="text-gray-600 mt-1">Your curated prompt library</p>
+          <p className="text-muted-foreground mt-1">Your curated prompt library</p>
         </div>
         <ErrorState
           title="Unable to load greenhouse"
@@ -124,21 +124,21 @@ export function GreenhouseSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Flower2 className="h-6 w-6 text-pink-600" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Flower2 className="h-6 w-6 text-pink-600 dark:text-pink-500" />
             Greenhouse
           </h2>
-          <p className="text-gray-600 mt-1">Your curated prompt library</p>
+          <p className="text-muted-foreground mt-1">Your curated prompt library</p>
         </div>
-        <div className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-12 text-center">
-          <Flower2 className="h-16 w-16 text-pink-400 mx-auto mb-4" />
-          <p className="text-gray-700 font-medium text-lg mb-2">
+        <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/50 dark:to-purple-950/50 border border-pink-200 dark:border-pink-800 rounded-lg p-12 text-center">
+          <Flower2 className="h-16 w-16 text-pink-400 dark:text-pink-600 mx-auto mb-4" />
+          <p className="text-foreground font-medium text-lg mb-2">
             Your greenhouse is empty
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Save prompts from your seedlings to build your library
           </p>
-          <p className="text-gray-400 text-xs mt-3 italic">
+          <p className="text-muted-foreground/70 text-xs mt-3 italic">
             Cultivate your best work and watch your prompt garden flourish 🌱
           </p>
         </div>
@@ -149,11 +149,11 @@ export function GreenhouseSection({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Flower2 className="h-6 w-6 text-pink-600" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Flower2 className="h-6 w-6 text-pink-600 dark:text-pink-500" />
           Greenhouse
         </h2>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           {prompts.length} saved prompt{prompts.length !== 1 ? "s" : ""} in your library
         </p>
       </div>
@@ -170,7 +170,7 @@ export function GreenhouseSection({
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0">
-            <ArrowUpDown className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <ArrowUpDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <label htmlFor="greenhouse-sort" className="sr-only">
               Sort greenhouse prompts by
             </label>
@@ -179,7 +179,7 @@ export function GreenhouseSection({
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               aria-label="Sort greenhouse prompts by"
-              className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white"
+              className="px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-background text-foreground"
             >
               <option value="recent">Recent</option>
               <option value="title-asc">Title (A-Z)</option>
@@ -190,8 +190,8 @@ export function GreenhouseSection({
 
         {allTags.length > 0 && (
           <div className="flex flex-wrap gap-2 items-center" role="group" aria-label="Filter by tags">
-            <Tag className="h-4 w-4 text-gray-500 flex-shrink-0" aria-hidden="true" />
-            <span className="text-sm text-gray-600 font-medium" id="tags-label">Tags:</span>
+            <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+            <span className="text-sm text-muted-foreground font-medium" id="tags-label">Tags:</span>
             {allTags.map((tag) => {
               const isSelected = selectedTags.includes(tag);
               return (
@@ -201,10 +201,10 @@ export function GreenhouseSection({
                   aria-pressed={isSelected}
                   aria-label={`Filter by tag: ${tag}`}
                   className={cn(
-                    "px-3 py-3 min-h-[44px] rounded-full text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2",
+                    "px-3 py-3 min-h-[44px] rounded-full text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background",
                     isSelected
-                      ? "bg-pink-600 text-white ring-2 ring-pink-300"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-pink-600 dark:bg-pink-600 text-white ring-2 ring-pink-300 dark:ring-pink-700"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                   )}
                 >
                   {tag}
@@ -215,7 +215,7 @@ export function GreenhouseSection({
               <button
                 onClick={() => setSelectedTags([])}
                 aria-label={`Clear ${selectedTags.length} selected tag filter${selectedTags.length !== 1 ? "s" : ""}`}
-                className="text-xs text-pink-600 hover:text-pink-700 font-medium underline ml-2 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 rounded-sm px-1"
+                className="text-xs text-pink-600 dark:text-pink-500 hover:text-pink-700 dark:hover:text-pink-400 font-medium underline ml-2 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background rounded-sm px-1"
               >
                 Clear tags
               </button>
@@ -225,8 +225,8 @@ export function GreenhouseSection({
       </div>
 
       {filteredAndSortedPrompts.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center" role="status">
-          <p className="text-gray-600 mb-2">
+        <div className="bg-secondary/50 border border-border rounded-lg p-8 text-center" role="status">
+          <p className="text-muted-foreground mb-2">
             No prompts match your search or filters
           </p>
           <div className="flex gap-3 justify-center">
@@ -234,7 +234,7 @@ export function GreenhouseSection({
               <button
                 onClick={() => setSearchQuery("")}
                 aria-label="Clear search query"
-                className="text-sm text-pink-600 hover:text-pink-700 font-medium focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                className="text-sm text-pink-600 dark:text-pink-500 hover:text-pink-700 dark:hover:text-pink-400 font-medium focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background rounded-md px-2 py-1"
               >
                 Clear search
               </button>
@@ -243,7 +243,7 @@ export function GreenhouseSection({
               <button
                 onClick={() => setSelectedTags([])}
                 aria-label={`Clear ${selectedTags.length} tag filter${selectedTags.length !== 1 ? "s" : ""}`}
-                className="text-sm text-pink-600 hover:text-pink-700 font-medium focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                className="text-sm text-pink-600 dark:text-pink-500 hover:text-pink-700 dark:hover:text-pink-400 font-medium focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background rounded-md px-2 py-1"
               >
                 Clear tag filters
               </button>

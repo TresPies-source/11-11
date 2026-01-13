@@ -448,6 +448,7 @@ Created comprehensive technical specification at `spec.md` covering:
 ---
 
 ### [ ] Step 12: Performance Optimization
+<!-- chat-id: ccaa3d36-2dd6-4aa7-a905-536bf109527e -->
 
 **Objective:** Ensure performance targets are met
 

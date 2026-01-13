@@ -60,23 +60,23 @@ Created comprehensive technical specification at `spec.md` with:
 
 ---
 
-### [ ] Step 2: Database Schema & Migration
+### [x] Step 2: Database Schema & Migration
 <!-- chat-id: cdc7b106-b3c7-4749-b382-f18049950f10 -->
 
 **Goal:** Add database tables for routing decisions, costs, and handoffs
 
 **Tasks:**
-- [ ] Create migration SQL in `lib/pglite/migrations/003_add_supervisor_tables.ts`
-- [ ] Add `routing_decisions` table
-- [ ] Add `routing_costs` table
-- [ ] Add `agent_handoffs` table
-- [ ] Update `lib/pglite/client.ts` to run migration
-- [ ] Test migration runs successfully
+- [x] Create migration SQL in `lib/pglite/migrations/003_add_supervisor_tables.ts`
+- [x] Add `routing_decisions` table
+- [x] Add `routing_costs` table
+- [x] Add `agent_handoffs` table
+- [x] Update `lib/pglite/client.ts` to run migration
+- [x] Test migration runs successfully
 
 **Verification:**
-- Migration runs without errors
-- Tables exist in PGlite database
-- Indexes are created
+- [x] Migration runs without errors
+- [x] Tables exist in PGlite database
+- [x] Indexes are created
 
 ---
 

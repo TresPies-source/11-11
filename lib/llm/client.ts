@@ -3,6 +3,9 @@ import type { ModelConfig, LLMCallOptions, LLMResponse, LLMProvider, TokenUsage 
 import { LLMError, LLMAuthError, LLMRateLimitError, LLMTimeoutError } from './types';
 import { getModelConfig, getModelForAgent, getFallbackModel, calculateCost } from './registry';
 import { logEvent, isTraceActive } from '../harness/trace';
+import { getSafetyStatus, activateSafetySwitch, shouldActivateSafetySwitch, getErrorReason } from '../safety/switch';
+import { applyConservativeMode, getConservativeModel } from '../safety/conservative-mode';
+import { trackSuccessfulOperation } from '../safety/recovery';
 
 const DEFAULT_TIMEOUT = 30000;
 
@@ -234,8 +237,29 @@ export class LLMClient {
     messages: OpenAI.Chat.ChatCompletionMessageParam[],
     options: LLMCallOptions = {}
   ): Promise<LLMResponse> {
-    const primaryModel = getModelForAgent(agentName);
-    const fallbackModel = getFallbackModel();
+    const safetyStatus = getSafetyStatus(options.sessionId);
+    let primaryModel = getModelForAgent(agentName);
+    let fallbackModel = getFallbackModel();
+    let processedOptions = options;
+
+    if (safetyStatus.active) {
+      primaryModel = getConservativeModel();
+      fallbackModel = getConservativeModel();
+      processedOptions = applyConservativeMode(options);
+
+      if (isTraceActive()) {
+        logEvent('SAFETY_SWITCH' as any, {
+          action: 'conservative_mode_applied',
+          agent: agentName,
+          sessionId: options.sessionId,
+        }, {
+          status: 'active',
+          model: primaryModel,
+        }, {
+          reason: safetyStatus.reason,
+        });
+      }
+    }
 
     let processedMessages = messages;
     let contextResult: any = null;
@@ -286,10 +310,23 @@ export class LLMClient {
     }
 
     try {
-      return await this.call(primaryModel, processedMessages, options);
+      const response = await this.call(primaryModel, processedMessages, processedOptions);
+      
+      trackSuccessfulOperation(options.sessionId);
+      
+      return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.warn(`[LLM] Primary model ${primaryModel} failed: ${errorMessage}`);
+
+      if (shouldActivateSafetySwitch(error instanceof Error ? error : undefined)) {
+        const reason = error instanceof Error ? getErrorReason(error) : 'llm_error';
+        await activateSafetySwitch(reason, {
+          sessionId: options.sessionId,
+          userId: options.userId,
+          error: error instanceof Error ? error : new Error(String(error)),
+        });
+      }
 
       if (isTraceActive()) {
         logEvent('AGENT_HANDOFF', {
@@ -305,10 +342,24 @@ export class LLMClient {
       }
 
       try {
-        return await this.call(fallbackModel, processedMessages, options);
+        const response = await this.call(fallbackModel, processedMessages, processedOptions);
+        
+        trackSuccessfulOperation(options.sessionId);
+        
+        return response;
       } catch (fallbackError) {
         const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         console.error(`[LLM] Fallback model ${fallbackModel} also failed: ${fallbackErrorMessage}`);
+
+        if (shouldActivateSafetySwitch(fallbackError instanceof Error ? fallbackError : undefined)) {
+          const reason = fallbackError instanceof Error ? getErrorReason(fallbackError) : 'llm_error';
+          await activateSafetySwitch(reason, {
+            sessionId: options.sessionId,
+            userId: options.userId,
+            error: fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError)),
+          });
+        }
+
         throw fallbackError;
       }
     }

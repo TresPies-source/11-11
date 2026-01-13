@@ -9,6 +9,8 @@ import { ActiveTab } from "@/lib/types";
 import { PANEL_TRANSITION_DURATION, ANIMATION_EASE } from "@/lib/constants";
 import { EditorSkeleton } from "@/components/editor/EditorSkeleton";
 import { MultiAgentSkeleton } from "@/components/multi-agent/MultiAgentSkeleton";
+import { SafetySwitchBanner } from "@/components/safety/SafetySwitchBanner";
+import { useSession } from "@/components/providers/MockSessionProvider";
 
 const EditorView = dynamic(
   () => import("@/components/editor/EditorView").then((mod) => ({ default: mod.EditorView })),
@@ -28,6 +30,8 @@ const MultiAgentView = dynamic(
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("multi-agent");
+  const { user } = useSession();
+  const sessionId = user?.id || 'mock-session-001';
 
   return (
     <div className="h-full bg-background flex flex-col">
@@ -46,32 +50,36 @@ export function MainContent() {
         />
       </div>
 
-      <div className="flex-1 overflow-hidden relative">
-        <AnimatePresence mode="wait">
-          {activeTab === "editor" ? (
-            <motion.div
-              key="editor"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
-              className="absolute inset-0"
-            >
-              <EditorView />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="multi-agent"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
-              className="absolute inset-0"
-            >
-              <MultiAgentView />
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="flex-1 overflow-hidden relative flex flex-col">
+        <SafetySwitchBanner sessionId={sessionId} className="m-4 mb-0" />
+        
+        <div className="flex-1 overflow-hidden relative">
+          <AnimatePresence mode="wait">
+            {activeTab === "editor" ? (
+              <motion.div
+                key="editor"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
+                className="absolute inset-0"
+              >
+                <EditorView />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="multi-agent"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
+                className="absolute inset-0"
+              >
+                <MultiAgentView />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ const EVENT_TYPE_COLORS = {
   PERSPECTIVE_INTEGRATION: "bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400",
   COST_TRACKED: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
   CONTEXT_BUILD: "bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400",
+  SAFETY_SWITCH: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
   ERROR: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
   USER_INPUT: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400",
   AGENT_RESPONSE: "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400",

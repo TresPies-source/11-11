@@ -33,7 +33,13 @@
     "test:context-integration": "tsx __tests__/context/integration.test.ts",
     "test:context-performance": "tsx __tests__/context/performance.test.ts",
     "test:context-api": "tsx __tests__/context/api.test.ts",
-    "test:context": "npm run test:context-builder && npm run test:context-pruning && npm run test:context-integration && npm run test:context-performance && npm run test:context-api"
+    "test:context": "npm run test:context-builder && npm run test:context-pruning && npm run test:context-integration && npm run test:context-performance && npm run test:context-api",
+    "test:safety-switch": "tsx __tests__/safety/switch.test.ts",
+    "test:safety-conservative": "tsx __tests__/safety/conservative-mode.test.ts",
+    "test:safety-recovery": "tsx __tests__/safety/recovery.test.ts",
+    "test:safety-integration": "tsx __tests__/safety/integration.test.ts",
+    "test:safety-e2e": "tsx __tests__/safety/e2e.test.ts",
+    "test:safety": "npm run test:safety-switch && npm run test:safety-conservative && npm run test:safety-recovery && npm run test:safety-integration && npm run test:safety-e2e"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

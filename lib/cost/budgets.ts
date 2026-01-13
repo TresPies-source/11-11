@@ -10,6 +10,7 @@
 import { DEFAULT_BUDGET } from './constants';
 import type { BudgetCheckResult, BudgetConfig } from './types';
 import { getSessionTokenUsage, getUserMonthlyTokenUsage } from '../pglite/cost';
+import { activateSafetySwitch } from '../safety/switch';
 
 /**
  * Check if an LLM call is allowed based on three-tier budget constraints.
@@ -62,6 +63,13 @@ export async function checkBudget(
   }
 
   if (estimatedTokens > config.query_limit * config.stop_threshold) {
+    if (sessionId) {
+      await activateSafetySwitch('budget_exhausted', {
+        sessionId,
+        userId,
+      });
+    }
+    
     return {
       allowed: false,
       reason: 'query_limit_exceeded',
@@ -79,6 +87,11 @@ export async function checkBudget(
     const sessionTotal = sessionUsage + estimatedTokens;
 
     if (sessionTotal > config.session_limit * config.stop_threshold) {
+      await activateSafetySwitch('budget_exhausted', {
+        sessionId,
+        userId,
+      });
+      
       return {
         allowed: false,
         reason: 'session_limit_exceeded',
@@ -97,6 +110,13 @@ export async function checkBudget(
   const userTotal = userUsage + estimatedTokens;
 
   if (userTotal > config.user_monthly_limit * config.stop_threshold) {
+    if (sessionId) {
+      await activateSafetySwitch('budget_exhausted', {
+        sessionId,
+        userId,
+      });
+    }
+    
     return {
       allowed: false,
       reason: 'user_limit_exceeded',

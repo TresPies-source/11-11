@@ -13,6 +13,7 @@ export type HarnessEventType =
   | 'PERSPECTIVE_INTEGRATION' // User perspective added
   | 'COST_TRACKED'            // Cost Guard event
   | 'CONTEXT_BUILD'           // Context builder applied
+  | 'SAFETY_SWITCH'           // Safety Switch activated/deactivated
   | 'ERROR'                   // Error occurred
   | 'USER_INPUT'              // User message
   | 'AGENT_RESPONSE';         // Agent response

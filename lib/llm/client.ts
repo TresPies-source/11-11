@@ -222,9 +222,10 @@ export class LLMClient {
   /**
    * Makes an LLM API call with automatic fallback to GPT-4o-mini on error.
    * Determines the optimal model for the agent and tries primary model first.
+   * Optionally uses hierarchical context management when userId is provided.
    * @param agentName - Name of the agent (e.g., 'supervisor', 'debugger')
    * @param messages - Chat messages
-   * @param options - Call options
+   * @param options - Call options (including userId for context management)
    * @returns LLM response
    * @throws Error if both primary and fallback models fail
    */
@@ -236,8 +237,56 @@ export class LLMClient {
     const primaryModel = getModelForAgent(agentName);
     const fallbackModel = getFallbackModel();
 
+    let processedMessages = messages;
+    let contextResult: any = null;
+
+    if (options.userId && options.enableContextBuilder !== false) {
+      try {
+        const { buildContext } = await import('../context/builder');
+        
+        contextResult = await buildContext({
+          agent: agentName,
+          messages,
+          userId: options.userId,
+          sessionId: options.sessionId,
+        });
+        
+        processedMessages = contextResult.messages;
+        
+        if (isTraceActive()) {
+          logEvent('CONTEXT_BUILD', {
+            agent: agentName,
+            original_message_count: messages.length,
+            context_message_count: contextResult.messages.length,
+          }, {
+            success: true,
+            token_savings: messages.length > 0 ? 
+              Math.round((1 - contextResult.totalTokens / (messages.length * 500)) * 100) : 0,
+          }, {
+            total_tokens: contextResult.totalTokens,
+            tier_breakdown: contextResult.tierBreakdown,
+            budget_percent: contextResult.budgetPercent,
+            pruning_strategy: contextResult.pruningStrategy.budgetRange,
+          });
+        }
+      } catch (error) {
+        console.warn('[LLM] Context builder failed, using original messages:', error);
+        
+        if (isTraceActive()) {
+          logEvent('ERROR', {
+            tool: 'context_builder',
+            agent: agentName,
+          }, {
+            error: true,
+          }, {
+            error_message: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+    }
+
     try {
-      return await this.call(primaryModel, messages, options);
+      return await this.call(primaryModel, processedMessages, options);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.warn(`[LLM] Primary model ${primaryModel} failed: ${errorMessage}`);
@@ -256,7 +305,7 @@ export class LLMClient {
       }
 
       try {
-        return await this.call(fallbackModel, messages, options);
+        return await this.call(fallbackModel, processedMessages, options);
       } catch (fallbackError) {
         const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         console.error(`[LLM] Fallback model ${fallbackModel} also failed: ${fallbackErrorMessage}`);

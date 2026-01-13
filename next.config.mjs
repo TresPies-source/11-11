@@ -39,6 +39,9 @@ const nextConfig = {
       'GOT.mem': false,
       'env': false,
       'wasi_snapshot_preview1': false,
+      'fs': false,
+      'fs/promises': false,
+      'path': false,
     };
 
     // Ignore specific PGlite warnings

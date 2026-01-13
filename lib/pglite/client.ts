@@ -6,6 +6,7 @@ import { applyMigration003 } from './migrations/003_add_cost_guard';
 import { applyMigration004 } from './migrations/004_add_supervisor_tables';
 import { applyMigration005 } from './migrations/005_add_vector_search';
 import { applyMigration006 } from './migrations/006_add_harness_traces';
+import { applyMigration007 } from './migrations/007_add_context_tracking';
 
 // Detect if we're running in browser or server
 const isBrowser = typeof window !== 'undefined';
@@ -44,6 +45,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration004(db);
       await applyMigration005(db);
       await applyMigration006(db);
+      await applyMigration007(db);
       console.log('[PGlite] Initial migrations complete');
       
       console.log('[PGlite] Seeding database with sample data...');
@@ -58,6 +60,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration004(db);
       await applyMigration005(db);
       await applyMigration006(db);
+      await applyMigration007(db);
       await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }

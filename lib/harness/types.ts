@@ -12,6 +12,7 @@ export type HarnessEventType =
   | 'TOOL_INVOCATION'         // External tool call (search, API, etc.)
   | 'PERSPECTIVE_INTEGRATION' // User perspective added
   | 'COST_TRACKED'            // Cost Guard event
+  | 'CONTEXT_BUILD'           // Context builder applied
   | 'ERROR'                   // Error occurred
   | 'USER_INPUT'              // User message
   | 'AGENT_RESPONSE';         // Agent response

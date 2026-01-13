@@ -27,7 +27,13 @@
     "test:llm-client": "tsx lib/llm/client.test.ts",
     "test:llm": "npm run test:llm-registry && npm run test:llm-client",
     "test:llm-integration": "tsx __tests__/agents/llm-integration.test.ts",
-    "test:llm-performance": "tsx scripts/test-llm-performance.ts"
+    "test:llm-performance": "tsx scripts/test-llm-performance.ts",
+    "test:context-builder": "tsx __tests__/context/builder.test.ts",
+    "test:context-pruning": "tsx __tests__/context/pruning.test.ts",
+    "test:context-integration": "tsx __tests__/context/integration.test.ts",
+    "test:context-performance": "tsx __tests__/context/performance.test.ts",
+    "test:context-api": "tsx __tests__/context/api.test.ts",
+    "test:context": "npm run test:context-builder && npm run test:context-pruning && npm run test:context-integration && npm run test:context-performance && npm run test:context-api"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

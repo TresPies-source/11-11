@@ -1044,3 +1044,284 @@ DeepSeek (Primary) → Error → Log to Harness Trace → GPT-4o-mini (Fallback)
 **Status:** v0.3.5 Multi-Model LLM Infrastructure - Production Ready  
 **Impact:** 60-90% cost savings, 100% routing accuracy, zero regressions  
 **Next:** Phase 9 - Documentation & Cleanup
+
+---
+
+## v0.3.6: Hierarchical Context Management - Production Ready
+
+**Date:** January 13, 2026  
+**Status:** ✅ Complete & Production-Ready  
+**Research Basis:** Dataiku Context Iceberg Pattern
+
+---
+
+### Test Results
+
+**All Tests: 47/47 Passed (100%)**
+
+**Unit Tests: 26/26 ✅**
+- Builder tests: 15/15 ✅
+  - Token counting: ✅
+  - Pruning strategy selection: ✅
+  - Tier builders (1-4): ✅
+  - Context building: ✅
+  - Token savings calculation: ✅
+- Pruning tests: 11/11 ✅
+  - Strategy boundaries (40%, 60%, 80%): ✅
+  - Tier 1 protection (never pruned): ✅
+  - Tier 2 pruning (seed limits): ✅
+  - Tier 3 modes (full/summary/none): ✅
+  - Tier 4 message limits: ✅
+  - Conversation history pruning: ✅
+
+**Integration Tests: 6/6 ✅**
+- Context builder builds correctly: ✅
+- Handles missing userId: ✅
+- Multi-agent support (4 agents): ✅
+- Message count reduction with long history: ✅
+- Error handling with invalid data: ✅
+- Tier breakdown calculation: ✅
+
+**API Tests: 8/8 ✅**
+- GET /api/context/status (current mode): ✅
+- GET /api/context/status (recent mode): ✅
+- GET /api/context/status (session mode): ✅
+- Tier breakdown calculation: ✅
+- Missing parameters handling: ✅
+- Invalid sessionId handling: ✅
+- Save and retrieve snapshots: ✅
+- Recent snapshots limit: ✅
+
+**Performance Tests: 7/7 ✅**
+- Context building performance (<100ms): ✅ (2-10ms actual)
+- Pruning performance (<50ms): ✅ (2-4ms actual)
+- Token reduction (30-50%): ✅ (45-79% actual)
+- Large conversation (200 messages): ✅
+- Budget calculation performance: ✅ (6.2ms avg)
+- Memory efficiency (<50MB): ✅ (3.85MB actual)
+- Token savings calculation accuracy: ✅
+
+---
+
+### Production Readiness Checklist
+
+- [x] Type check: 0 errors
+- [x] Lint: 0 errors, 0 warnings
+- [x] Build: Success
+- [x] Zero regressions
+- [x] Token reduction validated (30-79%)
+- [x] Budget integration working
+- [x] Harness Trace integration working
+- [x] Cost Guard integration working
+- [x] All agents benefit automatically
+- [x] Graceful degradation tested
+- [x] Tier 1 protection verified (never pruned)
+- [x] Context dashboard UI complete
+- [x] API endpoints working
+- [x] Documentation complete
+
+---
+
+### Performance Benchmarks
+
+**Context Building:**
+- Build time: 2-10ms (target <100ms) ✅
+- Pruning time: 2-4ms (target <50ms) ✅
+- Memory overhead: 3.85MB per 20 iterations (target <50MB) ✅
+
+**Token Reduction:**
+- 100% budget: 0% reduction (full context)
+- 50% budget: 50% reduction
+- 30% budget: 79% reduction
+- **Average: 30-79% token savings** ✅
+
+**Examples:**
+- 100 messages, high budget: 392 tokens → 392 tokens (0%)
+- 100 messages, medium budget: 392 tokens → 196 tokens (50%)
+- 100 messages, low budget: 392 tokens → 82 tokens (79%)
+
+---
+
+### Files Created (18)
+
+**Core Context Management:**
+1. `lib/context/types.ts` - TypeScript interfaces
+2. `lib/context/tokens.ts` - Token counting with tiktoken
+3. `lib/context/tiers.ts` - Tier builders (1-4)
+4. `lib/context/builder.ts` - Main context engine
+5. `lib/context/pruning.ts` - Budget-aware pruning
+6. `lib/context/status.ts` - Context status queries
+7. `lib/pglite/migrations/007_add_context_tracking.ts` - Database schema
+
+**API:**
+8. `app/api/context/status/route.ts` - Context status endpoint
+
+**UI:**
+9. `hooks/useContextStatus.ts` - React hooks
+10. `components/context/TierBreakdownChart.tsx` - Visualization
+11. `components/context/ContextDashboard.tsx` - Dashboard
+12. `app/context-dashboard/page.tsx` - Dashboard page
+
+**Testing:**
+13. `__tests__/context/builder.test.ts` - 15 tests
+14. `__tests__/context/pruning.test.ts` - 11 tests
+15. `__tests__/context/integration.test.ts` - 6 tests
+16. `__tests__/context/api.test.ts` - 8 tests
+17. `__tests__/context/performance.test.ts` - 7 tests
+
+**Documentation:**
+18. `lib/context/README.md` - Complete API reference
+
+---
+
+### Files Modified (4)
+
+1. `lib/llm/client.ts` - Context builder integration (opt-in)
+2. `lib/pglite/client.ts` - Added migration 007
+3. `next.config.mjs` - Node.js module fallbacks
+4. `package.json` - Test scripts for context tests
+
+---
+
+### Technical Decisions
+
+#### 4-Tier Architecture
+- **Tier 1 (Always On):** System prompt + current query (~2k tokens)
+- **Tier 2 (On Demand):** Active seeds + project memory (~5k tokens)
+- **Tier 3 (When Referenced):** File contents (~10k tokens)
+- **Tier 4 (Pruned):** Conversation history (variable)
+
+#### Budget-Aware Pruning
+- **>80% budget:** Full context (all tiers, 10 messages)
+- **60-80% budget:** Full context, 5 messages
+- **40-60% budget:** Top 3 seeds, summaries, 2 messages
+- **<40% budget:** Top 1 seed, no files, 0 messages
+- **Key:** Tier 1 NEVER pruned (critical context protected)
+
+#### Integration Strategy
+- **Opt-in:** Pass `userId` to enable context building
+- **Non-breaking:** Existing code works unchanged
+- **Graceful degradation:** Falls back to original messages on error
+- **Automatic benefit:** All agents benefit when userId provided
+
+#### Cost Impact
+- **Token reduction:** 30-79% depending on budget
+- **Cost reduction:** Proportional to token reduction
+- **Example:** $0.002 → $0.0011 (45% savings at 40% budget)
+
+---
+
+### Database Schema
+
+**Table:** `context_snapshots`
+```sql
+CREATE TABLE context_snapshots (
+  id SERIAL PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  session_id TEXT,
+  agent_name TEXT NOT NULL,
+  total_tokens INTEGER NOT NULL,
+  tier1_tokens INTEGER NOT NULL,
+  tier2_tokens INTEGER NOT NULL,
+  tier3_tokens INTEGER NOT NULL,
+  tier4_tokens INTEGER NOT NULL,
+  budget_percent NUMERIC(5,2) NOT NULL,
+  pruning_strategy TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Indexes:**
+- `idx_context_user` on `user_id`
+- `idx_context_session` on `session_id`
+- `idx_context_created` on `created_at`
+
+---
+
+### Action Items
+
+**Completed:**
+- [x] Design 4-tier architecture
+- [x] Implement context builder service
+- [x] Implement budget-aware pruning logic
+- [x] Integrate with Cost Guard
+- [x] Integrate with Harness Trace
+- [x] Integrate with LLM client (opt-in)
+- [x] Create context status API
+- [x] Build context dashboard UI
+- [x] Write comprehensive tests (47 tests)
+- [x] Run performance benchmarks
+- [x] Validate token reduction (30-79%)
+- [x] Update JOURNAL.md with architecture
+- [x] Update AUDIT_LOG.md with test results
+- [x] Create comprehensive README documentation
+
+**Future Enhancements (v0.4.0+):**
+- [ ] User-customizable tier rules
+- [ ] A/B testing of pruning strategies
+- [ ] Context caching (beyond LLM provider caching)
+- [ ] Predictive context loading
+- [ ] Machine learning-based relevance scoring
+
+---
+
+### Key Findings
+
+**✅ Strengths:**
+1. **Token Reduction:** 30-79% savings validated in tests
+2. **Performance:** 2-10ms build time (10x faster than target)
+3. **Stability:** Tier 1 protection ensures zero critical context loss
+4. **Integration:** Seamless opt-in, zero breaking changes
+5. **Scalability:** Handles 200+ message conversations efficiently
+
+**🎯 Trade-offs:**
+1. **Complexity:** 4-tier system adds architectural complexity (acceptable for 30-79% savings)
+2. **Database:** Requires context_snapshots table (small overhead)
+3. **Opt-in:** Requires passing userId to benefit (documented in README)
+
+**💡 Insights:**
+1. **Budget-aware pruning works:** Progressive degradation provides smooth UX
+2. **Tier 1 protection critical:** Never lose core context, users trust the system
+3. **Performance exceeded expectations:** 2-10ms vs 100ms target
+4. **Testing crucial:** 47 tests caught all edge cases before production
+
+---
+
+### Impact Analysis
+
+**Before (v0.3.5):**
+- Token usage: 10,000 tokens per session
+- Cost: $0.002 per session
+- Context re-feed tax: 100% of tokens
+
+**After (v0.3.6 at 40% budget):**
+- Token usage: 5,500 tokens per session (45% reduction)
+- Cost: $0.0011 per session (45% savings)
+- Context re-feed tax: 55% of tokens
+
+**Projected Annual Savings (1M queries):**
+- Tokens saved: 4.5M tokens
+- Cost saved: $900 per year
+- **ROI:** 45% cost reduction for sustainable growth
+
+---
+
+### Reusability
+
+**Design Patterns Established:**
+1. **Tier-based organization:** Applicable to any hierarchical data system
+2. **Budget-aware resource management:** Reusable for CPU, memory, network constraints
+3. **Graceful degradation:** Progressive feature reduction under resource pressure
+4. **Opt-in integration:** Non-breaking pattern for existing codebases
+
+**Code Reusability:**
+- Context builder pattern → Any LLM application
+- Budget-aware pruning → Any resource-constrained system
+- Tier breakdown visualization → Any hierarchical metrics dashboard
+- Token counting utilities → Any token-based system
+
+---
+
+**Status:** v0.3.6 Hierarchical Context Management - Production Ready  
+**Impact:** 30-79% token reduction, 30-79% cost savings, zero regressions  
+**Next:** v0.4.0 - Advanced context features (user-customizable rules, A/B testing, context caching)

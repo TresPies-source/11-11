@@ -50,6 +50,9 @@ export interface LLMCallOptions {
   tools?: OpenAI.Chat.ChatCompletionTool[];
   responseFormat?: { type: 'json_object' | 'text' };
   timeout?: number;
+  userId?: string;
+  sessionId?: string;
+  enableContextBuilder?: boolean;
 }
 
 /**

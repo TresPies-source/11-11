@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import { getDb } from '@/lib/pglite/client';
+import { getDB } from '@/lib/pglite/client';
 
 interface TestResult {
   name: string;
@@ -47,7 +47,7 @@ export default function TestDBPage() {
       // Test 1: Initialize database
       updateResult(0, { status: 'running' });
       const start1 = Date.now();
-      const db = await getDb();
+      const db = await getDB();
       updateResult(0, {
         status: 'passed',
         message: 'Database initialized successfully',
@@ -58,10 +58,10 @@ export default function TestDBPage() {
       updateResult(1, { status: 'running' });
       const start2 = Date.now();
       const decisionResult = await db.query(
-        `INSERT INTO routing_decisions (session_id, agent_id, confidence, reasoning, fallback, created_at)
-         VALUES ($1, $2, $3, $4, $5, NOW())
+        `INSERT INTO routing_decisions (session_id, user_query, agent_selected, confidence, reasoning, is_fallback, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW())
          RETURNING id`,
-        [sessionId, 'dojo', 0.85, 'Test routing decision', false]
+        [sessionId, 'Test query for routing', 'dojo', 0.85, 'Test routing decision', false]
       );
       const decisionId = decisionResult.rows[0].id;
       updateResult(1, {
@@ -74,9 +74,9 @@ export default function TestDBPage() {
       updateResult(2, { status: 'running' });
       const start3 = Date.now();
       await db.query(
-        `INSERT INTO routing_costs (routing_decision_id, session_id, agent_selected, confidence, tokens_used, cost_usd, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-        [decisionId, sessionId, 'dojo', 0.85, 450, 0.000225]
+        `INSERT INTO routing_costs (routing_decision_id, session_id, tokens_used, cost_usd, model, created_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())`,
+        [decisionId, sessionId, 450, 0.000225, 'gpt-4o-mini']
       );
       updateResult(2, {
         status: 'passed',
@@ -88,7 +88,7 @@ export default function TestDBPage() {
       updateResult(3, { status: 'running' });
       const start4 = Date.now();
       const costResult = await db.query(
-        `SELECT rc.*, rd.agent_id, rd.reasoning
+        `SELECT rc.*, rd.agent_selected, rd.reasoning
          FROM routing_costs rc
          JOIN routing_decisions rd ON rc.routing_decision_id = rd.id
          WHERE rc.session_id = $1`,
@@ -129,7 +129,7 @@ export default function TestDBPage() {
       updateResult(5, { status: 'running' });
       const start6 = Date.now();
       const historyResult = await db.query(
-        `SELECT rd.id, rd.agent_id, rd.confidence, rd.reasoning, rd.created_at, rc.tokens_used, rc.cost_usd
+        `SELECT rd.id, rd.agent_selected, rd.confidence, rd.reasoning, rd.created_at, rc.tokens_used, rc.cost_usd
          FROM routing_decisions rd
          LEFT JOIN routing_costs rc ON rd.id = rc.routing_decision_id
          WHERE rd.session_id = $1

@@ -28,7 +28,7 @@ export function MarkdownEditor() {
 
   if (!activeTab) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <div className="flex items-center justify-center h-full text-muted-foreground">
         Select a file to edit
       </div>
     );

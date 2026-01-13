@@ -205,22 +205,52 @@ Created comprehensive technical specification at `spec.md` with:
 
 ---
 
-### [ ] Step 7: Cost Tracking
+### [x] Step 7: Cost Tracking
 <!-- chat-id: f423f916-6203-4010-b6de-7fbde1f23d59 -->
 
 **Goal:** Track routing costs in PGlite database
 
 **Tasks:**
-- [ ] Create `lib/agents/cost-tracking.ts`
-- [ ] Implement `trackRoutingCost()` function
-- [ ] Calculate cost from tokens (GPT-4o-mini pricing)
-- [ ] Store in `routing_costs` table
-- [ ] Link to routing decision via foreign key
+- [x] Create `lib/agents/cost-tracking.ts`
+- [x] Implement `trackRoutingCost()` function
+- [x] Calculate cost from tokens (GPT-4o-mini pricing)
+- [x] Store in `routing_costs` table
+- [x] Link to routing decision via foreign key
 
 **Verification:**
-- Costs are accurately calculated
-- Data persists to database
-- Foreign key relationship works
+- ✅ Costs are accurately calculated
+- ✅ Data persists to database
+- ✅ Foreign key relationship works
+
+**Completion Notes:**
+- Created `lib/agents/cost-tracking.ts` with comprehensive cost tracking functions:
+  - `calculateRoutingCost()` - Calculates accurate cost from full token usage breakdown (input + output tokens)
+  - `calculateCostFromTotal()` - Estimates cost from total tokens using 70/30 weighted average
+  - `trackRoutingCost()` - Stores routing cost with full token breakdown in database
+  - `trackRoutingCostSimple()` - Stores routing cost using total tokens only
+  - `getSessionRoutingCosts()` - Aggregates costs for a session (total tokens, cost, count)
+  - `getRoutingCost()` - Retrieves cost for a specific routing decision
+  - `getSessionRoutingHistory()` - Retrieves routing history with costs, agent info, and timestamps
+- Updated `supervisor.ts` to use new cost-tracking module:
+  - Changed `saveRoutingDecision()` to accept `TokenUsage` instead of plain token count
+  - Updated `routeQueryWithLLM()` to return `TokenUsage` along with routing decision
+  - Fixed cost calculation (replaced incorrect division by 2 with accurate input/output pricing)
+- Added types to `types.ts`:
+  - `TokenUsage` interface (prompt_tokens, completion_tokens, total_tokens)
+  - `RoutingDecisionWithUsage` interface (extends RoutingDecision with optional usage)
+- Updated `fallback.ts` to support `RoutingDecisionWithUsage` return type
+- Created comprehensive test suite with 30+ assertions covering:
+  - Cost calculation accuracy (exact match with GPT-4o-mini pricing)
+  - Database persistence and retrieval
+  - Foreign key relationships
+  - Session aggregation
+  - Routing history queries
+- Build successful with zero TypeScript errors
+- Cost tracking uses accurate GPT-4o-mini pricing:
+  - Input: $0.00015 per 1,000 tokens
+  - Output: $0.0006 per 1,000 tokens
+  - Typical routing query: <$0.001
+- Ready for integration with Cost Guard (Feature 2) when available
 
 ---
 

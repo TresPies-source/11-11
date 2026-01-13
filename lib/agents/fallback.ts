@@ -1,6 +1,7 @@
 import {
   RoutingContext,
   RoutingDecision,
+  RoutingDecisionWithUsage,
   RoutingError,
   AgentNotFoundError,
 } from './types';
@@ -184,7 +185,7 @@ function validateAgentAvailability(
  */
 export async function routeWithFallback(
   context: RoutingContext
-): Promise<RoutingDecision> {
+): Promise<RoutingDecisionWithUsage> {
   try {
     // Validate we have available agents
     if (!context.available_agents || context.available_agents.length === 0) {

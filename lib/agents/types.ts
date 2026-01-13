@@ -19,6 +19,16 @@ export interface RoutingDecision {
   fallback?: boolean;
 }
 
+export interface TokenUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+export interface RoutingDecisionWithUsage extends RoutingDecision {
+  usage?: TokenUsage;
+}
+
 export interface RoutingContext {
   query: string;
   conversation_context: string[];

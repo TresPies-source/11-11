@@ -5,19 +5,21 @@ import {
   AgentRegistry,
   AgentNotFoundError,
   RoutingDecision,
+  RoutingDecisionWithUsage,
   RoutingContext,
   RoutingError,
   AGENT_IDS,
   type AgentId,
+  type TokenUsage,
 } from './types';
 import { createJSONCompletion, canUseOpenAI } from '../openai/client';
 import {
   DEFAULT_ROUTING_MODEL,
   DEFAULT_ROUTING_TIMEOUT,
   DEFAULT_ROUTING_TEMPERATURE,
-  GPT_4O_MINI_PRICING,
 } from '../openai/types';
 import { getDB } from '../pglite/client';
+import { trackRoutingCost, trackRoutingCostSimple } from './cost-tracking';
 
 const AgentSchema = z.object({
   id: z.string().min(1),
@@ -233,7 +235,7 @@ async function routeQueryWithLLM(
   userQuery: string,
   conversationContext: string[],
   availableAgents: Agent[]
-): Promise<RoutingDecision> {
+): Promise<RoutingDecisionWithUsage> {
   const prompt = buildRoutingPrompt(userQuery, conversationContext, availableAgents);
 
   try {
@@ -261,6 +263,7 @@ async function routeQueryWithLLM(
       confidence: validated.confidence,
       reasoning: validated.reasoning,
       fallback: false,
+      usage,
     };
   } catch (error) {
     throw new RoutingError(
@@ -306,7 +309,7 @@ function routeQueryKeywordFallback(
 
 export async function routeQuery(
   context: RoutingContext
-): Promise<RoutingDecision> {
+): Promise<RoutingDecisionWithUsage> {
   const { query, conversation_context, available_agents } = context;
 
   if (available_agents.length === 0) {
@@ -344,6 +347,7 @@ export async function routeQuery(
         confidence: decision.confidence,
         reasoning: `Low confidence (${decision.confidence.toFixed(2)}). Falling back to ${defaultAgent.name}.`,
         fallback: true,
+        usage: decision.usage,
       };
     }
 
@@ -364,7 +368,7 @@ export async function routeQuery(
 export async function saveRoutingDecision(
   decision: RoutingDecision,
   context: RoutingContext,
-  tokensUsed?: number
+  usage?: TokenUsage
 ): Promise<{ routing_decision_id: string; routing_cost_id?: string }> {
   const db = await getDB();
 
@@ -394,35 +398,17 @@ export async function saveRoutingDecision(
 
   const routing_decision_id = routingDecisionResult.rows[0].id;
 
-  if (tokensUsed !== undefined && tokensUsed > 0) {
-    const costUsd =
-      tokensUsed *
-      (GPT_4O_MINI_PRICING.input + GPT_4O_MINI_PRICING.output) /
-      2;
-
-    const routingCostResult = await db.query<{ id: string }>(
-      `
-      INSERT INTO routing_costs (
-        routing_decision_id,
-        session_id,
-        tokens_used,
-        cost_usd,
-        model
-      ) VALUES ($1, $2, $3, $4, $5)
-      RETURNING id
-    `,
-      [
-        routing_decision_id,
-        context.session_id,
-        tokensUsed,
-        costUsd,
-        DEFAULT_ROUTING_MODEL,
-      ]
+  if (usage && usage.total_tokens > 0) {
+    const routing_cost_id = await trackRoutingCost(
+      routing_decision_id,
+      context.session_id,
+      usage,
+      DEFAULT_ROUTING_MODEL
     );
 
     return {
       routing_decision_id,
-      routing_cost_id: routingCostResult.rows[0].id,
+      routing_cost_id,
     };
   }
 

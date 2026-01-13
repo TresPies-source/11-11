@@ -244,7 +244,7 @@ Created comprehensive technical specification at `spec.md` covering:
 
 ---
 
-### [ ] Step 7: File Operations Hook
+### [x] Step 7: File Operations Hook
 <!-- chat-id: a83aac67-25c6-4375-80ba-ffae99431133 -->
 
 **Objective:** Create hook for file operations with optimistic UI
@@ -272,10 +272,10 @@ Created comprehensive technical specification at `spec.md` covering:
    - Use RepositoryProvider for open file handling
 
 **Verification:**
-- [ ] Optimistic updates appear instant
-- [ ] Rollback works on API failure
-- [ ] Error messages display correctly
-- [ ] Sync status updates correctly
+- [x] Optimistic updates appear instant
+- [x] Rollback works on API failure
+- [x] Error messages display correctly
+- [x] Sync status updates correctly
 
 ---
 

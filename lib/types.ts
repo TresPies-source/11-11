@@ -177,6 +177,8 @@ export interface PromptFile extends DriveFile {
 export type ContextBusEvent =
   | { type: 'PLAN_UPDATED'; payload: { content: string; timestamp: Date } }
   | { type: 'FILE_SAVED'; payload: { fileId: string; fileName: string } }
+  | { type: 'FILE_RENAMED'; payload: { fileId: string; oldName: string; newName: string } }
+  | { type: 'FILE_DELETED'; payload: { fileId: string; fileName: string } }
   | { type: 'AGENT_SPAWNED'; payload: { agentId: string; persona: string } }
   | { type: 'SYNC_STATUS_CHANGED'; payload: { status: 'synced' | 'syncing' | 'error' } };
 

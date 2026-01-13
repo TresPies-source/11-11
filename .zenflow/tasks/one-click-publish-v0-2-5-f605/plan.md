@@ -93,6 +93,7 @@ Create API endpoints for publish, unpublish, public listing, and copy operations
 ---
 
 ### [ ] Step: Core UI Components
+<!-- chat-id: 0f53cc74-52c1-4fb5-b997-10c789742f5e -->
 
 Build reusable components for public toggle, badge, dialogs, and buttons.
 

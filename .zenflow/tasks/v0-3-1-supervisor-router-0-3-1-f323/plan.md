@@ -18,47 +18,312 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 55d73342-f4d8-4e88-a286-e484c8f721af -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
+**Complexity Assessment:** Hard
 
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
+Created comprehensive technical specification at `spec.md` with:
+- Technical context and dependencies
+- Implementation approach and architecture
+- Source code structure (new files and modifications)
+- Database schema changes (3 new tables)
+- API specifications
+- Verification approach (unit, integration, manual testing)
+- Excellence criteria self-assessment
+- Risk assessment and success metrics
 
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+**Key Decisions:**
+- Use GPT-4o-mini for cost-effective routing
+- Implement dev mode fallback (keyword-based routing)
+- Add 3 new database tables for routing decisions, costs, and handoffs
+- Create isolated agent registry system in `lib/agents/`
+- Prepare integration points for Cost Guard (Feature 2)
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step 1: Environment & Dependencies Setup
 
-Implement the task according to the technical specification and general engineering best practices.
+**Goal:** Install required dependencies and configure environment
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Tasks:**
+- [ ] Add `openai` package to dependencies
+- [ ] Add `zod` package for schema validation
+- [ ] Update `.env.example` with `OPENAI_API_KEY`
+- [ ] Create `.env.local` if needed (dev mode works without API key)
+- [ ] Run `npm install`
+
+**Verification:**
+- `npm run build` succeeds
+- No TypeScript errors
+
+---
+
+### [ ] Step 2: Database Schema & Migration
+
+**Goal:** Add database tables for routing decisions, costs, and handoffs
+
+**Tasks:**
+- [ ] Create migration SQL in `lib/pglite/migrations/003_add_supervisor_tables.ts`
+- [ ] Add `routing_decisions` table
+- [ ] Add `routing_costs` table
+- [ ] Add `agent_handoffs` table
+- [ ] Update `lib/pglite/client.ts` to run migration
+- [ ] Test migration runs successfully
+
+**Verification:**
+- Migration runs without errors
+- Tables exist in PGlite database
+- Indexes are created
+
+---
+
+### [ ] Step 3: OpenAI Client & Agent Types
+
+**Goal:** Set up OpenAI client and TypeScript types
+
+**Tasks:**
+- [ ] Create `lib/openai/client.ts` with singleton pattern
+- [ ] Create `lib/openai/types.ts` for OpenAI-specific types
+- [ ] Create `lib/agents/types.ts` for agent-related types
+- [ ] Add dev mode detection for graceful degradation
+
+**Verification:**
+- TypeScript compilation succeeds
+- OpenAI client initializes correctly
+- Dev mode fallback works without API key
+
+---
+
+### [ ] Step 4: Agent Registry
+
+**Goal:** Create static agent registry with Dojo, Librarian, Debugger agents
+
+**Tasks:**
+- [ ] Create `lib/agents/registry.json` with 3 agents
+- [ ] Create `lib/agents/supervisor.ts` with registry loading logic
+- [ ] Add registry validation with Zod schema
+- [ ] Add hot-reload support for dev mode
+- [ ] Test registry loads correctly
+
+**Verification:**
+- Registry validates against schema
+- All 3 agents load successfully
+- Default agent (Dojo) is properly marked
+
+---
+
+### [ ] Step 5: Routing Logic
+
+**Goal:** Implement LLM-based routing with GPT-4o-mini
+
+**Tasks:**
+- [ ] Implement `routeQuery()` in `lib/agents/supervisor.ts`
+- [ ] Build routing prompt with agent descriptions
+- [ ] Call OpenAI API with JSON response format
+- [ ] Parse and validate routing response
+- [ ] Implement timeout logic (5s)
+- [ ] Implement confidence threshold (0.6)
+- [ ] Create dev mode fallback (keyword-based routing)
+
+**Verification:**
+- Test with 10 diverse queries
+- Routing completes in <200ms (p95)
+- Timeout works correctly
+- Dev mode fallback works without API key
+
+---
+
+### [ ] Step 6: Fallback Logic
+
+**Goal:** Implement comprehensive fallback handling
+
+**Tasks:**
+- [ ] Create `lib/agents/fallback.ts`
+- [ ] Implement `routeWithFallback()` wrapper
+- [ ] Handle low confidence (<0.6)
+- [ ] Handle API failures
+- [ ] Handle timeout (5s)
+- [ ] Handle unavailable agents
+- [ ] Always return valid agent ID (never throw)
+
+**Verification:**
+- All fallback scenarios tested
+- Never throws errors
+- Always returns Dojo as fallback
+
+---
+
+### [ ] Step 7: Cost Tracking
+
+**Goal:** Track routing costs in PGlite database
+
+**Tasks:**
+- [ ] Create `lib/agents/cost-tracking.ts`
+- [ ] Implement `trackRoutingCost()` function
+- [ ] Calculate cost from tokens (GPT-4o-mini pricing)
+- [ ] Store in `routing_costs` table
+- [ ] Link to routing decision via foreign key
+
+**Verification:**
+- Costs are accurately calculated
+- Data persists to database
+- Foreign key relationship works
+
+---
+
+### [ ] Step 8: Handoff System
+
+**Goal:** Enable agent-to-agent handoffs with context preservation
+
+**Tasks:**
+- [ ] Create `lib/agents/handoff.ts`
+- [ ] Implement `executeHandoff()` function
+- [ ] Preserve full conversation history
+- [ ] Store handoff events in database
+- [ ] Prepare Harness Trace integration (stub for now)
+
+**Verification:**
+- Handoff preserves all context
+- Handoff events logged to database
+- Graceful degradation if Harness Trace unavailable
+
+---
+
+### [ ] Step 9: API Endpoints
+
+**Goal:** Create REST API for routing and agent listing
+
+**Tasks:**
+- [ ] Create `app/api/supervisor/route/route.ts` (POST)
+- [ ] Create `app/api/supervisor/agents/route.ts` (GET)
+- [ ] Implement request validation
+- [ ] Implement error handling
+- [ ] Add dev mode support
+- [ ] Test with sample requests
+
+**Verification:**
+- API returns correct response format
+- Error handling works
+- Dev mode returns mock data
+
+---
+
+### [ ] Step 10: UI Components
+
+**Goal:** Create UI components for agent selection and routing feedback
+
+**Tasks:**
+- [ ] Create `components/agents/AgentSelector.tsx`
+- [ ] Create `components/agents/RoutingIndicator.tsx`
+- [ ] Create `components/agents/AgentStatusBadge.tsx`
+- [ ] Integrate with existing ChatPanel
+- [ ] Add manual override functionality
+- [ ] Add routing visibility settings
+
+**Verification:**
+- Components render correctly
+- Agent selection works
+- Routing indicator shows during routing
+- Manual override works
+
+---
+
+### [ ] Step 11: Integration with Multi-Agent UI
+
+**Goal:** Integrate routing into existing multi-agent chat interface
+
+**Tasks:**
+- [ ] Update `components/multi-agent/ChatPanel.tsx`
+- [ ] Add agent routing on message send
+- [ ] Show routing indicator
+- [ ] Update agent badge on routing
+- [ ] Add manual override button
+- [ ] Update `lib/constants.ts` with agent constants
+
+**Verification:**
+- Routing triggers on message send
+- UI updates reflect routing decision
+- Manual override works
+- No regressions in existing chat functionality
+
+---
+
+### [ ] Step 12: Unit Tests
+
+**Goal:** Write comprehensive unit tests for all routing logic
+
+**Tasks:**
+- [ ] Create `__tests__/agents/supervisor.test.ts`
+- [ ] Create `__tests__/agents/handoff.test.ts`
+- [ ] Create `__tests__/agents/fallback.test.ts`
+- [ ] Test routing accuracy (20+ test cases)
+- [ ] Test fallback scenarios
+- [ ] Test cost tracking
+- [ ] Test handoff preservation
+
+**Verification:**
+- All tests pass
+- Test coverage >80%
+- Edge cases covered
+
+---
+
+### [ ] Step 13: Integration & Manual Testing
+
+**Goal:** End-to-end testing and manual validation
+
+**Tasks:**
+- [ ] Test full routing flow (user query → agent selection)
+- [ ] Test handoffs between agents
+- [ ] Verify cost tracking in database
+- [ ] Test routing accuracy with 20 diverse queries
+- [ ] Test performance (latency <200ms)
+- [ ] Test dev mode without API key
+- [ ] Test with API key in production mode
+
+**Verification:**
+- All integration tests pass
+- Manual testing confirms expected behavior
+- Performance targets met
+- Dev mode and production mode both work
+
+---
+
+### [ ] Step 14: Lint, Type Check & Documentation
+
+**Goal:** Final code quality checks and documentation
+
+**Tasks:**
+- [ ] Run `npm run lint` (fix all issues)
+- [ ] Run `npm run type-check` (fix all errors)
+- [ ] Update JOURNAL.md with architectural decisions
+- [ ] Document routing accuracy results
+- [ ] Self-assess against Excellence Criteria
+- [ ] Update BUGS.md if any bugs found
+- [ ] Create report.md in artifacts folder
+
+**Verification:**
+- Zero lint errors
+- Zero type errors
+- JOURNAL.md updated
+- All documentation complete
+
+---
+
+### [ ] Step 15: Final Testing & Completion Report
+
+**Goal:** Final validation and completion documentation
+
+**Tasks:**
+- [ ] Run full test suite
+- [ ] Manual regression testing
+- [ ] Performance benchmarking
+- [ ] Create completion report in `report.md`
+- [ ] Document challenges and solutions
+- [ ] List any known limitations or deferred features
+
+**Verification:**
+- All acceptance criteria met
+- Completion report written
+- Ready for code review

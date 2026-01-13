@@ -3324,3 +3324,65 @@ const { theme } = useTheme();
 **Next Sprint:** Foundation & Growth Sprint v0.2.5 (One-Click Publish to Global Commons)
 
 ---
+
+## Phase 5: One-Click Publish (Global Commons Foundation)
+
+**Date:** January 12-13, 2026  
+**Objective:** Enable users to publish prompts to the Global Commons with a single toggle, laying the foundation for the "Wikipedia of Prompts"
+
+### Build Log
+
+#### Overview
+Phase 5 implements the core infrastructure for the Global Commons—a collaborative, open-source library of prompts where users can share their best work and learn from others. This phase focuses on the publish/unpublish workflow, public prompt discovery, and copy-to-library functionality.
+
+#### Database Schema Updates
+
+**New Columns Added to `prompts` Table:**
+```typescript
+interface Prompt {
+  // ... existing fields
+  published_at: string | null;      // ISO 8601 timestamp, NULL if not published
+  visibility: 'private' | 'unlisted' | 'public';  // Visibility state
+  author_name: string;               // Display name of prompt author
+  author_id: string;                 // User ID for ownership verification
+}
+```
+
+**Indexes for Performance:**
+- `idx_prompts_visibility_published`: Composite index on `(visibility, published_at DESC)` for efficient public prompts queries
+- `idx_prompts_author_id`: Index on `author_id` for filtering user's public prompts
+
+**Migration Strategy:**
+- Existing prompts backfilled with `visibility = 'private'`
+- `author_name` and `author_id` populated from session data
+- `published_at` defaults to `NULL` (unpublished state)
+
+---
+
+### Sprint Completion
+
+**Status:** ✅ Complete  
+**Date:** January 13, 2026  
+
+**All Acceptance Criteria Met:**
+- ✅ Public toggle works with confirmation dialog
+- ✅ Database schema updated with required columns
+- ✅ Public prompts display in Commons view
+- ✅ Privacy rules enforced (only owner can publish/unpublish)
+- ✅ "Copy to My Library" creates independent copy
+- ✅ Filter works: "My Public Prompts" vs "All Public Prompts"
+- ✅ Sort works: Recent, Popular, Highest Score
+- ✅ Public badge displays on published prompts
+- ✅ Lint check passes
+- ✅ Type check passes
+- ✅ Production build succeeds
+
+**Documentation Updated:**
+- ✅ JOURNAL.md includes Commons architecture decisions
+- ✅ Database schema changes documented
+- ✅ Privacy model and copy mechanism documented
+- ✅ API endpoints documented
+
+**Next Phase:** Community features (likes, comments, moderation) deferred to v0.3+
+
+---

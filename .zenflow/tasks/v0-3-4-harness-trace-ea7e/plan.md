@@ -70,6 +70,7 @@ Technical specification created in `spec.md` covering:
 ---
 
 ### [ ] Step: Phase 2 - Retrieval & API Routes
+<!-- chat-id: 3a1b3cfe-c914-40a4-8a0b-e58b6a1c87a5 -->
 
 **Goal:** Enable trace retrieval via database queries and REST API.
 

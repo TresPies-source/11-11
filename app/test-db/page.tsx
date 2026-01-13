@@ -63,7 +63,7 @@ export default function TestDBPage() {
          RETURNING id`,
         [sessionId, 'Test query for routing', 'dojo', 0.85, 'Test routing decision', false]
       );
-      const decisionId = decisionResult.rows[0].id;
+      const decisionId = (decisionResult.rows[0] as { id: number }).id;
       updateResult(1, {
         status: 'passed',
         message: `Inserted routing decision (ID: ${decisionId})`,
@@ -94,7 +94,7 @@ export default function TestDBPage() {
          WHERE rc.session_id = $1`,
         [sessionId]
       );
-      const hasJoin = costResult.rows.length > 0 && costResult.rows[0].reasoning === 'Test routing decision';
+      const hasJoin = costResult.rows.length > 0 && (costResult.rows[0] as { reasoning: string }).reasoning === 'Test routing decision';
       updateResult(3, {
         status: hasJoin ? 'passed' : 'failed',
         message: hasJoin ? 'Foreign key relationship verified' : 'Foreign key join failed',
@@ -155,7 +155,7 @@ export default function TestDBPage() {
          WHERE session_id = $1`,
         [sessionId]
       );
-      const aggregate = aggregateResult.rows[0];
+      const aggregate = aggregateResult.rows[0] as { routing_count: number; total_tokens: number; total_cost: string };
       const hasAggregate = aggregate.routing_count > 0;
       updateResult(6, {
         status: hasAggregate ? 'passed' : 'failed',

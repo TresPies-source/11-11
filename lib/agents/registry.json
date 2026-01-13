@@ -1,0 +1,62 @@
+{
+  "agents": [
+    {
+      "id": "dojo",
+      "name": "Dojo Agent",
+      "description": "Core thinking partnership. Use when the user wants to explore perspectives, map routes, prune ideas, or generate a Next Move. Does NOT search for information or resolve conflicts.",
+      "when_to_use": [
+        "User wants to explore multiple perspectives",
+        "User needs help mapping routes or tradeoffs",
+        "User wants to prune ideas (Keep/Grow/Compost/Replant)",
+        "User needs a concrete Next Move",
+        "User wants thinking partnership or synthesis",
+        "General conversation or brainstorming"
+      ],
+      "when_not_to_use": [
+        "User needs to search for information",
+        "User has conflicting perspectives that need resolution",
+        "User wants to find seed patches or similar prompts",
+        "User explicitly asks to search or find something"
+      ],
+      "default": true
+    },
+    {
+      "id": "librarian",
+      "name": "Librarian Agent",
+      "description": "Semantic search and retrieval. Use when the user wants to find seed patches, search project memory, or discover similar prompts. Does NOT provide thinking partnership or generate new ideas.",
+      "when_to_use": [
+        "User wants to search for seed patches",
+        "User needs to find information in project memory",
+        "User wants to discover similar prompts",
+        "User asks 'what did I build before?' or 'find X'",
+        "User explicitly uses search keywords: 'search', 'find', 'look for', 'show me'"
+      ],
+      "when_not_to_use": [
+        "User wants thinking partnership",
+        "User wants to explore perspectives",
+        "User needs conflict resolution",
+        "User wants to generate new ideas or synthesis"
+      ],
+      "default": false
+    },
+    {
+      "id": "debugger",
+      "name": "Debugger Agent",
+      "description": "Conflict resolution and reasoning validation. Use when the user has conflicting perspectives, logical errors, or needs assumption analysis. Does NOT search or provide general thinking partnership.",
+      "when_to_use": [
+        "User has conflicting perspectives or contradictions",
+        "User's reasoning has logical errors",
+        "User needs assumption analysis or validation",
+        "User asks 'what's wrong with my thinking?'",
+        "User explicitly mentions conflicts, contradictions, or errors"
+      ],
+      "when_not_to_use": [
+        "User wants general thinking partnership",
+        "User wants to search for information",
+        "User wants to generate artifacts or new ideas",
+        "User wants to explore perspectives (without conflicts)"
+      ],
+      "default": false
+    }
+  ]
+}

@@ -98,22 +98,36 @@ Created comprehensive technical specification at `spec.md` with:
 
 ---
 
-### [ ] Step 4: Agent Registry
+### [x] Step 4: Agent Registry
 <!-- chat-id: 24ede612-7094-4d7e-a824-d0c975ad06d3 -->
 
 **Goal:** Create static agent registry with Dojo, Librarian, Debugger agents
 
 **Tasks:**
-- [ ] Create `lib/agents/registry.json` with 3 agents
-- [ ] Create `lib/agents/supervisor.ts` with registry loading logic
-- [ ] Add registry validation with Zod schema
-- [ ] Add hot-reload support for dev mode
-- [ ] Test registry loads correctly
+- [x] Create `lib/agents/registry.json` with 3 agents
+- [x] Create `lib/agents/supervisor.ts` with registry loading logic
+- [x] Add registry validation with Zod schema
+- [x] Add hot-reload support for dev mode
+- [x] Test registry loads correctly
 
 **Verification:**
-- Registry validates against schema
-- All 3 agents load successfully
-- Default agent (Dojo) is properly marked
+- ✅ Registry validates against schema
+- ✅ All 3 agents load successfully (Dojo, Librarian, Debugger)
+- ✅ Default agent (Dojo) is properly marked
+
+**Completion Notes:**
+- Created `lib/agents/registry.json` with 3 agents (Dojo, Librarian, Debugger)
+- Implemented `lib/agents/supervisor.ts` with comprehensive registry functions:
+  - `loadAgentRegistry()` - Loads and caches registry with Zod validation
+  - `reloadAgentRegistry()` - Hot-reload support for dev mode
+  - `getAvailableAgents()` - Returns all agents
+  - `getAgentById()` - Retrieves specific agent
+  - `getDefaultAgent()` - Returns default agent (Dojo)
+  - `isValidAgentId()` - Validates agent ID
+  - `validateAgentRegistry()` - Comprehensive validation with error reporting
+- Created comprehensive test suite (`supervisor.test.ts`) - all tests passing
+- Type checking passed with zero errors
+- Registry includes detailed "when_to_use" and "when_not_to_use" criteria for accurate routing
 
 ---
 

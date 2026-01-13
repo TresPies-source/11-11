@@ -99,6 +99,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 4: Agent Registry
+<!-- chat-id: 24ede612-7094-4d7e-a824-d0c975ad06d3 -->
 
 **Goal:** Create static agent registry with Dojo, Librarian, Debugger agents
 

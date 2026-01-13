@@ -2286,6 +2286,7 @@ if (isDev) {
 
 ---
 
+<<<<<<< HEAD
 ## Phase 2: Full Status Lifecycle UI (v0.2.2)
 
 **Date:** January 12, 2026  
@@ -2987,6 +2988,7 @@ MarkdownEditor remounts with new content
 
 ---
 
+<<<<<<< HEAD
 ### Known Limitations (Phase 1: Multi-File Tabs)
 **Out of Scope for v0.2.1:**
 1. **Tab Reordering:** Drag-and-drop to rearrange tabs (deferred to v0.3+)
@@ -3028,30 +3030,297 @@ MarkdownEditor remounts with new content
 - Well-documented localStorage edge cases
 
 ---
+=======
+## Sprint: Dark Mode / Light Mode Toggle (Phase 4 - v0.2.4)
+
+**Date:** January 13, 2026  
+**Objective:** Implement theme switching (dark mode / light mode) to improve accessibility and user preference support  
+**Status:** ✅ Complete
+
+### Overview
+
+Implemented comprehensive theme system supporting dark and light modes with full WCAG 2.1 AA accessibility compliance. The implementation uses Tailwind's class-based dark mode, CSS variables for dynamic theming, and localStorage persistence for user preferences.
+
+### Architecture Decisions
+
+#### Theme System Strategy
+
+**Tailwind Class-Based Dark Mode:**
+- Configured `darkMode: 'class'` in `tailwind.config.ts`
+- Applies `dark` class to `<html>` element for global theme switching
+- Enables Tailwind's `dark:` variant for all color utilities
+- Provides better performance than media query-based approach
+
+**CSS Variables with RGB Values:**
+- Defined color palette using CSS variables in `app/globals.css`
+- Used RGB values (e.g., `--background: 255 255 255`) for alpha channel support
+- Supports `bg-background/50` syntax for semi-transparent colors
+- Separate `:root` and `.dark` variable definitions
+- Total of 9 semantic color tokens: background, foreground, card, card-foreground, primary, secondary, accent, muted, border
+
+**Theme Context Provider:**
+- Created `ThemeProvider` component wrapping entire application
+- Provides `theme` state and `toggleTheme()` function via React Context
+- Single source of truth for theme state
+- Accessible via `useTheme()` hook in any component
+
+### Color Palette
+
+**Light Mode Colors:**
+```css
+background: rgb(255, 255, 255)      /* Pure white */
+foreground: rgb(10, 10, 10)         /* Near black */
+card: rgb(255, 255, 255)            /* Pure white */
+card-foreground: rgb(10, 10, 10)    /* Near black */
+primary: rgb(37, 99, 235)           /* Blue-600 */
+secondary: rgb(100, 116, 139)       /* Slate-500 */
+accent: rgb(245, 158, 11)           /* Amber-500 */
+muted: rgb(107, 114, 128)           /* Gray-500 */
+border: rgb(100, 116, 139)          /* Slate-500 (adjusted for contrast) */
+```
+
+**Dark Mode Colors:**
+```css
+background: rgb(10, 10, 10)         /* Near black */
+foreground: rgb(250, 250, 250)      /* Near white */
+card: rgb(23, 23, 23)               /* Zinc-900 */
+card-foreground: rgb(250, 250, 250) /* Near white */
+primary: rgb(30, 64, 175)           /* Blue-800 (adjusted for contrast) */
+secondary: rgb(148, 163, 184)       /* Slate-400 */
+accent: rgb(251, 191, 36)           /* Amber-400 */
+muted: rgb(161, 161, 170)           /* Zinc-400 */
+border: rgb(113, 113, 122)          /* Zinc-500 (adjusted for contrast) */
+```
+
+**WCAG 2.1 AA Compliance:**
+- All colors adjusted to meet minimum contrast ratios
+- Normal text: 4.5:1 contrast ratio (all passed)
+- Large text: 3:1 contrast ratio (all passed)
+- UI components: 3:1 contrast ratio (borders, focus indicators)
+- Light mode primary adjusted from default to ensure button text contrast
+- Dark mode primary darkened from blue-600 to blue-800 for contrast
+- Borders significantly adjusted from default values to meet 3:1 requirement
+- Total: 18 contrast tests passed (9 light mode + 9 dark mode)
+
+### System Preference Detection
+
+**`prefers-color-scheme` Media Query:**
+- Detects user's OS theme preference on first visit
+- Uses `window.matchMedia('(prefers-color-scheme: dark)')`
+- Fallback to light mode if media query unsupported
+- Only used if no localStorage preference exists
+
+**localStorage Persistence:**
+- Theme preference saved as `theme-preference` key
+- Values: `"light"` or `"dark"`
+- Restored on page reload via `useTheme` hook
+- Overrides system preference once user explicitly toggles theme
+
+**Cross-Tab Synchronization:**
+- Not implemented in v0.2.4 (deferred to future release)
+- Each tab maintains independent theme state
+- Potential future enhancement: `storage` event listener
+
+### Monaco Editor Integration
+
+**Theme Synchronization:**
+- Monaco editor theme switches automatically with app theme
+- Light mode: `vs` theme (white background, dark syntax)
+- Dark mode: `vs-dark` theme (dark background, light syntax)
+- Theme prop passed dynamically via `useTheme()` hook
+
+**Implementation:**
+```tsx
+const { theme } = useTheme();
+
+<Editor
+  theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+  // ...other props
+/>
+```
+
+**Syntax Highlighting:**
+- Monaco's built-in themes provide appropriate syntax highlighting
+- No custom token colors needed
+- Maintains readability in both themes
+
+### FOUC Prevention
+
+**Flash of Unstyled Content (FOUC) Strategy:**
+
+**Problem:** React hydration occurs after initial HTML render, causing theme class to apply late and creating a flash of incorrect theme.
+
+**Solution:**
+- Inline script in `app/layout.tsx` (before React hydration)
+- Executes before any content renders
+- Reads localStorage and applies theme class to `<html>` element
+- Prevents any visual flash during page load
+
+**Implementation:**
+```tsx
+<script
+  dangerouslySetInnerHTML={{
+    __html: `
+      (function() {
+        const theme = localStorage.getItem('theme-preference');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (theme === 'dark' || (!theme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    `
+  }}
+/>
+```
+
+**Result:** Zero visible flash when loading page or navigating
+
+### Component Migration Strategy
+
+**Systematic Approach:**
+- Migrated 37 components across 4 priority tiers
+- Each component updated to use semantic color tokens
+- Replaced all hardcoded Tailwind colors (e.g., `bg-white`, `text-gray-900`)
+- Added `dark:` variants where needed for non-semantic colors
+
+**Priority 1 - Layout & Core (4 components):**
+- `Header.tsx`, `Sidebar.tsx`, `MainContent.tsx`, `CommandCenter.tsx`
+- Foundation for entire app theme
+- Verified first to ensure base layout works
+
+**Priority 2 - Librarian (10 components):**
+- All Librarian view components (cards, sections, views)
+- Critique scoring UI with proper contrast in both themes
+- Status transition buttons with visible states
+
+**Priority 3 - Multi-Agent (3 components):**
+- Chat panels, FAB button, session management
+- Message history readability in both themes
+
+**Priority 4 - Shared Components (20 components):**
+- File tree, search, toasts, loading states, error states
+- Icons and badges with proper visibility
+- Interactive elements with accessible focus states
+
+### Performance Optimization
+
+**Theme Switch Performance:**
+- Average: 28.72ms (72% faster than 100ms requirement)
+- Range: 14-33ms across 5 test iterations
+- Zero layout shifts detected
+- No frame drops during transition
+- Synchronous execution: 0.50ms (97% frame budget available)
+
+**Bundle Size Impact:**
+- Estimated: ~2KB (60% under 5KB requirement)
+- No new dependencies added
+- Leveraged Tailwind's existing dark mode functionality
+- Custom code: <200 lines total
+
+**Optimization Techniques:**
+- CSS class toggle (pure CSS transitions, GPU-accelerated)
+- CSS variables for color values (no JavaScript calculations)
+- No JavaScript animations (all transitions via CSS)
+- localStorage caching (theme preference cached)
+- Minimal re-renders (theme context only triggers on toggle)
+
+### Technical Achievements
+
+✅ **Core Features Complete:**
+- Dark and light themes fully implemented
+- Theme toggle button in Header (Sun/Moon icon)
+- Theme persistence via localStorage
+- System preference detection on first visit
+- Monaco editor theme synchronization
+- All 37 components theme-aware
+- Smooth 200ms transitions
+- Zero FOUC (flash of unstyled content)
+
+✅ **Accessibility Standards Met:**
+- WCAG 2.1 AA contrast compliance (18/18 tests passed)
+- Keyboard navigation support (Tab + Enter to toggle)
+- Focus indicators visible in both themes
+- aria-label on theme toggle button
+- All interactive elements meet 44×44px touch target minimum
+
+✅ **Performance Targets Achieved:**
+- Theme switch: 28.72ms average (requirement: <100ms)
+- Zero layout shifts
+- Zero frame drops
+- Bundle size: ~2KB (requirement: <5KB)
+
+✅ **Quality Standards Met:**
+- Zero ESLint warnings/errors
+- Zero TypeScript type errors
+- Production build succeeds
+- All existing features work in both themes
+- No regressions detected
+
+### Documentation
+
+**WCAG Validation Report:**
+- Location: `.zenflow/tasks/dark-mode-f-g-sprint-v0-2-4-ee11/wcag-validation-report.md`
+- All 18 contrast tests passed
+- Color adjustments documented
+- Testing methodology explained
+
+**Performance Validation Report:**
+- Location: `.zenflow/tasks/dark-mode-f-g-sprint-v0-2-4-ee11/performance-validation-report.md`
+- All performance requirements exceeded
+- Detailed metrics and analysis
+- Optimization techniques documented
+
+**Visual Validation Screenshots:**
+- Location: `05_Logs/screenshots/phase4-dark-mode/`
+- 8 screenshots total (home, editor, librarian, multi-agent in both themes)
+- Full visual coverage of all major views
+
+### Known Limitations
+
+#### Out of Scope for v0.2.4:
+1. **Custom Theme Colors:** User-defined color palettes deferred to v0.3+
+2. **High Contrast Mode:** Specialized accessibility theme deferred
+3. **Auto Theme Switching:** Time-based theme changes deferred
+4. **Cross-Tab Sync:** Theme sync across browser tabs deferred
+5. **Theme Preview:** Hover preview before switching deferred
+6. **Keyboard Shortcut:** Cmd/Ctrl+Shift+T shortcut deferred
+
+#### Technical Limitations:
+1. **Monaco Themes:** Limited to built-in themes (vs, vs-dark)
+2. **Transition Coverage:** Only color properties animate (not all CSS)
+3. **System Preference:** One-time detection (no live updates)
 
 ### Sprint Completion
 
 **Status:** ✅ Complete  
-**Date:** January 13, 2026  
+**Date:** January 13, 2026
 
 **All Acceptance Criteria Met:**
-- ✅ Tab bar displays above Monaco editor
-- ✅ Multiple files open simultaneously (max 10)
-- ✅ Active tab visually distinct
-- ✅ Unsaved indicators work correctly
-- ✅ Close with unsaved shows confirmation
-- ✅ All keyboard shortcuts functional
-- ✅ Tab state persists across reloads
-- ✅ Responsive design (mobile, tablet, desktop)
+- ✅ Dark and light themes defined with WCAG AA contrast compliance
+- ✅ Theme toggle button works in Header (Sun/Moon icon)
+- ✅ Theme persists across page reloads (localStorage)
+- ✅ System preference detected on first visit
+- ✅ Monaco editor theme switches correctly (vs-dark / vs)
+- ✅ All components work correctly in both themes
+- ✅ Smooth transition animations (200ms)
+- ✅ No flash of unstyled content (FOUC)
+- ✅ Lint check passes (`npm run lint`)
+- ✅ Type check passes (`npm run build`)
+- ✅ Visual validation via localhost screenshots (both themes)
 - ✅ Zero regressions in existing features
-- ✅ Lint and type checks pass
-- ✅ Performance targets met
 
-**Documentation Updated:**
-- ✅ JOURNAL.md includes architectural decisions
-- ✅ BUGS.md updated with P0-001 resolution
-- ✅ Task artifacts include implementation plan, spec, test reports
+**Testing Summary:**
+- Manual testing: All test cases passed
+- WCAG validation: 18/18 tests passed
+- Performance validation: All requirements exceeded
+- Regression testing: Zero issues detected
+- Visual validation: 8 screenshots captured
 
-**Next Phase:** Documentation cleanup and final verification
+**Files Modified:**
+- 40+ files updated (37 components + config files)
+- 3 new files created (ThemeProvider, useTheme, ThemeToggle)
+- 1 new script added (contrast-check.js)
+
+**Next Sprint:** Foundation & Growth Sprint v0.2.5 (One-Click Publish to Global Commons)
 
 ---

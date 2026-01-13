@@ -142,6 +142,68 @@
 **Strategic Achievement:**
 Removed the single biggest barrier to autonomous development. Developers can now clone the repo and run `npm install && npm run dev` with zero additional setup—no API keys, no cloud accounts, no external dependencies.
 
+### Sprint Complete: v0.2.4 - Dark Mode / Light Mode Toggle
+
+**Status:** ✅ Complete (January 13, 2026)
+
+**Objective:** Implement theme switching (dark mode / light mode) to improve accessibility and user preference support.
+
+**Delivered Features:**
+
+1. **Theme System:**
+   - ✅ Tailwind class-based dark mode (`darkMode: 'class'`)
+   - ✅ CSS variables with RGB values for alpha channel support
+   - ✅ 9 semantic color tokens (background, foreground, card, primary, secondary, accent, muted, border)
+   - ✅ Theme context provider with `useTheme()` hook
+   - ✅ localStorage persistence with system preference detection
+
+2. **Theme Toggle UI:**
+   - ✅ Sun/Moon icon button in Header
+   - ✅ Smooth 200ms transition animations
+   - ✅ Keyboard accessible (Tab + Enter)
+   - ✅ Proper aria-labels for screen readers
+
+3. **Component Migration:**
+   - ✅ 37 components updated to theme-aware classes
+   - ✅ All layout components (Header, Sidebar, MainContent, CommandCenter)
+   - ✅ All Librarian components (cards, sections, views, critique UI)
+   - ✅ All Multi-Agent components (chat panels, FAB button)
+   - ✅ All shared components (file tree, search, toasts, loading states)
+   - ✅ Monaco editor theme synchronization (vs / vs-dark)
+
+4. **Accessibility & Performance:**
+   - ✅ WCAG 2.1 AA contrast compliance (18/18 tests passed)
+   - ✅ Zero FOUC (flash of unstyled content)
+   - ✅ Theme switch: 28.72ms average (72% faster than requirement)
+   - ✅ Zero layout shifts, zero frame drops
+   - ✅ Bundle size impact: ~2KB (60% under limit)
+
+5. **Documentation:**
+   - ✅ WCAG validation report with all contrast ratios
+   - ✅ Performance validation report with detailed metrics
+   - ✅ 8 screenshots (all major views in both themes)
+   - ✅ Comprehensive JOURNAL.md documentation
+
+**Performance Achieved:**
+- Theme switch: 28.72ms average (requirement: <100ms)
+- Zero layout shifts (PerformanceObserver validation)
+- Zero frame drops (97% frame budget available)
+- Bundle size: ~2KB (requirement: <5KB)
+
+**Quality Metrics:**
+- Lint: 0 errors, 0 warnings
+- Build: Success (0 TypeScript errors)
+- WCAG 2.1 AA: 18/18 tests passed
+- Manual testing: All scenarios passed
+- Visual validation: 8 screenshots captured
+- Zero regressions detected
+
+**Out of Scope (Deferred):**
+- Custom theme colors (user-defined palettes) - v0.3+
+- High contrast mode - v0.3+
+- Auto theme switching (time-based) - v0.3+
+- Cross-tab theme sync - v0.3+
+
 ### Deferred Features (Future Releases)
 
 **Original v0.2.0 Scope:** 7 phases (Phase 0 + 6 feature phases)

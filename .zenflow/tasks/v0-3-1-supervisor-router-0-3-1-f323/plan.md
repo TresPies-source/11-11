@@ -358,6 +358,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 10: UI Components
+<!-- chat-id: 77f75744-c752-4f41-802a-71db9b4fb065 -->
 
 **Goal:** Create UI components for agent selection and routing feedback
 

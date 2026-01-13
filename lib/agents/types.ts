@@ -54,6 +54,7 @@ export interface HandoffContext {
 }
 
 export interface ChatMessage {
+  id?: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
   agent_id?: string;

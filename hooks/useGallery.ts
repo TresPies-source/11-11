@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PromptWithCritique } from '@/lib/pglite/prompts';
+import { getPublicPrompts } from '@/lib/pglite/prompts';
+import { DEFAULT_USER_ID } from '@/lib/pglite/client';
 
 interface UseGalleryReturn {
   prompts: PromptWithCritique[];
@@ -26,24 +28,14 @@ export function useGallery(): UseGalleryReturn {
     setError(null);
 
     try {
-      const params = new URLSearchParams({
-        filter,
-        sort,
+      const myPromptsOnly = filter === 'mine';
+      const prompts = await getPublicPrompts({
+        myPromptsOnly,
+        userId: myPromptsOnly ? DEFAULT_USER_ID : undefined,
+        sortBy: sort,
       });
-
-      const response = await fetch(`/api/librarian/public?${params}`);
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch public prompts');
-      }
-
-      const data = await response.json();
-      
-      if (data.success) {
-        setPrompts(data.prompts || []);
-      } else {
-        throw new Error(data.error || 'Failed to fetch public prompts');
-      }
+      setPrompts(prompts || []);
     } catch (err) {
       console.error('Error fetching public prompts:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch public prompts');

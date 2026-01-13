@@ -2,11 +2,14 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useToast } from "./useToast";
+import { publishPrompt as publishPromptDB, unpublishPrompt as unpublishPromptDB } from "@/lib/pglite/prompts";
+import { DEFAULT_USER_ID } from "@/lib/pglite/client";
 
 interface UsePublicToggleOptions {
   promptId: string;
   initialVisibility: string;
   authorName: string;
+  userId?: string;
   onToggleComplete?: (isPublic: boolean) => void;
 }
 
@@ -27,6 +30,7 @@ export function usePublicToggle({
   promptId,
   initialVisibility,
   authorName,
+  userId = DEFAULT_USER_ID,
   onToggleComplete,
 }: UsePublicToggleOptions): UsePublicToggleReturn {
   const [isPublic, setIsPublic] = useState(initialVisibility === "public");
@@ -42,25 +46,15 @@ export function usePublicToggle({
     setIsPublishing(true);
 
     try {
-      const response = await fetch("/api/librarian/publish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptId, authorName }),
-      });
+      const updatedPrompt = await publishPromptDB(promptId, userId, authorName);
 
-      if (!response.ok) {
-        throw new Error("Failed to publish prompt");
+      if (!updatedPrompt) {
+        throw new Error("Prompt not found");
       }
 
-      const data = await response.json();
-
-      if (data.success) {
-        setIsPublic(true);
-        success("🌍 Prompt published to Commons!");
-        onToggleComplete?.(true);
-      } else {
-        throw new Error(data.message || "Failed to publish prompt");
-      }
+      setIsPublic(true);
+      success("🌍 Prompt published to Commons!");
+      onToggleComplete?.(true);
     } catch (error) {
       console.error("Failed to publish prompt:", error);
       showError("Failed to publish prompt. Please try again.");
@@ -68,31 +62,21 @@ export function usePublicToggle({
     } finally {
       setIsPublishing(false);
     }
-  }, [promptId, authorName, success, showError, onToggleComplete]);
+  }, [promptId, authorName, userId, success, showError, onToggleComplete]);
 
   const unpublishPrompt = useCallback(async () => {
     setIsPublishing(true);
 
     try {
-      const response = await fetch("/api/librarian/unpublish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptId }),
-      });
+      const updatedPrompt = await unpublishPromptDB(promptId, userId);
 
-      if (!response.ok) {
-        throw new Error("Failed to unpublish prompt");
+      if (!updatedPrompt) {
+        throw new Error("Prompt not found");
       }
 
-      const data = await response.json();
-
-      if (data.success) {
-        setIsPublic(false);
-        success("Prompt made private");
-        onToggleComplete?.(false);
-      } else {
-        throw new Error(data.message || "Failed to unpublish prompt");
-      }
+      setIsPublic(false);
+      success("Prompt made private");
+      onToggleComplete?.(false);
     } catch (error) {
       console.error("Failed to unpublish prompt:", error);
       showError("Failed to make prompt private. Please try again.");
@@ -100,7 +84,7 @@ export function usePublicToggle({
     } finally {
       setIsPublishing(false);
     }
-  }, [promptId, success, showError, onToggleComplete]);
+  }, [promptId, userId, success, showError, onToggleComplete]);
 
   const togglePublic = useCallback(() => {
     if (isPublishing) return;

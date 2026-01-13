@@ -537,16 +537,18 @@ export async function publishPrompt(
     throw new Error('Unauthorized: only the owner can publish this prompt');
   }
 
+  const publishedAt = new Date().toISOString();
+  
   const result = await db.query(`
     UPDATE prompts 
     SET 
       visibility = 'public',
-      published_at = NOW(),
-      author_name = $2,
-      author_id = $3
+      published_at = $2,
+      author_name = $3,
+      author_id = $4
     WHERE id = $1
     RETURNING *
-  `, [promptId, authorName, userId]);
+  `, [promptId, publishedAt, authorName, userId]);
 
   return (result.rows[0] as PromptRow) || null;
 }

@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { useToast } from "./useToast";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
+import { copyPrompt as copyPromptDB } from "@/lib/pglite/prompts";
+import { DEFAULT_USER_ID } from "@/lib/pglite/client";
 
 interface UseCopyPromptReturn {
   copyPrompt: (promptId: string) => Promise<PromptWithCritique | null>;
@@ -21,24 +23,14 @@ export function useCopyPrompt(): UseCopyPromptReturn {
       setError(null);
 
       try {
-        const response = await fetch("/api/librarian/copy", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ promptId, userId: "dev-user" }),
-        });
+        const copiedPrompt = await copyPromptDB(promptId, DEFAULT_USER_ID);
 
-        if (!response.ok) {
-          throw new Error("Failed to copy prompt");
+        if (!copiedPrompt) {
+          throw new Error("Failed to copy prompt - prompt not found or not public");
         }
 
-        const data = await response.json();
-
-        if (data.success && data.newPrompt) {
-          success("✅ Copied to your Greenhouse!");
-          return data.newPrompt;
-        } else {
-          throw new Error(data.message || "Failed to copy prompt");
-        }
+        success("✅ Copied to your Greenhouse!");
+        return copiedPrompt;
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Failed to copy prompt";

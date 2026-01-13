@@ -4,7 +4,7 @@ import { seedDatabase } from './seed';
 import { applyMigration002 } from './migrations/002_add_status_history';
 
 const DB_PATH = 'idb://11-11-db';
-const DEFAULT_USER_ID = 'dev-user';
+export const DEFAULT_USER_ID = 'dev-user';
 
 let dbInstance: PGlite | null = null;
 let initPromise: Promise<PGlite> | null = null;

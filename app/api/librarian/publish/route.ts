@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { publishPrompt } from "@/lib/pglite/prompts";
+import { DEFAULT_USER_ID } from "@/lib/pglite/client";
+
+const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session || !session.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized - no valid session" },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { promptId, authorName } = body;
+    const { promptId, authorName, userId } = body;
 
     if (!promptId) {
       return NextResponse.json(
@@ -22,10 +16,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const displayName = authorName || session.user.name || session.user.email;
-    const userId = session.user.email;
+    if (!userId && !isDevMode) {
+      return NextResponse.json(
+        { error: "Missing required field: userId" },
+        { status: 400 }
+      );
+    }
 
-    const updatedPrompt = await publishPrompt(promptId, userId, displayName);
+    const displayName = authorName || userId || "Anonymous";
+    const userIdValue = userId || DEFAULT_USER_ID;
+
+    const updatedPrompt = await publishPrompt(promptId, userIdValue, displayName);
 
     if (!updatedPrompt) {
       return NextResponse.json(

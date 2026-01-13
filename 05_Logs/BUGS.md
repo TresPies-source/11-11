@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-01-12
 
-**Bug Summary**: 8 total (0 P0, 0 P1, 1 P2, 1 P3) - 6 bugs resolved (2 P1, 4 P2)
+**Bug Summary**: 9 total (1 P0, 0 P1, 2 P2, 1 P3) - 5 bugs resolved (2 P1, 3 P2)
 
 This document tracks all bugs discovered during the Hotfix & Validate sprint. Bugs are categorized by severity:
 
@@ -15,7 +15,65 @@ This document tracks all bugs discovered during the Hotfix & Validate sprint. Bu
 
 ## P0 (Critical) Bugs
 
-_No P0 bugs identified._
+**Summary**: 1 bug - BLOCKING all manual testing
+
+### [P0-001] Infinite render loop when clicking files in file tree
+**Status**: Open - BLOCKING  
+**Component**: RepositoryProvider, FileTree integration  
+**Found During**: Multi-File Tabs - Manual Testing (Step 14)  
+**Date**: 2026-01-12
+
+**Description**:
+When clicking on any file in the file tree to open it in a tab, an infinite render loop occurs that floods the console with log messages and triggers React's "Maximum update depth exceeded" warning. The application becomes unusable and must be manually stopped.
+
+**Reproduction Steps**:
+1. Navigate to `http://localhost:3002`
+2. Click on any file in the file tree (e.g., JOURNAL.md, AUDIT_LOG.md)
+3. Observe console flooding with: `[LOG] [RepositoryProvider] Using shared SyncStatus context`
+4. Page becomes unresponsive
+5. React error: "Warning: Maximum update depth exceeded"
+
+**Expected Behavior**:
+- File should open in a new tab (or switch to existing tab)
+- Single fetch request should occur
+- Tab bar should display with the open file
+- No infinite loops or excessive re-renders
+
+**Actual Behavior**:
+- Continuous re-renders triggered
+- Console floods with log messages
+- "Maximum update depth exceeded" warning
+- File sometimes shows wrong name (e.g., clicking AUDIT_LOG.md shows task_plan.md)
+- Application becomes unusable
+
+**Root Cause (Suspected)**:
+State update cycle in RepositoryProvider's `openTab` function causing cascading re-renders. The `validateRestoredTabs` function may be creating a dependency cycle even after attempted fixes.
+
+**Attempted Fixes**:
+1. Removed `activeTabId` from `validateRestoredTabs` dependency array
+2. Changed useEffect dependency for initial restoration to empty array `[]`
+3. Made `validateRestoredTabs` take `currentActiveTabId` as parameter instead of using closure
+
+**Impact**:
+- **BLOCKING** - All manual testing cannot proceed
+- Users cannot open files
+- Multi-file tabs feature is non-functional
+- Development and testing completely halted
+
+**Workaround**:
+None - feature is completely broken
+
+**Next Steps**:
+1. Add detailed debug logging to track:
+   - When `openTab` is called and by what component
+   - State changes in tabs array  
+   - Re-render triggers and counts
+2. Review FileTree's integration with `openTab`
+3. Check for multiple event handlers or duplicate bindings
+4. Consider adding guards to prevent redundant `openTab` calls
+5. Add loading/busy state to block multiple simultaneous operations
+
+**Priority**: P0 - Must fix before any further testing or development
 
 ---
 

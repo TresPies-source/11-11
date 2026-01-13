@@ -69,7 +69,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
 
   console.log('[RepositoryProvider] Using shared SyncStatus context');
 
-  const validateRestoredTabs = useCallback(async (restoredTabs: EditorTab[]) => {
+  const validateRestoredTabs = useCallback(async (restoredTabs: EditorTab[], currentActiveTabId: string | null) => {
     const validationPromises = restoredTabs.map(async (tab) => {
       try {
         const response = await fetch(`/api/drive/content/${tab.fileId}`, {
@@ -97,15 +97,13 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       .map(r => r.tabId);
 
     if (invalidTabIds.length > 0) {
-      setTabs(prev => {
-        const filtered = prev.filter(t => !invalidTabIds.includes(t.id));
-        
-        if (invalidTabIds.includes(activeTabId || '')) {
-          setActiveTabId(filtered.length > 0 ? filtered[0].id : null);
-        }
-        
-        return filtered;
-      });
+      const filtered = restoredTabs.filter(t => !invalidTabIds.includes(t.id));
+      
+      setTabs(filtered);
+      
+      if (invalidTabIds.includes(currentActiveTabId || '')) {
+        setActiveTabId(filtered.length > 0 ? filtered[0].id : null);
+      }
 
       setSavedContents(prev => {
         const next = new Map(prev);
@@ -123,7 +121,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
         return next;
       });
     }
-  }, [activeTabId]);
+  }, []);
 
   useEffect(() => {
     const savedState = loadTabStateFromStorage();
@@ -147,9 +145,9 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       setSavedContents(contents);
       setFileNodeMap(nodeMap);
       
-      validateRestoredTabs(savedState.tabs);
+      validateRestoredTabs(savedState.tabs, savedState.activeTabId);
     }
-  }, [validateRestoredTabs]);
+  }, []);
 
   useEffect(() => {
     if (tabs.length > 0) {

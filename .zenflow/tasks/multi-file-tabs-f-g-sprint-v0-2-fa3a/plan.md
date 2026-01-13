@@ -328,7 +328,11 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 14: Manual Testing
+### [x] Step 14: Manual Testing
+<!-- chat-id: 2b4303ed-82b5-4119-9167-0913c68a8abb -->
+
+**STATUS: BLOCKED by P0-001** - Infinite render loop prevents testing
+**Report:** See `.zenflow/tasks/multi-file-tabs-f-g-sprint-v0-2-fa3a/manual-testing-report.md`
 
 **Objective:** Execute comprehensive manual test suite.
 

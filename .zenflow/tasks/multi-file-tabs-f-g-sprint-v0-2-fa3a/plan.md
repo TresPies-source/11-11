@@ -73,6 +73,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 3: Update RepositoryProvider for Multi-Tab State
+<!-- chat-id: 486d4363-3714-4927-8ac6-62424e87a890 -->
 
 **Objective:** Upgrade RepositoryProvider from single-file to multi-tab management.
 

@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-01-13
 
-**Bug Summary**: 9 total (0 P0, 0 P1, 2 P2, 1 P3) - 7 bugs resolved (1 P0, 2 P1, 3 P2, 1 P3)
+**Bug Summary**: 10 total (0 P0, 0 P1, 2 P2, 1 P3) - 8 bugs resolved (1 P0, 2 P1, 4 P2, 1 P3)
 
 This document tracks all bugs discovered during the Hotfix & Validate sprint. Bugs are categorized by severity:
 
@@ -363,6 +363,72 @@ Initial page load took ~4.6 seconds due to loading state logic requiring both ho
 
 **Verification**:
 Page now loads progressively. If Seedlings data loads first, users see that section immediately while Greenhouse is still loading, and vice versa. Significantly improves perceived load time.
+
+---
+
+### [P2-006] ✅ RESOLVED: Zod v4 Dependency Conflict with OpenAI SDK
+**Status**: Resolved  
+**Component**: Dependencies (`package.json`)  
+**Found During**: Supervisor Router Feature - Step 1 (Dependencies Setup)  
+**Fixed During**: Supervisor Router Feature - Dependency Resolution  
+**Date Found**: 2026-01-13  
+**Date Fixed**: 2026-01-13
+
+**Description**:
+When installing the `openai` package for the Supervisor Router feature, npm reported an ERESOLVE dependency conflict. The project was using `zod@4.3.5` but the OpenAI SDK v4.104.0 requires `zod@^3.23.8` as a peerOptional dependency. This prevented clean installation with the error: "Conflicting peer dependency: zod@3.25.76".
+
+**Reproduction Steps**:
+1. Add `openai@^4.77.0` to package.json dependencies
+2. Run `npm install`
+3. Observe ERESOLVE error: "Could not resolve dependency: peerOptional zod@"^3.23.8" from openai@4.104.0"
+4. Installation fails without `--force` or `--legacy-peer-deps`
+
+**Root Cause**:
+- OpenAI SDK explicitly requires Zod v3.x for schema validation
+- Project was using Zod v4.3.5 (latest major version)
+- npm strict peer dependency resolution prevented installation
+
+**Fix Applied**:
+1. Downgraded `zod` from `^4.3.5` to `^3.23.8` in `package.json`
+2. Performed clean installation:
+   ```bash
+   rmdir /s /q node_modules
+   del package-lock.json
+   npm install
+   ```
+3. Verified build and type-check pass with zero errors
+
+**Impact Analysis**:
+- ✅ No breaking changes in existing code (Zod v3 API compatible with our usage)
+- ✅ All schema validation works identically (AgentRegistry, Cost Guard schemas)
+- ✅ Type checking passes (0 errors)
+- ✅ Build succeeds (production-ready)
+- ✅ No regressions in existing features
+
+**Files Modified**:
+- `package.json:33` - Changed `"zod": "^4.3.5"` to `"zod": "^3.23.8"`
+
+**Verification**:
+- ✅ `npm install` completes without errors
+- ✅ `npm run type-check` passes (0 errors)
+- ✅ `npm run build` succeeds (all routes built)
+- ✅ OpenAI SDK initializes correctly
+- ✅ All existing features work (Cost Guard, Librarian, Multi-Agent UI)
+
+**Documentation Updated**:
+- JOURNAL.md: Added "Decision #9: Zod v3 Dependency" to Supervisor Router Architecture Decisions
+- spec.md: Updated dependency list to reflect `zod@^3.23.8` (pending)
+- BUGS.md: This entry
+
+**Rationale for Downgrade (Not Upgrade)**:
+- OpenAI SDK is industry-standard, mature package with specific dependency requirements
+- Upgrading OpenAI SDK not viable (already on latest stable version)
+- Zod v3 → v4 migration provides minimal benefit for this project
+- Stability and compatibility prioritized over latest version
+- No API surface changes in Zod v3 → v4 affect our validation schemas
+
+**Resolution Date**: 2026-01-13  
+**Status**: RESOLVED
 
 ---
 

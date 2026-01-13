@@ -164,6 +164,30 @@ All transitions follow the "Hardworking" calm aesthetic:
 | **Layout** | react-resizable-panels | Resizable panel system |
 | **Language** | TypeScript | Type-safe development |
 
+### Important Dependency Note
+
+⚠️ **Zod Version Constraint**: This project uses `zod@^3.23.8` (not v4.x) for compatibility with the OpenAI SDK.
+
+The OpenAI SDK v4.104.0 requires Zod v3.x as a peer dependency. If you encounter an ERESOLVE error during `npm install`:
+
+```bash
+npm error Conflicting peer dependency: zod@3.x.x
+```
+
+**Solution:**
+1. Ensure `package.json` specifies `"zod": "^3.23.8"` (not v4.x)
+2. Perform a clean install:
+   ```bash
+   # Windows
+   rmdir /s /q node_modules && del package-lock.json && npm install
+   
+   # macOS/Linux
+   rm -rf node_modules package-lock.json && npm install
+   ```
+3. Verify: `npm run type-check && npm run build`
+
+See [BUGS.md](./05_Logs/BUGS.md) (bug P2-006) and [JOURNAL.md](./JOURNAL.md) (Architecture Decision #9 in Supervisor Router sprint) for detailed documentation.
+
 ## 🧪 Testing
 
 Currently, the application uses manual testing and type checking. Future sprints will add:

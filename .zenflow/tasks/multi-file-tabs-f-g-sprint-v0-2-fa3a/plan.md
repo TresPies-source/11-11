@@ -259,6 +259,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 11: Update FileTree Integration
+<!-- chat-id: aee8e0ef-997b-481e-9228-08e4cf183c95 -->
 
 **Objective:** Update FileTree to open tabs instead of setting active file.
 

@@ -94,11 +94,11 @@ Tests comprehensive fallback handling for all error scenarios.
 
 ---
 
-### ⏭️ cost-tracking.test.ts - Routing Cost Tracking (30+ assertions, SKIPPED)
+### ✅ cost-tracking.test.ts - Routing Cost Tracking (12/12 PASS)
 
 Tests routing cost calculation and database persistence.
 
-**Status:** Skipped in Node.js (requires browser environment with IndexedDB)
+**Status:** ✅ All tests passing in browser environment (Playwright)
 
 **Test Coverage (when run in browser):**
 - ✅ Cost calculation accuracy (GPT-4o-mini pricing)

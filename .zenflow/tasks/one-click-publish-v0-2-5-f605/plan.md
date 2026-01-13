@@ -136,6 +136,7 @@ Integrate public toggle and badge into existing prompt cards and views.
 ---
 
 ### [ ] Step: Seed Data & Testing
+<!-- chat-id: b7c08d8d-1de2-4179-8ed0-4f13b289bcd1 -->
 
 Update seed data with public prompts and perform end-to-end testing.
 

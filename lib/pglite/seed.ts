@@ -8,6 +8,9 @@ interface SeedPrompt {
   tags: string[];
   description: string;
   critiqueScore: number;
+  visibility?: 'private' | 'public' | 'unlisted';
+  authorName?: string;
+  publishedDaysAgo?: number;
 }
 
 const SEED_PROMPTS: SeedPrompt[] = [
@@ -17,7 +20,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['code', 'review', 'engineering'],
     description: 'AI assistant for code reviews',
-    critiqueScore: 88
+    critiqueScore: 88,
+    visibility: 'public',
+    authorName: 'Sarah Chen',
+    publishedDaysAgo: 3
   },
   {
     title: 'SQL Query Optimizer',

@@ -61,6 +61,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 2: Database Schema & Migration
+<!-- chat-id: cdc7b106-b3c7-4749-b382-f18049950f10 -->
 
 **Goal:** Add database tables for routing decisions, costs, and handoffs
 

@@ -11,18 +11,23 @@ import {
   User,
   Bot,
   Check,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChatMessage, Session } from "@/lib/types";
-import { AGENT_PERSONAS, ANIMATION_EASE } from "@/lib/constants";
+import { AGENT_PERSONAS, ANIMATION_EASE, SUPERVISOR_AGENTS } from "@/lib/constants";
 import { useContextBus, useContextBusSubscription } from "@/hooks/useContextBus";
+import { AgentSelector } from "@/components/agents/AgentSelector";
+import { RoutingIndicator } from "@/components/agents/RoutingIndicator";
+import { AgentStatusBadge } from "@/components/agents/AgentStatusBadge";
+import type { Agent, RoutingResult } from "@/lib/agents/types";
 
 interface ChatPanelProps {
   session: Session;
   onMinimize: (id: string) => void;
   onMaximize: (id: string) => void;
   onClose: (id: string) => void;
-  onSendMessage: (id: string, content: string) => void;
+  onSendMessage: (id: string, content: string, agentId?: string) => void;
 }
 
 const ChatPanelComponent = ({
@@ -35,8 +40,33 @@ const ChatPanelComponent = ({
   const [input, setInput] = useState("");
   const [systemContext, setSystemContext] = useState<string>("");
   const [showContextToast, setShowContextToast] = useState(false);
+  const [selectedAgentMode, setSelectedAgentMode] = useState<string | "auto">("auto");
+  const [currentAgent, setCurrentAgent] = useState<Agent | null>(null);
+  const [routingDecision, setRoutingDecision] = useState<RoutingResult | null>(null);
+  const [isRouting, setIsRouting] = useState(false);
+  const [availableAgents, setAvailableAgents] = useState<Agent[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const persona = AGENT_PERSONAS.find((p) => p.id === session.persona);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await fetch("/api/supervisor/agents");
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableAgents(data.agents || []);
+          const defaultAgent = data.agents?.find((a: Agent) => a.default);
+          if (defaultAgent) {
+            setCurrentAgent(defaultAgent);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch agents:", error);
+      }
+    };
+
+    fetchAgents();
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,16 +96,75 @@ const ChatPanelComponent = ({
 
   useContextBusSubscription("PLAN_UPDATED", handlePlanUpdate);
 
+  const routeMessage = useCallback(
+    async (query: string): Promise<string> => {
+      if (selectedAgentMode !== "auto") {
+        return selectedAgentMode;
+      }
+
+      setIsRouting(true);
+      try {
+        const conversationContext = session.messages
+          .slice(-3)
+          .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`);
+
+        const response = await fetch("/api/supervisor/route", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query,
+            conversation_context: conversationContext,
+            session_id: session.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Routing failed");
+        }
+
+        const result: RoutingResult = await response.json();
+        setRoutingDecision(result);
+
+        const agent = availableAgents.find((a) => a.id === result.agent_id);
+        if (agent) {
+          setCurrentAgent(agent);
+        }
+
+        return result.agent_id;
+      } catch (error) {
+        console.error("Routing error:", error);
+        const defaultAgent = availableAgents.find((a) => a.default);
+        return defaultAgent?.id || "dojo";
+      } finally {
+        setIsRouting(false);
+      }
+    },
+    [selectedAgentMode, session.messages, session.id, availableAgents]
+  );
+
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
       if (input.trim()) {
-        onSendMessage(session.id, input.trim());
+        const agentId = await routeMessage(input.trim());
+        onSendMessage(session.id, input.trim(), agentId);
         setInput("");
       }
     },
-    [input, onSendMessage, session.id]
+    [input, routeMessage, onSendMessage, session.id]
   );
+
+  const handleAgentChange = useCallback((agentId: string | "auto") => {
+    setSelectedAgentMode(agentId);
+    setRoutingDecision(null);
+
+    if (agentId !== "auto") {
+      const agent = availableAgents.find((a) => a.id === agentId);
+      if (agent) {
+        setCurrentAgent(agent);
+      }
+    }
+  }, [availableAgents]);
 
   if (session.isMinimized) {
     return (
@@ -139,38 +228,59 @@ const ChatPanelComponent = ({
         )}
       </AnimatePresence>
       
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Sparkles
-            className={cn(
-              "w-4 h-4 flex-shrink-0",
-              persona?.color === "blue" && "text-blue-500",
-              persona?.color === "purple" && "text-purple-500",
-              persona?.color === "green" && "text-green-500",
-              persona?.color === "amber" && "text-amber-500"
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Sparkles
+              className={cn(
+                "w-4 h-4 flex-shrink-0",
+                persona?.color === "blue" && "text-blue-500",
+                persona?.color === "purple" && "text-purple-500",
+                persona?.color === "green" && "text-green-500",
+                persona?.color === "amber" && "text-amber-500"
+              )}
+            />
+            <span className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+              {session.title}
+            </span>
+            {currentAgent && (
+              <AgentStatusBadge agent={currentAgent} />
             )}
-          />
-          <span className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{session.title}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onMinimize(session.id)}
+              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+              title="Minimize"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onClose(session.id)}
+              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+              title="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onMinimize(session.id)}
-            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-            title="Minimize"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onClose(session.id)}
-            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-            title="Close"
-          >
-            <X className="w-4 h-4" />
-          </button>
+        <div className="px-4 pb-3">
+          <AgentSelector
+            selectedAgentId={selectedAgentMode}
+            onAgentChange={handleAgentChange}
+            availableAgents={availableAgents}
+          />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+        {routingDecision && currentAgent && (
+          <RoutingIndicator
+            result={routingDecision}
+            agent={currentAgent}
+            mode="full"
+          />
+        )}
         {session.messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
             <div className="text-center">
@@ -243,10 +353,14 @@ const ChatPanelComponent = ({
           />
           <button
             type="submit"
-            disabled={!input.trim()}
+            disabled={!input.trim() || isRouting}
             className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
-            <Send className="w-4 h-4" />
+            {isRouting ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </button>
         </div>
       </form>

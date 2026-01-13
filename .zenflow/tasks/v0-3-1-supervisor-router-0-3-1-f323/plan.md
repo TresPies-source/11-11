@@ -315,23 +315,45 @@ Created comprehensive technical specification at `spec.md` with:
 
 ---
 
-### [ ] Step 9: API Endpoints
+### [x] Step 9: API Endpoints
 <!-- chat-id: 5e157a03-b114-435e-85ac-5fb88b643ad9 -->
 
 **Goal:** Create REST API for routing and agent listing
 
 **Tasks:**
-- [ ] Create `app/api/supervisor/route/route.ts` (POST)
-- [ ] Create `app/api/supervisor/agents/route.ts` (GET)
-- [ ] Implement request validation
-- [ ] Implement error handling
-- [ ] Add dev mode support
-- [ ] Test with sample requests
+- [x] Create `app/api/supervisor/route/route.ts` (POST)
+- [x] Create `app/api/supervisor/agents/route.ts` (GET)
+- [x] Implement request validation
+- [x] Implement error handling
+- [x] Add dev mode support
+- [x] Test with sample requests
 
 **Verification:**
-- API returns correct response format
-- Error handling works
-- Dev mode returns mock data
+- ✅ API returns correct response format
+- ✅ Error handling works (tested empty query, missing session_id)
+- ✅ Dev mode returns keyword-based routing (no API key required)
+
+**Completion Notes:**
+- Created `POST /api/supervisor/route` endpoint for routing queries to agents
+  - Validates required fields: query (non-empty string), session_id (string)
+  - Optional conversation_context (array of strings)
+  - Returns: agent_id, agent_name, confidence, reasoning, fallback flag, routing_cost
+  - Gracefully handles dev mode with keyword-based fallback
+  - Comprehensive error handling: validation errors (400), server errors (500), JSON parsing errors
+- Created `GET /api/supervisor/agents` endpoint for listing available agents
+  - Returns all agents with id, name, description, when_to_use, when_not_to_use, default flag
+  - No authentication required (public endpoint)
+  - Simple error handling with 500 status on failure
+- Tested all endpoints with multiple scenarios:
+  - ✅ Search query → routes to Librarian Agent
+  - ✅ Thinking query → routes to Dojo Agent  
+  - ✅ Conflict query → routes to Debugger Agent
+  - ✅ Empty query → returns validation error
+  - ✅ Missing session_id → returns validation error
+  - ✅ GET /agents → returns all 3 agents correctly
+- Build successful with zero TypeScript errors
+- Follows existing API patterns in codebase (NextRequest/NextResponse, error handling, dev mode detection)
+- Ready for integration with UI components (Step 10)
 
 ---
 

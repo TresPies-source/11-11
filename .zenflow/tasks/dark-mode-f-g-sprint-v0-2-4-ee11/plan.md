@@ -36,6 +36,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 1: Configure Tailwind & Define Color Palette
+<!-- chat-id: d95d94de-d593-4a67-b4c9-3c71d5c6f1d5 -->
 
 **Objective:** Enable Tailwind dark mode and define comprehensive color palette
 

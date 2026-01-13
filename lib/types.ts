@@ -181,3 +181,13 @@ export type ContextBusEvent =
   | { type: 'SYNC_STATUS_CHANGED'; payload: { status: 'synced' | 'syncing' | 'error' } };
 
 export type ActiveTab = "editor" | "multi-agent";
+
+export interface ContextMenuItem {
+  id: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  onClick: () => void;
+  disabled?: boolean;
+  danger?: boolean;
+  separator?: boolean;
+}

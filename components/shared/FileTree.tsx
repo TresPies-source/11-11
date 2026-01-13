@@ -22,6 +22,7 @@ interface FileTreeProps {
   onSelect?: (node: FileNode) => void;
   expandedIds?: Set<string>;
   onToggleExpand?: (id: string) => void;
+  openFileIds?: Set<string>;
 }
 
 export function FileTree({
@@ -31,6 +32,7 @@ export function FileTree({
   onSelect,
   expandedIds,
   onToggleExpand,
+  openFileIds,
 }: FileTreeProps) {
   return (
     <div className="space-y-0.5">
@@ -43,6 +45,7 @@ export function FileTree({
           onSelect={onSelect}
           expandedIds={expandedIds}
           onToggleExpand={onToggleExpand}
+          openFileIds={openFileIds}
         />
       ))}
     </div>
@@ -56,6 +59,7 @@ interface FileTreeNodeProps {
   onSelect?: (node: FileNode) => void;
   expandedIds?: Set<string>;
   onToggleExpand?: (id: string) => void;
+  openFileIds?: Set<string>;
 }
 
 function FileTreeNode({
@@ -65,10 +69,12 @@ function FileTreeNode({
   onSelect,
   expandedIds,
   onToggleExpand,
+  openFileIds,
 }: FileTreeNodeProps) {
   const isExpanded = expandedIds?.has(node.id) ?? node.expanded ?? false;
   const isSelected = selectedId === node.id;
   const hasChildren = node.type === "folder" && node.children && node.children.length > 0;
+  const isOpen = node.type === "file" && openFileIds?.has(node.id);
 
   const handleClick = () => {
     if (node.type === "folder") {
@@ -136,6 +142,9 @@ function FileTreeNode({
         </span>
 
         <div className="flex items-center gap-1.5 flex-shrink-0">
+          {isOpen && (
+            <div className="w-2 h-2 rounded-full bg-blue-500" title="Open in tab" />
+          )}
           {node.isModified && (
             <div className="w-2 h-2 rounded-full bg-orange-500" title="Modified" />
           )}
@@ -159,6 +168,7 @@ function FileTreeNode({
               onSelect={onSelect}
               expandedIds={expandedIds}
               onToggleExpand={onToggleExpand}
+              openFileIds={openFileIds}
             />
           </motion.div>
         )}

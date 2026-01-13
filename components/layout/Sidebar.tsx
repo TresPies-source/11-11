@@ -70,7 +70,7 @@ function convertDriveFilesToFileNodes(driveFiles: DriveFile[]): FileNode[] {
 }
 
 export function Sidebar({ collapsed }: SidebarProps) {
-  const { setActiveFile } = useRepository();
+  const { openTab, tabs, activeTabId } = useRepository();
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     new Set(["00_roadmap", "05_logs"])
@@ -78,6 +78,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
   const [fileTree, setFileTree] = useState<FileNode[]>(mockFileTree);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const openFileIds = new Set(tabs.map(tab => tab.fileId));
 
   useEffect(() => {
     async function loadFiles() {
@@ -129,9 +130,9 @@ export function Sidebar({ collapsed }: SidebarProps) {
     });
   };
 
-  const handleSelect = (node: FileNode) => {
+  const handleSelect = async (node: FileNode) => {
     setSelectedId(node.id);
-    setActiveFile(node);
+    await openTab(node);
   };
   return (
     <div className="h-full bg-white border-r border-gray-200 flex flex-col">
@@ -191,6 +192,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                   onSelect={handleSelect}
                   expandedIds={expandedIds}
                   onToggleExpand={handleToggleExpand}
+                  openFileIds={openFileIds}
                 />
               )}
             </motion.div>

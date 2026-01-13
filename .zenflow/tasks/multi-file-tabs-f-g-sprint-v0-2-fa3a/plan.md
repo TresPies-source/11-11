@@ -372,7 +372,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 16: Lint and Type Check
+### [x] Step 16: Lint and Type Check
+<!-- chat-id: c6234e2f-4436-4fe5-9a45-cbf9c942b48d -->
 
 **Objective:** Ensure code quality and type safety.
 

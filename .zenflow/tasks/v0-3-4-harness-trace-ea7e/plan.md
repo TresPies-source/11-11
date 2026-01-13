@@ -41,7 +41,7 @@ Technical specification created in `spec.md` covering:
 
 ---
 
-### [ ] Step: Phase 1 - Core Infrastructure
+### [x] Step: Phase 1 - Core Infrastructure
 <!-- chat-id: ce583431-8e06-4c7a-94c1-85ea8dcf60e3 -->
 
 **Goal:** Establish tracing foundation with types, utilities, and database schema.
@@ -57,10 +57,10 @@ Technical specification created in `spec.md` covering:
 8. Update `/lib/pglite/client.ts` - Add migration 005 to initialization sequence
 
 **Verification:**
-- [ ] Unit tests pass: `tsx lib/harness/trace.test.ts`
-- [ ] Database migration runs successfully on fresh database
-- [ ] TypeScript compilation passes: `npm run type-check`
-- [ ] No regressions in existing tests
+- [x] Unit tests pass: `tsx lib/harness/trace.test.ts`
+- [x] Database migration runs successfully on fresh database
+- [x] TypeScript compilation passes: `npm run type-check`
+- [x] No regressions in existing tests
 
 **Deliverables:**
 - Functional tracing API with nested span support

@@ -224,3 +224,24 @@ export interface SearchHistoryInsert {
   filters?: Record<string, any>;
   created_at?: string;
 }
+
+export interface HarnessTraceRow {
+  trace_id: string;
+  session_id: string;
+  user_id: string;
+  started_at: string;
+  ended_at: string | null;
+  events: any;
+  summary: any;
+  created_at: string;
+}
+
+export interface HarnessTraceInsert {
+  trace_id: string;
+  session_id: string;
+  user_id: string;
+  started_at: string;
+  ended_at: string | null;
+  events: string;
+  summary: string;
+}

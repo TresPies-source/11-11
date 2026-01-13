@@ -40,19 +40,31 @@ export function useSyncStatus() {
   }, []);
 
   const retryLastFailed = useCallback(async () => {
-    const lastFailedOp = status.operations.find((op) => op.status === 'error');
-    
-    if (!lastFailedOp) {
-      return;
-    }
+    setStatus((prev) => {
+      const lastFailedOp = prev.operations.find((op) => op.status === 'error');
+      
+      if (!lastFailedOp) {
+        return prev;
+      }
 
-    addOperation({
-      type: lastFailedOp.type,
-      status: 'pending',
-      fileId: lastFailedOp.fileId,
-      fileName: lastFailedOp.fileName,
+      const newOperation: SyncOperation = {
+        type: lastFailedOp.type,
+        status: 'pending',
+        fileId: lastFailedOp.fileId,
+        fileName: lastFailedOp.fileName,
+        id: generateId(),
+        timestamp: new Date(),
+      };
+
+      const operations = [newOperation, ...prev.operations].slice(0, MAX_OPERATIONS);
+      
+      return {
+        ...prev,
+        operations,
+        currentOperation: newOperation,
+      };
     });
-  }, [status.operations, addOperation]);
+  }, []);
 
   const clearOperations = useCallback(() => {
     setStatus({

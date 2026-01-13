@@ -79,7 +79,7 @@ export const CritiqueScore = memo(function CritiqueScore({
     >
       <div className="flex items-center justify-between gap-2">
         {showLabel && (
-          <span className={cn("font-medium text-gray-600", config.label)}>
+          <span className={cn("font-medium text-muted-foreground", config.label)}>
             Quality Score
           </span>
         )}

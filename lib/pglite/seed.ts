@@ -8,6 +8,9 @@ interface SeedPrompt {
   tags: string[];
   description: string;
   critiqueScore: number;
+  visibility?: 'private' | 'public' | 'unlisted';
+  authorName?: string;
+  publishedDaysAgo?: number;
 }
 
 const SEED_PROMPTS: SeedPrompt[] = [
@@ -17,7 +20,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['code', 'review', 'engineering'],
     description: 'AI assistant for code reviews',
-    critiqueScore: 88
+    critiqueScore: 88,
+    visibility: 'public',
+    authorName: 'Sarah Chen',
+    publishedDaysAgo: 3
   },
   {
     title: 'SQL Query Optimizer',
@@ -33,7 +39,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['documentation', 'api', 'technical writing'],
     description: 'Generates API documentation',
-    critiqueScore: 92
+    critiqueScore: 92,
+    visibility: 'public',
+    authorName: 'Marcus Rodriguez',
+    publishedDaysAgo: 7
   },
   {
     title: 'Debug Helper',
@@ -57,7 +66,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['testing', 'qa', 'jest'],
     description: 'Generates comprehensive test cases',
-    critiqueScore: 85
+    critiqueScore: 85,
+    visibility: 'public',
+    authorName: 'Aisha Patel',
+    publishedDaysAgo: 1
   },
   {
     title: 'TypeScript Migration',
@@ -73,7 +85,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['security', 'audit', 'vulnerabilities'],
     description: 'Comprehensive security audit prompt',
-    critiqueScore: 95
+    critiqueScore: 95,
+    visibility: 'public',
+    authorName: 'David Kim',
+    publishedDaysAgo: 14
   },
   {
     title: 'API Design Review',
@@ -89,7 +104,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['database', 'schema', 'sql'],
     description: 'Database schema design assistant',
-    critiqueScore: 87
+    critiqueScore: 87,
+    visibility: 'public',
+    authorName: 'Elena Popescu',
+    publishedDaysAgo: 5
   },
   {
     title: 'Git Commit Message',
@@ -105,7 +123,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['performance', 'optimization'],
     description: 'Performance optimization consultant',
-    critiqueScore: 90
+    critiqueScore: 90,
+    visibility: 'public',
+    authorName: 'James Okonkwo',
+    publishedDaysAgo: 21
   },
   {
     title: 'CSS Layout Help',
@@ -121,7 +142,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['accessibility', 'a11y', 'wcag'],
     description: 'WCAG compliance checker',
-    critiqueScore: 91
+    critiqueScore: 91,
+    visibility: 'public',
+    authorName: 'Yuki Tanaka',
+    publishedDaysAgo: 2
   },
   {
     title: 'Docker Configuration',
@@ -137,7 +161,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['algorithms', 'education'],
     description: 'Algorithm teaching assistant',
-    critiqueScore: 86
+    critiqueScore: 86,
+    visibility: 'public',
+    authorName: 'Priya Sharma',
+    publishedDaysAgo: 10
   },
   {
     title: 'Error Message Decoder',
@@ -153,7 +180,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['cicd', 'devops', 'automation'],
     description: 'CI/CD pipeline designer',
-    critiqueScore: 89
+    critiqueScore: 89,
+    visibility: 'public',
+    authorName: 'Carlos Mendoza',
+    publishedDaysAgo: 4
   },
   {
     title: 'Regex Pattern Builder',
@@ -217,7 +247,10 @@ const SEED_PROMPTS: SeedPrompt[] = [
     status: 'saved',
     tags: ['architecture', 'microservices', 'system-design'],
     description: 'Microservices architect',
-    critiqueScore: 93
+    critiqueScore: 93,
+    visibility: 'public',
+    authorName: 'Lisa Zhang',
+    publishedDaysAgo: 8
   },
   {
     title: 'NPM Package Setup',
@@ -273,11 +306,17 @@ export async function seedDatabase(db: any, userId: string): Promise<void> {
   console.log('[PGlite] Seeding database with sample prompts...');
 
   for (const seed of SEED_PROMPTS) {
+    const visibility = seed.visibility || 'private';
+    const authorName = seed.authorName || null;
+    const publishedAt = seed.publishedDaysAgo 
+      ? new Date(Date.now() - seed.publishedDaysAgo * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+
     const promptResult = await db.query(`
-      INSERT INTO prompts (user_id, title, content, status)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO prompts (user_id, title, content, status, author_id, author_name, visibility, published_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id
-    `, [userId, seed.title, seed.content, seed.status]);
+    `, [userId, seed.title, seed.content, seed.status, userId, authorName, visibility, publishedAt]);
 
     const promptId = promptResult.rows[0].id;
 

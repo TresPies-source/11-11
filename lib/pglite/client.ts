@@ -1,9 +1,10 @@
 import { PGlite } from '@electric-sql/pglite';
-import { initializeSchema, checkIfInitialized } from './schema';
+import { initializeSchema, checkIfInitialized, MIGRATION_SQL } from './schema';
 import { seedDatabase } from './seed';
+import { applyMigration002 } from './migrations/002_add_status_history';
 
 const DB_PATH = 'idb://11-11-db';
-const DEFAULT_USER_ID = 'dev-user';
+export const DEFAULT_USER_ID = 'dev-user';
 
 let dbInstance: PGlite | null = null;
 let initPromise: Promise<PGlite> | null = null;
@@ -34,6 +35,11 @@ async function initializeDatabase(): Promise<PGlite> {
       console.log('[PGlite] Database seeding complete');
     } else {
       console.log('[PGlite] Database already initialized');
+      
+      console.log('[PGlite] Running migrations...');
+      await applyMigration002(db);
+      await db.exec(MIGRATION_SQL);
+      console.log('[PGlite] Migrations complete');
     }
     
     dbInstance = db;

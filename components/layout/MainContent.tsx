@@ -13,8 +13,8 @@ export function MainContent() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("multi-agent");
 
   return (
-    <div className="h-full bg-white flex flex-col">
-      <div className="h-14 border-b border-gray-200 flex items-center px-6 gap-1">
+    <div className="h-full bg-background flex flex-col">
+      <div className="h-14 border-b border-border flex items-center px-6 gap-1">
         <TabButton
           icon={FileText}
           label="Editor"
@@ -73,10 +73,10 @@ function TabButton({ icon: Icon, label, active, onClick }: TabButtonProps) {
       onClick={onClick}
       className={cn(
         "relative px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200",
-        "hover:bg-gray-100",
+        "hover:bg-accent",
         active
-          ? "text-blue-600 font-medium"
-          : "text-gray-600 hover:text-gray-900"
+          ? "text-primary font-medium"
+          : "text-muted-foreground hover:text-foreground"
       )}
     >
       <Icon className="w-4 h-4" />
@@ -84,7 +84,7 @@ function TabButton({ icon: Icon, label, active, onClick }: TabButtonProps) {
       {active && (
         <motion.div
           layoutId="active-tab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
           transition={{ duration: PANEL_TRANSITION_DURATION, ease: ANIMATION_EASE }}
         />
       )}

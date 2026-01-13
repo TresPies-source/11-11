@@ -26,6 +26,7 @@ export const AGENT_PERSONAS = [
 ] as const;
 
 export const MAX_CHAT_PANELS = 6;
+export const MAX_EDITOR_TABS = 10;
 
 export const SIDEBAR_MIN_WIDTH = 200;
 export const SIDEBAR_MAX_WIDTH = 500;

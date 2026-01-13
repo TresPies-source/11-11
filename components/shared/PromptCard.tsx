@@ -99,7 +99,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
 
   return (
     <motion.div
-      className="group bg-white rounded-lg border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200 hover:border-blue-300 flex flex-col h-full"
+      className="group bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-lg transition-shadow duration-200 hover:border-blue-300 dark:hover:border-blue-600 flex flex-col h-full"
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -107,7 +107,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
     >
       <div className="flex-1">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
             {title}
           </h3>
           <button
@@ -116,8 +116,8 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
               "flex-shrink-0 p-1.5 rounded-md transition-all duration-100",
               "active:scale-95",
               copied
-                ? "bg-green-100 text-green-600"
-                : "hover:bg-gray-100 text-gray-500"
+                ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400"
             )}
             title="Quick Copy"
           >
@@ -129,7 +129,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
           </button>
         </div>
 
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3">{description}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-3">{description}</p>
 
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -141,8 +141,8 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
                   onTagClick?.(tag);
                 }}
                 className={cn(
-                  "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700",
-                  onTagClick && "cursor-pointer hover:bg-blue-100 active:scale-95 transition-all duration-100"
+                  "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
+                  onTagClick && "cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/50 active:scale-95 transition-all duration-100"
                 )}
                 variants={tagVariants}
                 initial="hidden"
@@ -162,12 +162,12 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
         )}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100">
+      <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800">
         {normalizedVariant === "greenhouse" ? (
           <div className="flex gap-2">
             <button
               onClick={handleEdit}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 active:scale-95 transition-all duration-100 text-sm font-medium"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 active:scale-95 transition-all duration-100 text-sm font-medium"
               aria-label={`Edit ${title}`}
             >
               <Edit className="h-4 w-4" />
@@ -175,7 +175,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
             </button>
             <button
               onClick={handleRunInChat}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 active:scale-95 transition-all duration-100 text-sm font-medium"
               aria-label={`Run ${title} in chat`}
             >
               <PlayCircle className="h-4 w-4" />
@@ -187,7 +187,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
             onClick={handleFork}
             disabled={forking}
             className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 active:scale-95 transition-all duration-100 text-sm font-medium",
+              "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 active:scale-95 transition-all duration-100 text-sm font-medium",
               forking && "opacity-50 cursor-not-allowed"
             )}
           >

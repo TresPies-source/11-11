@@ -33,6 +33,7 @@ interface FileTreeProps {
   expandedIds?: Set<string>;
   onToggleExpand?: (id: string) => void;
   operationsInProgress?: Set<string>;
+  openFileIds?: Set<string>;
 }
 
 export function FileTree({
@@ -43,6 +44,7 @@ export function FileTree({
   expandedIds,
   onToggleExpand,
   operationsInProgress,
+  openFileIds,
 }: FileTreeProps) {
   const contextMenu = useContextMenu();
   const fileOps = useFileOperations();
@@ -110,6 +112,7 @@ export function FileTree({
         expandedIds={expandedIds}
         onToggleExpand={onToggleExpand}
         operationsInProgress={operationsInProgress}
+        openFileIds={openFileIds}
         onContextMenu={contextMenu.openContextMenu}
         renamingNodeId={renamingNodeId}
         onRename={handleRename}
@@ -164,6 +167,7 @@ interface FileTreeNodesProps {
   expandedIds?: Set<string>;
   onToggleExpand?: (id: string) => void;
   operationsInProgress?: Set<string>;
+  openFileIds?: Set<string>;
   onContextMenu: (event: React.MouseEvent, node: FileNode) => void;
   renamingNodeId: string | null;
   onRename: (node: FileNode) => void;
@@ -179,6 +183,7 @@ const FileTreeNodes = memo(function FileTreeNodes({
   expandedIds,
   onToggleExpand,
   operationsInProgress,
+  openFileIds,
   onContextMenu,
   renamingNodeId,
   onRename,
@@ -197,6 +202,7 @@ const FileTreeNodes = memo(function FileTreeNodes({
           expandedIds={expandedIds}
           onToggleExpand={onToggleExpand}
           operationsInProgress={operationsInProgress}
+          openFileIds={openFileIds}
           onContextMenu={onContextMenu}
           renamingNodeId={renamingNodeId}
           onRename={onRename}
@@ -276,6 +282,7 @@ interface FileTreeNodeProps {
   expandedIds?: Set<string>;
   onToggleExpand?: (id: string) => void;
   operationsInProgress?: Set<string>;
+  openFileIds?: Set<string>;
   onContextMenu: (event: React.MouseEvent, node: FileNode) => void;
   renamingNodeId: string | null;
   onRename: (node: FileNode) => void;
@@ -291,6 +298,7 @@ const FileTreeNode = memo(function FileTreeNode({
   expandedIds,
   onToggleExpand,
   operationsInProgress,
+  openFileIds,
   onContextMenu,
   renamingNodeId,
   onRename,
@@ -302,6 +310,7 @@ const FileTreeNode = memo(function FileTreeNode({
   const hasChildren = node.type === "folder" && node.children && node.children.length > 0;
   const isOperationInProgress = operationsInProgress?.has(node.id) ?? false;
   const isRenaming = renamingNodeId === node.id;
+  const isOpen = node.type === "file" && openFileIds?.has(node.id);
 
   const [renameValue, setRenameValue] = useState(node.name);
   const [lastClickTime, setLastClickTime] = useState(0);
@@ -369,9 +378,9 @@ const FileTreeNode = memo(function FileTreeNode({
   const getSourceIcon = () => {
     switch (node.source) {
       case "google-drive":
-        return <Cloud className="w-3 h-3 text-blue-500" />;
+        return <Cloud className="w-3 h-3 text-blue-500 dark:text-blue-400" />;
       case "github":
-        return <GitBranch className="w-3 h-3 text-gray-700" />;
+        return <GitBranch className="w-3 h-3 text-gray-700 dark:text-gray-300" />;
       default:
         return null;
     }
@@ -382,8 +391,8 @@ const FileTreeNode = memo(function FileTreeNode({
       <motion.div
         className={cn(
           "flex items-center gap-1.5 px-2 py-1.5 rounded-md group transition-colors",
-          !isRenaming && !isOperationInProgress && "cursor-pointer hover:bg-gray-100",
-          isSelected && "bg-blue-50 hover:bg-blue-100",
+          !isRenaming && !isOperationInProgress && "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800",
+          isSelected && "bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/40",
           isOperationInProgress && "opacity-60 cursor-wait"
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
@@ -398,23 +407,23 @@ const FileTreeNode = memo(function FileTreeNode({
           <div className="flex items-center gap-1 flex-shrink-0">
             {hasChildren ? (
               isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-gray-600" />
+                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               ) : (
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               )
             ) : (
               <div className="w-4 h-4" />
             )}
             {isExpanded ? (
-              <FolderOpen className="w-4 h-4 text-blue-600" />
+              <FolderOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             ) : (
-              <Folder className="w-4 h-4 text-blue-600" />
+              <Folder className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             )}
           </div>
         ) : (
           <div className="flex items-center gap-1 flex-shrink-0">
             <div className="w-4 h-4" />
-            <File className="w-4 h-4 text-gray-500" />
+            <File className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           </div>
         )}
 
@@ -438,7 +447,7 @@ const FileTreeNode = memo(function FileTreeNode({
           <span
             className={cn(
               "text-sm truncate flex-1",
-              isSelected ? "text-blue-900 font-medium" : "text-gray-700"
+              isSelected ? "text-blue-900 font-medium dark:text-blue-100" : "text-gray-700 dark:text-gray-300"
             )}
           >
             {node.name}
@@ -449,8 +458,11 @@ const FileTreeNode = memo(function FileTreeNode({
           {isOperationInProgress && (
             <Loader2 className="w-3 h-3 text-blue-500 animate-spin" />
           )}
+          {isOpen && (
+            <div className="w-2 h-2 rounded-full bg-blue-500" title="Open in tab" />
+          )}
           {node.isModified && (
-            <div className="w-2 h-2 rounded-full bg-orange-500" title="Modified" />
+            <div className="w-2 h-2 rounded-full bg-orange-500 dark:bg-orange-400" title="Modified" />
           )}
           {getSourceIcon()}
         </div>
@@ -473,6 +485,7 @@ const FileTreeNode = memo(function FileTreeNode({
               expandedIds={expandedIds}
               onToggleExpand={onToggleExpand}
               operationsInProgress={operationsInProgress}
+              openFileIds={openFileIds}
               onContextMenu={onContextMenu}
               renamingNodeId={renamingNodeId}
               onRename={onRename}

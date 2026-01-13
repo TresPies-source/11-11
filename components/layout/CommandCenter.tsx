@@ -43,13 +43,13 @@ export function CommandCenter() {
   if (!mounted) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
-        <div className="text-lg text-gray-500">Loading...</div>
+        <div className="text-lg text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-gray-50 flex flex-col">
+    <div className="h-screen w-full overflow-hidden bg-muted/30 flex flex-col">
       <Header />
       <div className="flex-1 overflow-hidden">
         <PanelGroup
@@ -72,7 +72,7 @@ export function CommandCenter() {
             <Sidebar collapsed={sidebarCollapsed} />
           </Panel>
 
-          <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-500 transition-colors" />
+          <PanelResizeHandle className="w-1 bg-border hover:bg-primary transition-colors" />
 
           <Panel defaultSize={getDefaultLayout()[1]} minSize={50}>
             <MainContent />

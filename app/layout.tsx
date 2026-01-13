@@ -6,6 +6,7 @@ import { ContextBusProvider } from "@/components/providers/ContextBusProvider";
 import { SyncStatusProvider } from "@/components/providers/SyncStatusProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { FileTreeProvider } from "@/components/providers/FileTreeProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "11-11 | Sustainable Intelligence OS",
@@ -19,20 +20,40 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const storedTheme = localStorage.getItem('theme');
+                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased">
-        <ToastProvider>
-          <ContextBusProvider>
-            <MockSessionProvider>
-              <SyncStatusProvider>
-                <FileTreeProvider>
-                  <RepositoryProvider>
-                    {children}
-                  </RepositoryProvider>
-                </FileTreeProvider>
-              </SyncStatusProvider>
-            </MockSessionProvider>
-          </ContextBusProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <ContextBusProvider>
+              <MockSessionProvider>
+                <SyncStatusProvider>
+                  <FileTreeProvider>
+                    <RepositoryProvider>
+                      {children}
+                    </RepositoryProvider>
+                  </FileTreeProvider>
+                </SyncStatusProvider>
+              </MockSessionProvider>
+            </ContextBusProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

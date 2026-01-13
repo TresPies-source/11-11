@@ -85,7 +85,7 @@ const ChatPanelComponent = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
         transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-        className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
         onClick={() => onMaximize(session.id)}
       >
         <div className="p-4 flex items-center justify-between">
@@ -99,14 +99,14 @@ const ChatPanelComponent = ({
                 persona?.color === "amber" && "bg-amber-500"
               )}
             />
-            <span className="font-medium text-sm">{session.title}</span>
+            <span className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.title}</span>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClose(session.id);
             }}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -122,7 +122,7 @@ const ChatPanelComponent = ({
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
       transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-      className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col overflow-hidden relative"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden relative"
     >
       <AnimatePresence>
         {showContextToast && (
@@ -139,7 +139,7 @@ const ChatPanelComponent = ({
         )}
       </AnimatePresence>
       
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <Sparkles
             className={cn(
@@ -150,19 +150,19 @@ const ChatPanelComponent = ({
               persona?.color === "amber" && "text-amber-500"
             )}
           />
-          <span className="font-medium text-sm truncate">{session.title}</span>
+          <span className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{session.title}</span>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => onMinimize(session.id)}
-            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
             title="Minimize"
           >
             <Minus className="w-4 h-4" />
           </button>
           <button
             onClick={() => onClose(session.id)}
-            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
             title="Close"
           >
             <X className="w-4 h-4" />
@@ -172,7 +172,7 @@ const ChatPanelComponent = ({
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
         {session.messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-400">
+          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
             <div className="text-center">
               <Bot className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">Start a conversation with {persona?.name}</p>
@@ -213,14 +213,14 @@ const ChatPanelComponent = ({
                   "rounded-lg px-4 py-2 max-w-[80%]",
                   message.role === "user"
                     ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-900"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 )}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               </div>
               {message.role === "user" && (
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <User className="w-4 h-4 text-blue-600" />
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
               )}
             </div>
@@ -231,7 +231,7 @@ const ChatPanelComponent = ({
 
       <form
         onSubmit={handleSubmit}
-        className="border-t border-gray-200 p-4 bg-gray-50"
+        className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800"
       >
         <div className="flex gap-2">
           <input
@@ -239,12 +239,12 @@ const ChatPanelComponent = ({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={`Message ${persona?.name}...`}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
           <button
             type="submit"
             disabled={!input.trim()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
             <Send className="w-4 h-4" />
           </button>

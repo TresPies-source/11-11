@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Brain, LogIn, User } from "lucide-react";
 import { WorkspaceSelector } from "@/components/shared/WorkspaceSelector";
 import { SyncStatus } from "@/components/shared/SyncStatus";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { useSession } from "@/components/providers/MockSessionProvider";
 import { cn } from "@/lib/utils";
 
@@ -22,23 +23,23 @@ export function Header() {
   ];
 
   return (
-    <header className="h-14 border-b border-gray-200 bg-white px-4 flex items-center justify-between">
+    <header className="h-14 border-b border-border bg-background px-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
             <Brain className="h-5 w-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-lg font-bold text-gray-900 leading-none">
+            <h1 className="text-lg font-bold text-foreground leading-none">
               11-11
             </h1>
-            <p className="text-xs text-gray-500 leading-none hidden sm:block">
+            <p className="text-xs text-muted-foreground leading-none hidden sm:block">
               Sustainable Intelligence
             </p>
           </div>
         </div>
 
-        <div className="h-6 w-px bg-gray-200" />
+        <div className="h-6 w-px bg-border" />
 
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
@@ -50,8 +51,8 @@ export function Header() {
                 className={cn(
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                   isActive
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 )}
               >
                 {link.label}
@@ -60,23 +61,25 @@ export function Header() {
           })}
         </nav>
 
-        <div className="h-6 w-px bg-gray-200 hidden md:block" />
+        <div className="h-6 w-px bg-border hidden md:block" />
 
         <WorkspaceSelector />
       </div>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
+        
         <SyncStatus />
 
-        <div className="h-6 w-px bg-gray-200 hidden sm:block" />
+        <div className="h-6 w-px bg-border hidden sm:block" />
 
         {isAuthenticated && user ? (
           <div className="flex items-center gap-2">
             <div className="text-right hidden md:block">
-              <div className="text-sm font-medium text-gray-700">
+              <div className="text-sm font-medium text-foreground">
                 {user.name}
               </div>
-              <div className="text-xs text-gray-500">{user.email}</div>
+              <div className="text-xs text-muted-foreground">{user.email}</div>
             </div>
             {user.avatar ? (
               <Image
@@ -84,7 +87,7 @@ export function Header() {
                 alt={user.name}
                 width={32}
                 height={32}
-                className="rounded-full border-2 border-gray-200"
+                className="rounded-full border-2 border-border"
               />
             ) : (
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
@@ -97,7 +100,7 @@ export function Header() {
             onClick={handleSignIn}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-md",
-              "bg-blue-600 hover:bg-blue-700 text-white",
+              "bg-primary hover:bg-primary/90 text-white",
               "transition-colors text-sm font-medium"
             )}
           >

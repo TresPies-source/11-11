@@ -435,3 +435,207 @@ export async function syncPromptFromDrive(
 ): Promise<PromptRow> {
   return syncDriveFile(userId, { ...fileMetadata, content });
 }
+
+export interface PublicPromptsFilters {
+  myPromptsOnly?: boolean;
+  userId?: string;
+  sortBy?: 'recent' | 'popular' | 'score';
+  limit?: number;
+  offset?: number;
+}
+
+export async function getPublicPrompts(
+  filters: PublicPromptsFilters = {}
+): Promise<PromptWithCritique[]> {
+  const db = await getDB();
+  
+  let sql = `
+    SELECT 
+      p.*,
+      json_build_object(
+        'score', c.score,
+        'conciseness_score', c.conciseness_score,
+        'specificity_score', c.specificity_score,
+        'context_score', c.context_score,
+        'task_decomposition_score', c.task_decomposition_score
+      ) as "latestCritique",
+      json_build_object(
+        'description', pm.description,
+        'tags', pm.tags,
+        'is_public', pm.is_public,
+        'author', pm.author,
+        'version', pm.version
+      ) as "metadata"
+    FROM prompts p
+    LEFT JOIN LATERAL (
+      SELECT * FROM critiques 
+      WHERE prompt_id = p.id 
+      ORDER BY created_at DESC 
+      LIMIT 1
+    ) c ON true
+    LEFT JOIN prompt_metadata pm ON pm.prompt_id = p.id
+    WHERE p.visibility = 'public'
+  `;
+
+  const params: any[] = [];
+  let paramCount = 1;
+
+  if (filters.myPromptsOnly && filters.userId) {
+    sql += ` AND p.user_id = $${paramCount}`;
+    params.push(filters.userId);
+    paramCount++;
+  }
+
+  const sortBy = filters.sortBy || 'recent';
+  if (sortBy === 'recent') {
+    sql += ' ORDER BY p.published_at DESC NULLS LAST';
+  } else if (sortBy === 'popular' || sortBy === 'score') {
+    sql += ' ORDER BY c.score DESC NULLS LAST, p.published_at DESC';
+  }
+
+  if (filters.limit) {
+    sql += ` LIMIT $${paramCount}`;
+    params.push(filters.limit);
+    paramCount++;
+  }
+
+  if (filters.offset) {
+    sql += ` OFFSET $${paramCount}`;
+    params.push(filters.offset);
+    paramCount++;
+  }
+
+  const result = await db.query(sql, params);
+
+  return result.rows.map((row: any) => ({
+    ...row,
+    latestCritique: row.latestCritique?.score ? row.latestCritique : null,
+    metadata: row.metadata?.description !== null || row.metadata?.tags !== null 
+      ? row.metadata 
+      : null
+  }));
+}
+
+export async function publishPrompt(
+  promptId: string,
+  userId: string,
+  authorName: string
+): Promise<PromptRow | null> {
+  const db = await getDB();
+  
+  const checkResult = await db.query(
+    'SELECT user_id FROM prompts WHERE id = $1',
+    [promptId]
+  );
+
+  if (checkResult.rows.length === 0) {
+    return null;
+  }
+
+  const prompt: any = checkResult.rows[0];
+  if (prompt.user_id !== userId) {
+    throw new Error('Unauthorized: only the owner can publish this prompt');
+  }
+
+  const result = await db.query(`
+    UPDATE prompts 
+    SET 
+      visibility = 'public',
+      published_at = NOW(),
+      author_name = $2,
+      author_id = $3
+    WHERE id = $1
+    RETURNING *
+  `, [promptId, authorName, userId]);
+
+  return (result.rows[0] as PromptRow) || null;
+}
+
+export async function unpublishPrompt(
+  promptId: string,
+  userId: string
+): Promise<PromptRow | null> {
+  const db = await getDB();
+  
+  const checkResult = await db.query(
+    'SELECT user_id FROM prompts WHERE id = $1',
+    [promptId]
+  );
+
+  if (checkResult.rows.length === 0) {
+    return null;
+  }
+
+  const prompt: any = checkResult.rows[0];
+  if (prompt.user_id !== userId) {
+    throw new Error('Unauthorized: only the owner can unpublish this prompt');
+  }
+
+  const result = await db.query(`
+    UPDATE prompts 
+    SET visibility = 'private'
+    WHERE id = $1
+    RETURNING *
+  `, [promptId]);
+
+  return (result.rows[0] as PromptRow) || null;
+}
+
+export async function copyPrompt(
+  sourcePromptId: string,
+  targetUserId: string
+): Promise<PromptRow | null> {
+  const db = await getDB();
+  
+  const sourceResult = await db.query(
+    'SELECT * FROM prompts WHERE id = $1 AND visibility = $2',
+    [sourcePromptId, 'public']
+  );
+
+  if (sourceResult.rows.length === 0) {
+    return null;
+  }
+
+  const sourcePrompt: any = sourceResult.rows[0];
+
+  const result = await db.query(`
+    INSERT INTO prompts (
+      user_id, title, content, status, visibility,
+      author_name, author_id
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  `, [
+    targetUserId,
+    `${sourcePrompt.title} (Copy)`,
+    sourcePrompt.content,
+    'draft',
+    'private',
+    null,
+    targetUserId
+  ]);
+
+  const newPrompt: any = result.rows[0];
+
+  const metadataResult = await db.query(
+    'SELECT * FROM prompt_metadata WHERE prompt_id = $1',
+    [sourcePromptId]
+  );
+
+  if (metadataResult.rows.length > 0) {
+    const sourceMetadata: any = metadataResult.rows[0];
+    await db.query(`
+      INSERT INTO prompt_metadata (prompt_id, description, tags, is_public, author, version)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `, [
+      newPrompt.id,
+      sourceMetadata.description,
+      sourceMetadata.tags,
+      false,
+      sourceMetadata.author,
+      sourceMetadata.version
+    ]);
+  }
+
+  return newPrompt as PromptRow;
+}

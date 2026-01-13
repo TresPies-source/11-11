@@ -71,7 +71,7 @@ Update PGlite database schema to support public prompts with visibility controls
 
 ---
 
-### [ ] Step: API Routes Implementation
+### [x] Step: API Routes Implementation
 <!-- chat-id: 1e27da21-6826-4d79-ab69-18faa5385b20 -->
 
 Create API endpoints for publish, unpublish, public listing, and copy operations.

@@ -1,8 +1,8 @@
-# Bug Log - The Librarian's Home (v0.1)
+# Bug Log - 11-11 Platform
 
-**Last Updated**: 2026-01-12
+**Last Updated**: 2026-01-13
 
-**Bug Summary**: 8 total (0 P0, 0 P1, 2 P2, 1 P3) - 5 bugs resolved (2 P1, 3 P2)
+**Bug Summary**: 10 total (0 P0, 0 P1, 2 P2, 1 P3) - 7 bugs resolved (2 P1, 5 P2)
 
 This document tracks all bugs discovered during the Hotfix & Validate sprint. Bugs are categorized by severity:
 
@@ -160,7 +160,7 @@ React warning appears in console indicating improper ref usage on function compo
 
 ## Fixed Bugs
 
-**Summary**: 5 bugs fixed (2 P1, 3 P2)
+**Summary**: 7 bugs fixed (2 P1, 5 P2)
 
 ### [P1-001] ✅ RESOLVED: Missing Edit Action in Greenhouse View
 **Status**: Resolved  
@@ -328,6 +328,101 @@ Initial page load took ~4.6 seconds due to loading state logic requiring both ho
 
 **Verification**:
 Page now loads progressively. If Seedlings data loads first, users see that section immediately while Greenhouse is still loading, and vice versa. Significantly improves perceived load time.
+
+---
+
+### [P2-006] ✅ RESOLVED: Delete API Endpoint Parameter Mismatch
+**Status**: Resolved  
+**Component**: `hooks/useFileOperations.ts`, `app/api/drive/delete/route.ts`  
+**Found During**: v0.2.3 - Step 10 Integration Testing  
+**Fixed During**: v0.2.3 - Step 10 Integration Testing  
+**Date Found**: 2026-01-13  
+**Date Fixed**: 2026-01-13
+
+**Description**:
+The DELETE API endpoint expected `fileId` as a URL query parameter, but the `useFileOperations` hook was sending `fileId` in the request body as JSON. This caused all delete operations to fail with the error "Invalid request - 'fileId' query parameter required".
+
+**Reproduction Steps**:
+1. Right-click on a file in the file tree
+2. Select "Delete" from context menu
+3. Confirm deletion in dialog
+4. Operation fails with error message
+
+**Root Cause**:
+Mismatch between API endpoint expectations and client implementation. DELETE requests typically don't have request bodies, so the API route was designed to read from query parameters, but the client was sending a JSON body.
+
+**Fix Applied**:
+Changed the fetch call in `useFileOperations.ts` to send `fileId` as a query parameter:
+
+```typescript
+// BEFORE (incorrect)
+const response = await fetch("/api/drive/delete", {
+  method: "DELETE",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ fileId: node.id }),
+});
+
+// AFTER (correct)
+const response = await fetch(
+  `/api/drive/delete?fileId=${encodeURIComponent(node.id)}`,
+  { method: "DELETE" }
+);
+```
+
+**Files Modified**:
+- `hooks/useFileOperations.ts:364-372`
+
+**Verification**:
+- ✅ Delete operation works via context menu
+- ✅ Success toast displays: "\"filename\" moved to trash"
+- ✅ File removed from tree with optimistic UI
+- ✅ FILE_DELETED event emitted correctly
+
+---
+
+### [P2-007] ✅ RESOLVED: Delete Key Keyboard Shortcut Not Implemented
+**Status**: Resolved  
+**Component**: `components/shared/FileTree.tsx`  
+**Found During**: v0.2.3 - Step 10 Integration Testing  
+**Fixed During**: v0.2.3 - Step 10 Integration Testing  
+**Date Found**: 2026-01-13  
+**Date Fixed**: 2026-01-13
+
+**Description**:
+Pressing the Delete key on a selected file did not trigger the delete confirmation dialog. The keyboard event was being prevented but no action was taken.
+
+**Reproduction Steps**:
+1. Click on a file in the file tree to select it
+2. Press the Delete key
+3. Expected: Delete confirmation dialog appears
+4. Actual: Nothing happens
+
+**Root Cause**:
+The `handleKeyDown` function in `FileTreeNode` component was calling `e.preventDefault()` for the Delete key but did not have access to the `onDelete` callback. The callback was not being passed down through the component tree.
+
+**Fix Applied**:
+1. Added `onDelete?: (node: DriveFileNode) => void` prop to `FileTreeNodesProps` interface
+2. Added `onDelete?: (node: DriveFileNode) => void` prop to `FileTreeNodeProps` interface
+3. Updated `FileTreeNodes` component to accept and forward `onDelete` prop to child nodes
+4. Updated `FileTreeNode` to accept `onDelete` prop
+5. Modified `handleKeyDown` to call `onDelete(node)` when Delete key is pressed
+6. Connected `handleDelete` from `FileTree` to `FileTreeNodes` via props
+
+**Files Modified**:
+- `components/shared/FileTree.tsx:162` - Added onDelete to FileTreeNodesProps
+- `components/shared/FileTree.tsx:272` - Added onDelete to FileTreeNodeProps
+- `components/shared/FileTree.tsx:177,195` - Pass onDelete in FileTreeNodes
+- `components/shared/FileTree.tsx:289` - Accept onDelete in FileTreeNode
+- `components/shared/FileTree.tsx:337` - Call onDelete in handleKeyDown
+- `components/shared/FileTree.tsx:99` - Connect handleDelete to FileTreeNodes
+- `components/shared/FileTree.tsx:471` - Forward onDelete to recursive calls
+
+**Verification**:
+- ✅ Delete key now triggers delete confirmation dialog
+- ✅ Dialog shows correct file name and warnings
+- ✅ "This file is currently open" warning displays when applicable
+- ✅ Cancel button dismisses dialog without deleting
+- ✅ Delete button successfully deletes the file
 
 ---
 

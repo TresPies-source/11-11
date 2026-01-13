@@ -15,34 +15,34 @@
 ## Critical Bugs Found
 
 ### P0: Infinite Render Loop When Clicking Files
-**Status:** BLOCKING  
+**Status:** RESOLVED ✅  
 **Severity:** Critical  
+**Resolution Date:** 2026-01-13
 
-**Description:**  
-When clicking on files in the file tree, an infinite render loop occurs with continuous console logs:
-```
-[LOG] [RepositoryProvider] Using shared SyncStatus context
-```
+**Original Description:**  
+When clicking on files in the file tree, an infinite render loop occurred with continuous console logs flooding the browser.
 
-**Steps to Reproduce:**
-1. Navigate to http://localhost:3002
-2. Click on any file in the file tree (e.g., JOURNAL.md, AUDIT_LOG.md)
-3. Observe console flooding with log messages
-4. React warns: "Maximum update depth exceeded"
+**Root Cause Identified:**
+1. SyncStatusProvider created new contextValue object on every render (no memoization)
+2. useSyncStatus hook's retryLastFailed depended on status.operations (unstable reference)
+3. Sidebar created new openFileIds Set on every render
+4. Sidebar's handleSelect callback wasn't memoized
 
-**Root Cause:**
-The `validateRestoredTabs` function in RepositoryProvider was causing a dependency cycle. Initial fix attempted but issue persists - likely caused by state updates triggering re-renders that call `openTab` again.
+**Fix Implemented:**
+- hooks/useSyncStatus.ts: Used functional state updates, empty deps array
+- SyncStatusProvider.tsx: Added useMemo for contextValue
+- Sidebar.tsx: Added useMemo for openFileIds, useCallback for handleSelect
+- RepositoryProvider.tsx: Added eslint-disable comment
 
-**Impact:**
-- Application becomes unusable
-- Cannot open files
-- Browser may freeze
-- Testing cannot proceed
+**Verification (2026-01-13):**
+- ✅ Clicked JOURNAL.md - only 4 normal logs, no flooding
+- ✅ Clicked AUDIT_LOG.md - only 4 normal logs, no flooding  
+- ✅ Clicked task_plan.md - only 4 normal logs, no flooding
+- ✅ Console stable after 3+ seconds
+- ✅ No "Maximum update depth exceeded" errors
+- ✅ Page remains responsive
 
-**Attempted Fix:**
-- Removed `activeTabId` from `validateRestoredTabs` dependency array
-- Changed useEffect dependency for initial restoration to empty array `[]`
-- Issue persists - needs deeper investigation
+**Result:** Bug completely resolved, application usable
 
 ---
 

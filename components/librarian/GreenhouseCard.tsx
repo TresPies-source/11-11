@@ -11,6 +11,8 @@ import { usePromptStatus } from "@/hooks/usePromptStatus";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { CritiqueScore } from "./CritiqueScore";
 import { CritiqueDetails } from "./CritiqueDetails";
+import { PublicToggle } from "./PublicToggle";
+import { PublicBadge } from "./PublicBadge";
 
 interface GreenhouseCardProps {
   prompt: PromptWithCritique;
@@ -162,6 +164,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
               {highlightText(title, searchQuery)}
             </h3>
           </div>
+          {prompt.visibility === 'public' && <PublicBadge variant="compact" />}
         </div>
 
         <p className="text-sm text-muted-foreground mb-3 line-clamp-3 ml-10">
@@ -231,6 +234,14 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
       </div>
 
       <div className="mt-auto pt-3 border-t border-border space-y-2">
+        <div onClick={(e) => e.stopPropagation()}>
+          <PublicToggle
+            promptId={prompt.id}
+            visibility={prompt.visibility}
+            authorName={prompt.author_name || 'Anonymous'}
+            className="w-full"
+          />
+        </div>
         <div className="flex gap-2">
           <button
             onClick={handleRunInChat}

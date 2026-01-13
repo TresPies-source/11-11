@@ -11,6 +11,8 @@ import { CritiqueScore } from "./CritiqueScore";
 import { CritiqueDetails } from "./CritiqueDetails";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { getValidTransitions } from "@/lib/pglite/statusTransitions";
+import { PublicToggle } from "./PublicToggle";
+import { PublicBadge } from "./PublicBadge";
 
 interface SeedlingCardProps {
   prompt: PromptWithCritique;
@@ -156,6 +158,7 @@ export const SeedlingCard = memo(function SeedlingCard({
               {title}
             </h3>
           </div>
+          {prompt.visibility === 'public' && <PublicBadge variant="compact" />}
         </div>
 
         <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{description}</p>
@@ -197,6 +200,14 @@ export const SeedlingCard = memo(function SeedlingCard({
       </div>
 
       <div className="mt-auto pt-3 border-t border-border space-y-2">
+        <div onClick={(e) => e.stopPropagation()}>
+          <PublicToggle
+            promptId={prompt.id}
+            visibility={prompt.visibility}
+            authorName={prompt.author_name || 'Anonymous'}
+            className="w-full"
+          />
+        </div>
         {prompt.status === 'active' && onSaveToGreenhouse ? (
           <button
             onClick={handleSaveClick}

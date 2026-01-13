@@ -1,27 +1,69 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useLibrary } from './useLibrary';
-import type { PromptFile } from '@/lib/types';
+import { useState, useEffect, useCallback } from 'react';
+import type { PromptWithCritique } from '@/lib/pglite/prompts';
 
 interface UseGalleryReturn {
-  prompts: PromptFile[];
+  prompts: PromptWithCritique[];
   loading: boolean;
   error: string | null;
   retry: () => void;
+  filter: 'all' | 'mine';
+  setFilter: (filter: 'all' | 'mine') => void;
+  sort: 'recent' | 'score';
+  setSort: (sort: 'recent' | 'score') => void;
 }
 
 export function useGallery(): UseGalleryReturn {
-  const { prompts: allPrompts, loading, error, retry } = useLibrary();
+  const [prompts, setPrompts] = useState<PromptWithCritique[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'mine'>('all');
+  const [sort, setSort] = useState<'recent' | 'score'>('recent');
 
-  const publicPrompts = useMemo(() => {
-    return allPrompts.filter((prompt) => prompt.metadata?.public === true);
-  }, [allPrompts]);
+  const fetchPublicPrompts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const params = new URLSearchParams({
+        filter,
+        sort,
+      });
+
+      const response = await fetch(`/api/librarian/public?${params}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch public prompts');
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setPrompts(data.prompts || []);
+      } else {
+        throw new Error(data.error || 'Failed to fetch public prompts');
+      }
+    } catch (err) {
+      console.error('Error fetching public prompts:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch public prompts');
+    } finally {
+      setLoading(false);
+    }
+  }, [filter, sort]);
+
+  useEffect(() => {
+    fetchPublicPrompts();
+  }, [fetchPublicPrompts]);
 
   return {
-    prompts: publicPrompts,
+    prompts,
     loading,
     error,
-    retry,
+    retry: fetchPublicPrompts,
+    filter,
+    setFilter,
+    sort,
+    setSort,
   };
 }

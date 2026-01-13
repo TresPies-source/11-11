@@ -211,7 +211,7 @@ Created comprehensive technical specification at `spec.md` covering:
 
 ---
 
-### [ ] Step 6: File Tree Provider
+### [x] Step 6: File Tree Provider
 <!-- chat-id: 2706cb3f-8be4-4548-81c9-0343bdf1499a -->
 
 **Objective:** Create centralized file tree state management
@@ -237,10 +237,10 @@ Created comprehensive technical specification at `spec.md` covering:
    - Connect to RepositoryProvider
 
 **Verification:**
-- [ ] File tree loads correctly
-- [ ] Expand/collapse still works
-- [ ] File selection still works
-- [ ] No regressions in existing functionality
+- [x] File tree loads correctly
+- [x] Expand/collapse still works
+- [x] File selection still works
+- [x] No regressions in existing functionality
 
 ---
 

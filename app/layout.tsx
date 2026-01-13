@@ -5,6 +5,7 @@ import { RepositoryProvider } from "@/components/providers/RepositoryProvider";
 import { ContextBusProvider } from "@/components/providers/ContextBusProvider";
 import { SyncStatusProvider } from "@/components/providers/SyncStatusProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
+import { FileTreeProvider } from "@/components/providers/FileTreeProvider";
 
 export const metadata: Metadata = {
   title: "11-11 | Sustainable Intelligence OS",
@@ -23,9 +24,11 @@ export default function RootLayout({
           <ContextBusProvider>
             <MockSessionProvider>
               <SyncStatusProvider>
-                <RepositoryProvider>
-                  {children}
-                </RepositoryProvider>
+                <FileTreeProvider>
+                  <RepositoryProvider>
+                    {children}
+                  </RepositoryProvider>
+                </FileTreeProvider>
               </SyncStatusProvider>
             </MockSessionProvider>
           </ContextBusProvider>

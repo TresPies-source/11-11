@@ -279,7 +279,7 @@ function routeQueryKeywordFallback(
 ): RoutingDecision {
   const queryLower = userQuery.toLowerCase();
 
-  const searchKeywords = ['search', 'find', 'lookup', 'retrieve', 'discover', 'similar'];
+  const searchKeywords = ['search', 'find', 'lookup', 'retrieve', 'discover', 'similar', 'show'];
   const debugKeywords = ['conflict', 'error', 'wrong', 'debug', 'fix', 'validate'];
 
   const hasSearchKeyword = searchKeywords.some((kw) => queryLower.includes(kw));

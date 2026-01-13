@@ -10,7 +10,17 @@
     "type-check": "tsc --noEmit",
     "analyze": "set ANALYZE=true && npm run build",
     "test:budgets": "tsx lib/cost/budgets.test.ts",
-    "test:tracking": "tsx lib/cost/tracking.test.ts"
+    "test:tracking": "tsx lib/cost/tracking.test.ts",
+    "test:vector": "tsx lib/librarian/vector.test.ts",
+    "test:embeddings": "tsx lib/librarian/embeddings.test.ts",
+    "test:search": "tsx lib/librarian/search.test.ts",
+    "test:api": "tsx lib/librarian/api.test.ts",
+    "test:suggestions": "tsx lib/librarian/suggestions.test.ts",
+    "test:suggestions-api": "tsx app/api/librarian/suggestions/route.test.ts",
+    "test:librarian-handler": "tsx __tests__/agents/librarian-handler.test.ts",
+    "test:librarian-routing": "tsx __tests__/agents/librarian-routing.test.ts",
+    "test:auto-embed": "tsx lib/librarian/auto-embed.test.ts",
+    "batch-embed": "tsx scripts/batch-embed-prompts.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

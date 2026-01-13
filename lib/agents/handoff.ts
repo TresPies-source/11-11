@@ -4,8 +4,10 @@ import {
   AgentInvocationContext,
   HandoffError,
   ChatMessage,
+  AGENT_IDS,
 } from './types';
 import { getAgentById, isValidAgentId } from './supervisor';
+import { invokeLibrarianAgent } from './librarian-handler';
 
 export interface HandoffEvent {
   id: string;
@@ -83,6 +85,10 @@ export async function storeHandoffEvent(context: HandoffContext): Promise<string
   const db = await getDB();
 
   try {
+    // For JSONB columns, we need to pass the value as a JSON string
+    // and use jsonb_build_array or similar, or just inline the JSON
+    const conversationHistoryJson = JSON.stringify(context.conversation_history);
+    
     const result = await db.query<{ id: string }>(
       `INSERT INTO agent_handoffs 
         (session_id, from_agent, to_agent, reason, conversation_history, harness_trace_id, user_intent)
@@ -93,7 +99,7 @@ export async function storeHandoffEvent(context: HandoffContext): Promise<string
         context.from_agent,
         context.to_agent,
         context.reason,
-        JSON.stringify(context.conversation_history),
+        conversationHistoryJson,
         context.harness_trace_id || null,
         context.user_intent,
       ]
@@ -225,7 +231,7 @@ export async function logHarnessEvent(event: HarnessTraceEvent): Promise<void> {
 export async function invokeAgent(
   agentId: string,
   context: AgentInvocationContext
-): Promise<void> {
+): Promise<unknown> {
   console.log(`[AGENT_INVOKE] Invoking agent: ${agentId}`);
   console.log(`[AGENT_INVOKE] Context:`, {
     session_id: context.session_id,
@@ -233,6 +239,29 @@ export async function invokeAgent(
     user_intent: context.user_intent,
     harness_trace_id: context.harness_trace_id,
   });
+
+  // Route to appropriate agent handler
+  switch (agentId) {
+    case AGENT_IDS.LIBRARIAN:
+      return await invokeLibrarianAgent(context);
+    
+    case AGENT_IDS.DOJO:
+      // Dojo agent handler will be implemented in future feature
+      console.log('[AGENT_INVOKE] Dojo agent invoked (not yet implemented)');
+      return { message: 'Dojo agent response placeholder' };
+    
+    case AGENT_IDS.DEBUGGER:
+      // Debugger agent handler will be implemented in future feature
+      console.log('[AGENT_INVOKE] Debugger agent invoked (not yet implemented)');
+      return { message: 'Debugger agent response placeholder' };
+    
+    default:
+      throw new HandoffError(
+        `No handler available for agent: ${agentId}`,
+        'unknown',
+        agentId
+      );
+  }
 }
 
 function validateHandoffContext(context: HandoffContext): void {

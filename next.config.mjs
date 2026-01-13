@@ -22,6 +22,31 @@ const nextConfig = {
       enforce: 'pre',
     });
 
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+    });
+
+    // Add fallbacks for PGlite WebAssembly dependencies
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'GOT.mem': false,
+      'env': false,
+      'wasi_snapshot_preview1': false,
+    };
+
+    // Ignore specific PGlite warnings
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      { module: /node_modules\/@electric-sql\/pglite/ },
+    ];
+
     return config;
   },
 };

@@ -3,13 +3,19 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BookHeart, Sparkles, Leaf, Globe, ArrowRight } from "lucide-react";
+import { BookHeart, Sparkles, Leaf, Globe, ArrowRight, Search as SearchIcon } from "lucide-react";
 import type { PromptStatus } from "@/lib/pglite/types";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
 import { useToast } from "@/hooks/useToast";
+import { useSemanticSearch } from "@/hooks/useSemanticSearch";
+import { useSuggestions } from "@/hooks/useSuggestions";
 import { SeedlingSection } from "./SeedlingSection";
 import { GreenhouseSection } from "./GreenhouseSection";
+import { SearchBar } from "./SearchBar";
+import { SearchResults } from "./SearchResults";
+import { SuggestionsPanel } from "./SuggestionsPanel";
+import { RecentSearches } from "./RecentSearches";
 import { LibrarianErrorBoundary } from "./LibrarianErrorBoundary";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
@@ -17,7 +23,20 @@ import { cn } from "@/lib/utils";
 
 export function LibrarianView() {
   const [savingPromptIds, setSavingPromptIds] = useState<Set<string>>(new Set());
+  const [showSearch, setShowSearch] = useState(false);
   const { success: showSuccess, error: showError } = useToast();
+
+  const {
+    results: searchResults,
+    loading: searchLoading,
+    error: searchError,
+    query,
+    count: searchCount,
+    duration: searchDuration,
+    setQuery,
+    search,
+    clearResults,
+  } = useSemanticSearch({ autoSearch: false });
 
   const {
     prompts: activePrompts,
@@ -39,6 +58,18 @@ export function LibrarianView() {
   } = useLibrarian({ status: "saved" });
 
   const { transitionStatus } = usePromptStatus();
+
+  const {
+    suggestions,
+    loading: suggestionsLoading,
+    error: suggestionsError,
+    refresh: refreshSuggestions,
+    dismiss: dismissSuggestion,
+  } = useSuggestions({
+    trigger: 'page_load',
+    limit: 6,
+    autoLoad: true,
+  });
 
   const handleSaveToGreenhouse = useCallback(
     async (promptId: string) => {
@@ -78,6 +109,15 @@ export function LibrarianView() {
   const handleGreenhouseStatusChange = useCallback(async () => {
     await Promise.all([refreshSaved(), refreshActive()]);
   }, [refreshSaved, refreshActive]);
+
+  const handleSearch = useCallback(async (searchQuery: string) => {
+    await search(searchQuery);
+  }, [search]);
+
+  const handleClearSearch = useCallback(() => {
+    clearResults();
+    setQuery("");
+  }, [clearResults, setQuery]);
 
   const handleSeedlingStatusChange = useCallback(
     async (promptId: string, newStatus: PromptStatus) => {
@@ -220,11 +260,79 @@ export function LibrarianView() {
         </Link>
       </motion.nav>
 
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mb-8"
+        aria-label="Semantic search"
+      >
+        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 rounded-xl border-2 border-purple-200 dark:border-purple-800 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <SearchIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" aria-hidden="true" />
+            <h2 className="text-2xl font-bold text-foreground">Semantic Search</h2>
+          </div>
+          <p className="text-muted-foreground mb-6 text-sm">
+            Search your library using AI-powered semantic matching. Find prompts based on meaning, not just keywords.
+          </p>
+
+          <SearchBar
+            value={query}
+            onChange={setQuery}
+            onSearch={handleSearch}
+            loading={searchLoading}
+            resultCount={searchCount > 0 ? searchCount : undefined}
+            searchDuration={searchDuration > 0 ? searchDuration : undefined}
+          />
+
+          <div className="mt-6">
+            <SearchResults
+              results={searchResults}
+              loading={searchLoading}
+              error={searchError}
+              query={query}
+              onClearSearch={handleClearSearch}
+            />
+          </div>
+        </div>
+      </motion.section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="bg-card rounded-lg border border-border p-6 shadow-sm"
+          aria-label="Suggestions"
+        >
+          <SuggestionsPanel
+            suggestions={suggestions}
+            loading={suggestionsLoading}
+            error={suggestionsError}
+            onDismiss={dismissSuggestion}
+            onRefresh={refreshSuggestions}
+          />
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="bg-card rounded-lg border border-border p-6 shadow-sm"
+          aria-label="Recent searches"
+        >
+          <RecentSearches
+            onSearchClick={handleSearch}
+            limit={5}
+          />
+        </motion.section>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <motion.section
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="bg-card rounded-lg border border-border p-6 shadow-sm"
           aria-label="Seedlings - Active prompts"
         >
@@ -247,7 +355,7 @@ export function LibrarianView() {
         <motion.section
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
           className="bg-card rounded-lg border border-border p-6 shadow-sm"
           aria-label="Greenhouse - Saved prompts"
         >

@@ -20,6 +20,7 @@ export interface PromptRow {
   visibility: PromptVisibility;
   author_name: string | null;
   author_id: string | null;
+  embedding: number[] | null;
   created_at: string;
   updated_at: string;
 }
@@ -35,6 +36,7 @@ export interface PromptInsert {
   visibility?: PromptVisibility;
   author_name?: string | null;
   author_id?: string | null;
+  embedding?: number[] | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -50,6 +52,7 @@ export interface PromptUpdate {
   visibility?: PromptVisibility;
   author_name?: string | null;
   author_id?: string | null;
+  embedding?: number[] | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -202,4 +205,22 @@ export interface UserMonthlyUsageInsert {
   total_cost_usd?: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface SearchHistoryRow {
+  id: string;
+  user_id: string;
+  query: string;
+  results_count: number;
+  filters: Record<string, any>;
+  created_at: string;
+}
+
+export interface SearchHistoryInsert {
+  id?: string;
+  user_id: string;
+  query: string;
+  results_count: number;
+  filters?: Record<string, any>;
+  created_at?: string;
 }

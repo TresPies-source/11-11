@@ -3,6 +3,7 @@ import type { PromptRow, PromptInsert, PromptUpdate, PromptStatus, StatusHistory
 import type { DriveFile } from '@/lib/types';
 import matter from 'gray-matter';
 import { isValidTransition } from './statusTransitions';
+import { autoEmbedOnCreate, autoEmbedOnUpdate } from '@/lib/librarian/auto-embed';
 
 export interface PromptFilters {
   tags?: string[];
@@ -143,7 +144,14 @@ export async function createPrompt(
     insert.author_id || insert.user_id
   ]);
 
-  return result.rows[0] as PromptRow;
+  const prompt = result.rows[0] as PromptRow;
+
+  // Auto-generate embedding (async, non-blocking)
+  autoEmbedOnCreate(prompt.id, prompt.content, prompt.user_id).catch(err => {
+    console.error(`[CREATE_PROMPT] Auto-embed failed for ${prompt.id}:`, err);
+  });
+
+  return prompt;
 }
 
 export async function updatePrompt(
@@ -203,7 +211,16 @@ export async function updatePrompt(
     RETURNING *
   `, values);
 
-  return (result.rows[0] as PromptRow) || null;
+  const prompt = result.rows[0] as PromptRow | null;
+
+  // Auto-refresh embedding if content changed (async, non-blocking)
+  if (prompt && update.content !== undefined) {
+    autoEmbedOnUpdate(prompt.id, update.content, prompt.user_id).catch(err => {
+      console.error(`[UPDATE_PROMPT] Auto-embed failed for ${prompt.id}:`, err);
+    });
+  }
+
+  return prompt;
 }
 
 export async function updatePromptStatus(

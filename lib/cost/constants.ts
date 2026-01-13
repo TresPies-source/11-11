@@ -29,6 +29,10 @@ export const MODEL_PRICING: Record<string, { input_price_per_1m: number; output_
     input_price_per_1m: 0.50,
     output_price_per_1m: 1.50,
   },
+  'text-embedding-3-small': {
+    input_price_per_1m: 0.02,
+    output_price_per_1m: 0.00,
+  },
 };
 
 export const OPERATION_TYPES = [

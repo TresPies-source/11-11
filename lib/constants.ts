@@ -25,27 +25,6 @@ export const AGENT_PERSONAS = [
   },
 ] as const;
 
-export const SUPERVISOR_AGENTS = [
-  {
-    id: "dojo",
-    name: "Dojo Agent",
-    description: "Core thinking partnership for exploring perspectives and generating next moves",
-    color: "blue",
-  },
-  {
-    id: "librarian",
-    name: "Librarian Agent",
-    description: "Semantic search and retrieval for finding seed patches and project memory",
-    color: "green",
-  },
-  {
-    id: "debugger",
-    name: "Debugger Agent",
-    description: "Conflict resolution and reasoning validation for logical analysis",
-    color: "amber",
-  },
-] as const;
-
 export const MAX_CHAT_PANELS = 6;
 export const MAX_EDITOR_TABS = 10;
 

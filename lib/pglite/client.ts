@@ -3,7 +3,6 @@ import { initializeSchema, checkIfInitialized, MIGRATION_SQL } from './schema';
 import { seedDatabase } from './seed';
 import { applyMigration002 } from './migrations/002_add_status_history';
 import { applyMigration003 } from './migrations/003_add_cost_guard';
-import { applyMigration004 } from './migrations/004_add_supervisor_tables';
 
 // Detect if we're running in browser or server
 const isBrowser = typeof window !== 'undefined';
@@ -39,7 +38,6 @@ async function initializeDatabase(): Promise<PGlite> {
       
       console.log('[PGlite] Running initial migrations...');
       await applyMigration003(db);
-      await applyMigration004(db);
       console.log('[PGlite] Initial migrations complete');
       
       console.log('[PGlite] Seeding database with sample data...');
@@ -51,7 +49,6 @@ async function initializeDatabase(): Promise<PGlite> {
       console.log('[PGlite] Running migrations...');
       await applyMigration002(db);
       await applyMigration003(db);
-      await applyMigration004(db);
       await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }

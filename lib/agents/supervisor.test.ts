@@ -6,8 +6,9 @@ import {
   getDefaultAgent,
   isValidAgentId,
   validateAgentRegistry,
+  routeQuery,
 } from './supervisor';
-import { AGENT_IDS } from './types';
+import { AGENT_IDS, RoutingContext } from './types';
 
 console.log('Testing Agent Registry...\n');
 
@@ -143,4 +144,137 @@ try {
   process.exit(1);
 }
 
-console.log('\n✅ All tests passed!\n');
+console.log('\n9. Testing routeQuery() with keyword fallback...');
+(async () => {
+  try {
+    const testCases: { query: string; expectedAgent: string; description: string }[] = [
+      {
+        query: 'Find prompts similar to my budget planning prompt',
+        expectedAgent: AGENT_IDS.LIBRARIAN,
+        description: 'Search query (contains "find" keyword)',
+      },
+      {
+        query: 'Search for previous conversations about design',
+        expectedAgent: AGENT_IDS.LIBRARIAN,
+        description: 'Search query (contains "search" keyword)',
+      },
+      {
+        query: 'I have conflicting perspectives on this approach',
+        expectedAgent: AGENT_IDS.DEBUGGER,
+        description: 'Debug query (contains "conflict" keyword)',
+      },
+      {
+        query: 'Something is wrong with my reasoning',
+        expectedAgent: AGENT_IDS.DEBUGGER,
+        description: 'Debug query (contains "wrong" keyword)',
+      },
+      {
+        query: 'Help me explore different perspectives on this idea',
+        expectedAgent: AGENT_IDS.DOJO,
+        description: 'Thinking query (default agent)',
+      },
+      {
+        query: 'What are the tradeoffs between approach A and B?',
+        expectedAgent: AGENT_IDS.DOJO,
+        description: 'Thinking query (default agent)',
+      },
+    ];
+
+    const availableAgents = getAvailableAgents();
+
+    for (const testCase of testCases) {
+      const context: RoutingContext = {
+        query: testCase.query,
+        conversation_context: [],
+        session_id: 'test-session',
+        available_agents: availableAgents,
+      };
+
+      const decision = await routeQuery(context);
+
+      if (decision.agent_id === testCase.expectedAgent) {
+        console.log(`✓ ${testCase.description}`);
+        console.log(`  Query: "${testCase.query}"`);
+        console.log(`  Routed to: ${decision.agent_name} (confidence: ${decision.confidence})`);
+        console.log(`  Reasoning: ${decision.reasoning}`);
+      } else {
+        console.error(`✗ ${testCase.description}`);
+        console.error(`  Query: "${testCase.query}"`);
+        console.error(`  Expected: ${testCase.expectedAgent}, Got: ${decision.agent_id}`);
+        process.exit(1);
+      }
+    }
+  } catch (error) {
+    console.error('✗ Routing tests failed:', error);
+    process.exit(1);
+  }
+
+  console.log('\n10. Testing empty query handling...');
+  try {
+    const context: RoutingContext = {
+      query: '',
+      conversation_context: [],
+      session_id: 'test-session',
+      available_agents: getAvailableAgents(),
+    };
+
+    const decision = await routeQuery(context);
+
+    if (decision.agent_id === AGENT_IDS.DOJO && decision.fallback === true) {
+      console.log('✓ Empty query correctly routed to default agent');
+      console.log(`  Reasoning: ${decision.reasoning}`);
+    } else {
+      console.error('✗ Empty query not handled correctly');
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error('✗ Empty query test failed:', error);
+    process.exit(1);
+  }
+
+  console.log('\n11. Testing no agents available...');
+  try {
+    const context: RoutingContext = {
+      query: 'test query',
+      conversation_context: [],
+      session_id: 'test-session',
+      available_agents: [],
+    };
+
+    await routeQuery(context);
+    console.error('✗ Should have thrown error for no agents');
+    process.exit(1);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('No agents available')) {
+      console.log('✓ Correctly throws error when no agents available');
+    } else {
+      console.error('✗ Wrong error thrown:', error);
+      process.exit(1);
+    }
+  }
+
+  console.log('\n12. Testing conversation context...');
+  try {
+    const context: RoutingContext = {
+      query: 'What did we discuss?',
+      conversation_context: [
+        'User: I want to find similar prompts',
+        'Assistant: Let me search for you',
+        'User: What did we discuss?',
+      ],
+      session_id: 'test-session',
+      available_agents: getAvailableAgents(),
+    };
+
+    const decision = await routeQuery(context);
+    console.log('✓ Routing with conversation context works');
+    console.log(`  Routed to: ${decision.agent_name}`);
+    console.log(`  Reasoning: ${decision.reasoning}`);
+  } catch (error) {
+    console.error('✗ Conversation context test failed:', error);
+    process.exit(1);
+  }
+
+  console.log('\n✅ All routing tests passed!\n');
+  console.log('\n✅ All tests passed!\n');
+})();

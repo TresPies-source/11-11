@@ -69,6 +69,62 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
 
   console.log('[RepositoryProvider] Using shared SyncStatus context');
 
+  const validateRestoredTabs = useCallback(async (restoredTabs: EditorTab[]) => {
+    const validationPromises = restoredTabs.map(async (tab) => {
+      try {
+        const response = await fetch(`/api/drive/content/${tab.fileId}`, {
+          method: 'HEAD',
+        });
+        
+        return {
+          tabId: tab.id,
+          valid: response.ok,
+          status: response.status,
+        };
+      } catch (error) {
+        return {
+          tabId: tab.id,
+          valid: false,
+          status: 0,
+        };
+      }
+    });
+
+    const results = await Promise.all(validationPromises);
+    
+    const invalidTabIds = results
+      .filter(r => !r.valid)
+      .map(r => r.tabId);
+
+    if (invalidTabIds.length > 0) {
+      setTabs(prev => {
+        const filtered = prev.filter(t => !invalidTabIds.includes(t.id));
+        
+        if (invalidTabIds.includes(activeTabId || '')) {
+          setActiveTabId(filtered.length > 0 ? filtered[0].id : null);
+        }
+        
+        return filtered;
+      });
+
+      setSavedContents(prev => {
+        const next = new Map(prev);
+        invalidTabIds.forEach(id => next.delete(id));
+        return next;
+      });
+
+      setFileNodeMap(prev => {
+        const next = new Map(prev);
+        restoredTabs.forEach(tab => {
+          if (invalidTabIds.includes(tab.id)) {
+            next.delete(tab.fileId);
+          }
+        });
+        return next;
+      });
+    }
+  }, [activeTabId]);
+
   useEffect(() => {
     const savedState = loadTabStateFromStorage();
     if (savedState && savedState.tabs.length > 0) {
@@ -76,16 +132,30 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       setActiveTabId(savedState.activeTabId);
       
       const contents = new Map<string, string>();
+      const nodeMap = new Map<string, FileNode>();
       savedState.tabs.forEach(tab => {
         contents.set(tab.id, tab.content);
+        nodeMap.set(tab.fileId, {
+          id: tab.fileId,
+          name: tab.fileName,
+          path: tab.filePath,
+          type: 'file',
+          source: 'local',
+          children: [],
+        });
       });
       setSavedContents(contents);
+      setFileNodeMap(nodeMap);
+      
+      validateRestoredTabs(savedState.tabs);
     }
-  }, []);
+  }, [validateRestoredTabs]);
 
   useEffect(() => {
     if (tabs.length > 0) {
       saveTabStateToStorage(tabs, activeTabId);
+    } else {
+      localStorage.removeItem('editor-tabs-state');
     }
   }, [tabs, activeTabId]);
 

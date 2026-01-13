@@ -237,7 +237,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 10: Update MarkdownEditor for Tab Switching
+### [x] Step 10: Update MarkdownEditor for Tab Switching
 <!-- chat-id: 563ace7a-b8a1-4e22-a2ec-3494da5cf53e -->
 
 **Objective:** Optimize Monaco editor for tab switching.

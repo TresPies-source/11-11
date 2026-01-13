@@ -206,6 +206,7 @@ Created comprehensive technical specification at `spec.md` with:
 ---
 
 ### [ ] Step 7: Cost Tracking
+<!-- chat-id: f423f916-6203-4010-b6de-7fbde1f23d59 -->
 
 **Goal:** Track routing costs in PGlite database
 

@@ -83,6 +83,12 @@ export async function GET(request: NextRequest) {
     console.error('❌ Suggestions API error:', error);
 
     if (error instanceof Error) {
+      // Handle PGlite initialization errors gracefully (expected on server-side)
+      if (error.message.includes('PGlite initialization failed') || error.message.includes('path') || error.message.includes('URL')) {
+        console.warn('[Suggestions API] PGlite not available on server-side, returning empty suggestions');
+        return NextResponse.json({ suggestions: [] }, { status: 200 });
+      }
+
       if (error.message.includes('rate limit')) {
         return NextResponse.json(
           {

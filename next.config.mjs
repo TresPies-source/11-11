@@ -1,4 +1,11 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { createRequire } from 'module';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const require = createRequire(import.meta.url);
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -23,28 +30,26 @@ const nextConfig = {
       enforce: 'pre',
     });
 
+    // Handle SQL files for PGlite
+    config.module.rules.push({
+      test: /\.sql$/,
+      type: 'asset/source',
+    });
+
+    // Configure experiments for WASM
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
       layers: true,
     };
 
-    // Configure WASM loading for PGlite
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: 'webassembly/async',
-    });
-
     // Add fallbacks for PGlite WebAssembly dependencies
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      'GOT.mem': false,
-      'env': false,
-      'wasi_snapshot_preview1': false,
-      'fs': false,
-      'fs/promises': false,
-      'path': false,
-      'url': false,
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      }
     }
 
     // Ignore specific PGlite warnings

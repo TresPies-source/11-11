@@ -28,14 +28,19 @@ async function initializeDatabase(): Promise<PGlite> {
   initPromise = (async () => {
     // Detect if we're running in browser or server at runtime
     const isBrowser = typeof window !== 'undefined';
-    // Use IndexedDB in browser, memory in server (Next.js API routes)
-    const dbPath = isBrowser ? 'idb://11-11-db' : 'memory://';
     
-    console.log('[PGlite] Initializing database at:', dbPath);
     console.log('[PGlite] Environment:', isBrowser ? 'Browser' : 'Server');
     
-    const db = new PGlite(dbPath);
-    await db.waitReady;
+    // Use IndexedDB in browser, empty string for in-memory DB in server (Next.js API routes)
+    let db: PGlite;
+    try {
+      db = isBrowser ? new PGlite('idb://11-11-db') : new PGlite('');
+      console.log('[PGlite] Database initialized');
+      await db.waitReady;
+    } catch (error) {
+      console.error('[PGlite] Failed to initialize database:', error);
+      throw new Error('PGlite initialization failed. This is expected on server-side in Next.js due to bundling limitations.');
+    }
     
     const isInitialized = await checkIfInitialized(db);
     

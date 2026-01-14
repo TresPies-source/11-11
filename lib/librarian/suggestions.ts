@@ -167,7 +167,7 @@ async function generateSimilarPromptSuggestions(
       promptId,
       userId,
       limit,
-      0.75
+      0.4
     );
 
     return similarPrompts.map(prompt => ({

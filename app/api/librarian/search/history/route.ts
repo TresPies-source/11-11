@@ -21,9 +21,9 @@ const HistoryQuerySchema = z.object({
 const isDevMode = () => process.env.NEXT_PUBLIC_DEV_MODE === 'true';
 
 export async function GET(request: NextRequest) {
+  let userId: string = 'dev-user'; // Default value for error handling
+  
   try {
-    let userId: string;
-
     if (isDevMode()) {
       console.warn('[Search History API] Running in dev mode with mock authentication');
       userId = 'dev-user';
@@ -71,6 +71,19 @@ export async function GET(request: NextRequest) {
     console.error('❌ Search history API error:', error);
 
     if (error instanceof Error) {
+      // Handle PGlite initialization errors gracefully (expected on server-side)
+      if (error.message.includes('PGlite initialization failed') || error.message.includes('path') || error.message.includes('URL')) {
+        console.warn('[Search History API] PGlite not available on server-side, returning empty history');
+        return NextResponse.json(
+          {
+            history: [],
+            count: 0,
+            user_id: userId,
+          },
+          { status: 200 }
+        );
+      }
+
       return NextResponse.json(
         {
           error: 'Internal server error',

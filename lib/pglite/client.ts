@@ -9,6 +9,7 @@ import { applyMigration006 } from './migrations/006_add_harness_traces';
 import { applyMigration007 } from './migrations/007_add_context_tracking';
 import { applyMigration008 } from './migrations/008_add_safety_switch';
 import { applyMigration009 } from './migrations/009_add_dojo_sessions';
+import { applyMigration010 } from './migrations/010_add_seeds';
 
 // Detect if we're running in browser or server
 const isBrowser = typeof window !== 'undefined';
@@ -50,6 +51,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration007(db);
       await applyMigration008(db);
       await applyMigration009(db);
+      await applyMigration010(db);
       console.log('[PGlite] Initial migrations complete');
       
       console.log('[PGlite] Seeding database with sample data...');
@@ -67,6 +69,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration007(db);
       await applyMigration008(db);
       await applyMigration009(db);
+      await applyMigration010(db);
       await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }

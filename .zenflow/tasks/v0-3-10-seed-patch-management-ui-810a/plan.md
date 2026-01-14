@@ -120,23 +120,36 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 4: Custom Hook (useSeeds)
+### [x] Step 4: Custom Hook (useSeeds)
+<!-- chat-id: 58ad4185-bc72-4c31-a07a-f60cd8fc7faa -->
 
 **Objective:** Create hook for fetching and managing seeds
 
 **Tasks:**
-1. Create `hooks/useSeeds.ts` with:
+1. ✅ Create `hooks/useSeeds.ts` with:
    - Fetch seeds with filters
    - Loading and error states
    - Refetch function
+2. ✅ Create comprehensive test suite
+3. ✅ Add test scripts to package.json
 
 **Verification:**
-- Hook fetches seeds correctly
-- Filters work (status, type, search)
-- Refetch triggers new API call
+- ✅ Hook fetches seeds correctly
+- ✅ Filters work (status, type, search, dateFrom, dateTo, user_id, session_id)
+- ✅ Refetch triggers new API call
+- ✅ All tests passing (export + hook tests)
+- ✅ Follows existing hook patterns (useLibrary, useTrace)
+- ✅ TypeScript compilation passes
+- ✅ Proper error handling and loading states
 
 **Files Created:**
 - `hooks/useSeeds.ts`
+- `__tests__/seeds/useSeeds.test.ts`
+
+**Files Modified:**
+- `package.json` (added test:seeds-hook, test:seeds scripts)
+
+**Note:** Hook fully implemented and tested. The useSeeds hook follows existing patterns, provides filtering, loading, and error states, and has been verified through comprehensive tests. The hook is ready for use in React components.
 
 ---
 

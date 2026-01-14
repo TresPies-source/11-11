@@ -63,7 +63,7 @@ export default function TestDBPage() {
          RETURNING id`,
         [sessionId, 'Test query for routing', 'dojo', 0.85, 'Test routing decision', false]
       );
-      const decisionId = (decisionResult.rows[0] as { id: number }).id;
+      const decisionId = (decisionResult.rows[0] as { id: string }).id;
       updateResult(1, {
         status: 'passed',
         message: `Inserted routing decision (ID: ${decisionId})`,

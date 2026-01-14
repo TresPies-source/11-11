@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { MockSessionProvider } from "@/components/providers/MockSessionProvider";
 import { RepositoryProvider } from "@/components/providers/RepositoryProvider";
@@ -9,6 +10,18 @@ import { FileTreeProvider } from "@/components/providers/FileTreeProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ActivityProvider } from "@/components/providers/ActivityProvider";
 import { ActivityStatus } from "@/components/activity/ActivityStatus";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "11-11 | Sustainable Intelligence OS",
@@ -21,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

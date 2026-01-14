@@ -389,6 +389,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 10: Integration Tests
+<!-- chat-id: 83971ab9-2dfc-44b5-a416-1a475f9b4198 -->
 
 **Objective:** Test full workflow end-to-end
 

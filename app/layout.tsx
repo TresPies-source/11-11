@@ -10,6 +10,7 @@ import { FileTreeProvider } from "@/components/providers/FileTreeProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ActivityProvider } from "@/components/providers/ActivityProvider";
 import { ActivityStatus } from "@/components/activity/ActivityStatus";
+import { NavigationSidebar } from "@/components/layout/NavigationSidebar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -62,7 +63,12 @@ export default function RootLayout({
                   <SyncStatusProvider>
                     <FileTreeProvider>
                       <RepositoryProvider>
-                        {children}
+                        <div className="flex h-screen">
+                          <NavigationSidebar />
+                          <main className="flex-1 overflow-y-auto">
+                            {children}
+                          </main>
+                        </div>
                         <ActivityStatus />
                       </RepositoryProvider>
                     </FileTreeProvider>

@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       userId = session.user.email;
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const rawParams = {
       limit: searchParams.get('limit') || undefined,
     };

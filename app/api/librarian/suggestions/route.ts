@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       userId = session.user.email;
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const rawParams = {
       prompt_id: searchParams.get('prompt_id') || undefined,
       trigger: searchParams.get('trigger') || undefined,

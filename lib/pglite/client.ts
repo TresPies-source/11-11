@@ -11,11 +11,6 @@ import { applyMigration008 } from './migrations/008_add_safety_switch';
 import { applyMigration009 } from './migrations/009_add_dojo_sessions';
 import { applyMigration010 } from './migrations/010_add_seeds';
 
-// Detect if we're running in browser or server
-const isBrowser = typeof window !== 'undefined';
-
-// Use IndexedDB in browser, memory in server (Next.js API routes)
-const DB_PATH = isBrowser ? 'idb://11-11-db' : 'memory://';
 export const DEFAULT_USER_ID = 'dev-user';
 
 let dbInstance: PGlite | null = null;
@@ -31,10 +26,15 @@ async function initializeDatabase(): Promise<PGlite> {
   }
 
   initPromise = (async () => {
-    console.log('[PGlite] Initializing database at:', DB_PATH ?? 'memory');
+    // Detect if we're running in browser or server at runtime
+    const isBrowser = typeof window !== 'undefined';
+    // Use IndexedDB in browser, memory in server (Next.js API routes)
+    const dbPath = isBrowser ? 'idb://11-11-db' : 'memory://';
+    
+    console.log('[PGlite] Initializing database at:', dbPath);
     console.log('[PGlite] Environment:', isBrowser ? 'Browser' : 'Server');
     
-    const db = new PGlite(DB_PATH);
+    const db = new PGlite(dbPath);
     await db.waitReady;
     
     const isInitialized = await checkIfInitialized(db);

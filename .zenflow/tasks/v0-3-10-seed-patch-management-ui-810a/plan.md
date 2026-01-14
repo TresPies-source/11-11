@@ -153,12 +153,13 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 5: UI Components (SeedCard)
+### [x] Step 5: UI Components (SeedCard)
+<!-- chat-id: a8ae40c0-68b6-4ebf-af0d-46d8cb43b66c -->
 
 **Objective:** Create seed card component
 
 **Tasks:**
-1. Create `components/seeds/seed-card.tsx` with:
+1. ✅ Create `components/seeds/seed-card.tsx` with:
    - Type badge and status icon
    - Seed name and metadata
    - Keep/Grow/Compost buttons
@@ -166,13 +167,28 @@ Do not make assumptions on important decisions — get clarification first.
    - Framer Motion animations
 
 **Verification:**
-- Card renders correctly with sample data
-- Buttons trigger callbacks
-- Animations work smoothly
-- Dark mode support
+- ✅ Card renders correctly with sample data
+- ✅ Buttons trigger callbacks
+- ✅ Animations work smoothly (hover effects on card and icon)
+- ✅ Dark mode support (all colors have dark: variants)
+- ✅ Component test passes
+- ✅ No TypeScript errors
+- ✅ No lint issues
 
 **Files Created:**
 - `components/seeds/seed-card.tsx`
+- `__tests__/seeds/seed-card.test.tsx`
+
+**Files Modified:**
+- `package.json` (added test:seeds-card script)
+
+**Implementation Notes:**
+- Component uses memo for performance optimization
+- Type-specific color schemes (blue/green/yellow/purple/orange/red)
+- Status-specific icons (Leaf/TrendingUp/CheckCircle/X)
+- Smooth animations with Framer Motion (scale on hover, icon rotation)
+- Proper accessibility (aria-labels, disabled states)
+- Follows existing card patterns (SeedlingCard, PromptCard)
 
 ---
 

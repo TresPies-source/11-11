@@ -48,7 +48,8 @@
     "test:packet": "npm run test:packet-schema && npm run test:packet-builder && npm run test:packet-formatters && npm run test:packet-export-api && npm run test:packet-import-api",
     "test:seeds-export": "tsx __tests__/seeds/export.test.ts",
     "test:seeds-hook": "tsx __tests__/seeds/useSeeds.test.ts",
-    "test:seeds": "npm run test:seeds-export && npm run test:seeds-hook"
+    "test:seeds-card": "tsx __tests__/seeds/seed-card.test.tsx",
+    "test:seeds": "npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

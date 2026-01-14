@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { StatusDot } from '@/components/ui/StatusDot';
 import { NewProjectModal } from '@/components/dashboard/NewProjectModal';
+import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed';
 import { useProjects } from '@/hooks/useProjects';
 
 interface Agent {
@@ -15,23 +16,11 @@ interface Agent {
   status: 'idle' | 'working' | 'error' | 'success';
 }
 
-interface ActivityItem {
-  id: string;
-  description: string;
-  timestamp: string;
-}
-
 const agents: Agent[] = [
   { id: 'supervisor', name: 'Supervisor', icon: '🎯', status: 'idle' },
   { id: 'dojo', name: 'Dojo', icon: '🧠', status: 'idle' },
   { id: 'librarian', name: 'Librarian', icon: '📚', status: 'idle' },
   { id: 'debugger', name: 'Debugger', icon: '🔍', status: 'idle' },
-];
-
-const recentActivity: ActivityItem[] = [
-  { id: '1', description: 'Dojo Session: "React performance"', timestamp: '2h ago' },
-  { id: '2', description: 'Prompt Saved: "Roadmap Planning"', timestamp: '5h ago' },
-  { id: '3', description: 'Librarian Search: "product roadmap"', timestamp: '1d ago' },
 ];
 
 export default function Dashboard() {
@@ -92,20 +81,7 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card>
-          <h2 className="text-2xl font-semibold mb-6">Recent Activity</h2>
-          <div className="flex flex-col gap-3">
-            {recentActivity.map((item) => (
-              <div key={item.id} className="flex items-start gap-2">
-                <span className="text-text-secondary">•</span>
-                <div className="flex-1">
-                  <span className="text-sm text-text-secondary">{item.description}</span>
-                  <span className="text-sm text-text-tertiary ml-2">({item.timestamp})</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+        <RecentActivityFeed />
       </div>
 
       <NewProjectModal

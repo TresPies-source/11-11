@@ -3,6 +3,8 @@
     {
       "id": "dojo",
       "name": "Dojo Agent",
+      "icon": "🧘",
+      "tagline": "Core thinking partnership for exploration and synthesis",
       "description": "Core thinking partnership. Use when the user wants to explore perspectives, map routes, prune ideas, or generate a Next Move. Does NOT search for information or resolve conflicts.",
       "when_to_use": [
         "User wants to explore multiple perspectives",
@@ -23,6 +25,8 @@
     {
       "id": "librarian",
       "name": "Librarian Agent",
+      "icon": "📚",
+      "tagline": "Semantic search and retrieval across project memory",
       "description": "Semantic search and retrieval. Use when the user wants to find seed patches, search project memory, or discover similar prompts. Does NOT provide thinking partnership or generate new ideas.",
       "when_to_use": [
         "User wants to search for seed patches",
@@ -42,6 +46,8 @@
     {
       "id": "debugger",
       "name": "Debugger Agent",
+      "icon": "🔍",
+      "tagline": "Conflict resolution and reasoning validation",
       "description": "Conflict resolution and reasoning validation. Use when the user has conflicting perspectives, logical errors, or needs assumption analysis. Does NOT search or provide general thinking partnership.",
       "when_to_use": [
         "User has conflicting perspectives or contradictions",

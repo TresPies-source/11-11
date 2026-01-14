@@ -25,6 +25,8 @@ const AgentSchema = z.object({
   when_to_use: z.array(z.string()).min(1),
   when_not_to_use: z.array(z.string()).min(1),
   default: z.boolean(),
+  icon: z.string().optional(),
+  tagline: z.string().optional(),
 });
 
 const AgentRegistrySchema = z.object({

@@ -5,6 +5,8 @@ export interface Agent {
   when_to_use: string[];
   when_not_to_use: string[];
   default: boolean;
+  icon?: string;
+  tagline?: string;
 }
 
 export interface AgentRegistry {

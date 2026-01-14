@@ -192,23 +192,44 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 6: UI Components (FiltersPanel)
+### [x] Step 6: UI Components (FiltersPanel)
+<!-- chat-id: 0027abdc-80da-4839-866c-cfb0ae72a526 -->
 
 **Objective:** Create filters panel component
 
 **Tasks:**
-1. Create `components/seeds/filters-panel.tsx` with:
+1. ✅ Create `components/seeds/filters-panel.tsx` with:
    - Type filters (6 badges)
    - Status filters (4 badges)
    - Clear all filters button
+2. ✅ Create comprehensive test suite
+3. ✅ Add test script to package.json
 
 **Verification:**
-- Filters toggle correctly
-- Active state visually distinct
-- Clear all works
+- ✅ Filters toggle correctly
+- ✅ Active state visually distinct
+- ✅ Clear all works
+- ✅ Component test passes
+- ✅ No TypeScript errors
+- ✅ No lint issues
+- ✅ All seeds tests passing
 
 **Files Created:**
 - `components/seeds/filters-panel.tsx`
+- `__tests__/seeds/filters-panel.test.tsx`
+
+**Files Modified:**
+- `package.json` (added test:seeds-filters script, updated test:seeds)
+
+**Implementation Notes:**
+- Component uses memo for performance optimization
+- Type-specific color schemes matching SeedCard (blue/green/yellow/purple/orange/red)
+- Status-specific color schemes (gray/emerald/teal/amber)
+- Active/inactive badge states with smooth transitions
+- "Clear all" button appears only when filters are active
+- Follows existing filter patterns (GreenhouseView tag filters)
+- Proper accessibility (aria-labels, aria-pressed states)
+- Dark mode support (all colors have dark: variants)
 
 ---
 

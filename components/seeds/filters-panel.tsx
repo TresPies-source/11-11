@@ -14,19 +14,19 @@ const TYPES: SeedType[] = ["principle", "pattern", "question", "route", "artifac
 const STATUSES: SeedStatus[] = ["new", "growing", "mature", "compost"];
 
 const TYPE_COLORS: Record<SeedType, string> = {
-  principle: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/70",
-  pattern: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/70",
-  question: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/70",
-  route: "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/70",
-  artifact: "bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/70",
-  constraint: "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/70",
+  principle: "bg-info/20 text-info hover:bg-info/30",
+  pattern: "bg-success/20 text-success hover:bg-success/30",
+  question: "bg-librarian/20 text-librarian hover:bg-librarian/30",
+  route: "bg-dojo/20 text-dojo hover:bg-dojo/30",
+  artifact: "bg-supervisor/20 text-supervisor hover:bg-supervisor/30",
+  constraint: "bg-error/20 text-error hover:bg-error/30",
 };
 
 const STATUS_COLORS: Record<SeedStatus, string> = {
-  new: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700",
-  growing: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/70",
-  mature: "bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-400 hover:bg-teal-200 dark:hover:bg-teal-900/70",
-  compost: "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/70",
+  new: "bg-muted/20 text-muted hover:bg-muted/30",
+  growing: "bg-success/20 text-success hover:bg-success/30",
+  mature: "bg-info/20 text-info hover:bg-info/30",
+  compost: "bg-error/20 text-error hover:bg-error/30",
 };
 
 export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFiltersChange }: FiltersPanelProps) {

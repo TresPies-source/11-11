@@ -15,34 +15,34 @@ interface SeedDetailsModalProps {
 
 const TYPE_COLORS = {
   principle: {
-    bg: "bg-blue-50 dark:bg-blue-900/30",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-info/10",
+    text: "text-info",
+    border: "border-info/30",
   },
   pattern: {
-    bg: "bg-green-50 dark:bg-green-900/30",
-    text: "text-green-700 dark:text-green-300",
-    border: "border-green-200 dark:border-green-800",
+    bg: "bg-success/10",
+    text: "text-success",
+    border: "border-success/30",
   },
   question: {
-    bg: "bg-yellow-50 dark:bg-yellow-900/30",
-    text: "text-yellow-700 dark:text-yellow-300",
-    border: "border-yellow-200 dark:border-yellow-800",
+    bg: "bg-librarian/10",
+    text: "text-librarian",
+    border: "border-librarian/30",
   },
   route: {
-    bg: "bg-purple-50 dark:bg-purple-900/30",
-    text: "text-purple-700 dark:text-purple-300",
-    border: "border-purple-200 dark:border-purple-800",
+    bg: "bg-dojo/10",
+    text: "text-dojo",
+    border: "border-dojo/30",
   },
   artifact: {
-    bg: "bg-orange-50 dark:bg-orange-900/30",
-    text: "text-orange-700 dark:text-orange-300",
-    border: "border-orange-200 dark:border-orange-800",
+    bg: "bg-supervisor/10",
+    text: "text-supervisor",
+    border: "border-supervisor/30",
   },
   constraint: {
-    bg: "bg-red-50 dark:bg-red-900/30",
-    text: "text-red-700 dark:text-red-300",
-    border: "border-red-200 dark:border-red-800",
+    bg: "bg-error/10",
+    text: "text-error",
+    border: "border-error/30",
   },
 };
 
@@ -50,26 +50,26 @@ const STATUS_CONFIG = {
   new: {
     Icon: Leaf,
     label: "New",
-    color: "text-gray-600 dark:text-gray-400",
-    bg: "bg-gray-100 dark:bg-gray-800",
+    color: "text-muted",
+    bg: "bg-muted/20",
   },
   growing: {
     Icon: TrendingUp,
     label: "Growing",
-    color: "text-green-600 dark:text-green-400",
-    bg: "bg-green-100 dark:bg-green-900/30",
+    color: "text-success",
+    bg: "bg-success/20",
   },
   mature: {
     Icon: CheckCircle,
     label: "Mature",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-100 dark:bg-blue-900/30",
+    color: "text-info",
+    bg: "bg-info/20",
   },
   compost: {
     Icon: X,
     label: "Composted",
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-100 dark:bg-red-900/30",
+    color: "text-error",
+    bg: "bg-error/20",
   },
 };
 
@@ -164,13 +164,13 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col"
+              className="bg-bg-primary rounded-lg shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col"
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-6 flex items-start justify-between z-10">
+              <div className="sticky top-0 bg-bg-primary border-b border-border p-6 flex items-start justify-between z-10">
                 <div className="flex-1 pr-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span
@@ -195,14 +195,14 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
                   </div>
                   <h2
                     id="modal-title"
-                    className="text-2xl font-bold text-gray-900 dark:text-gray-100"
+                    className="text-2xl font-bold text-text-primary"
                   >
                     {seed.name}
                   </h2>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="p-2 rounded-md text-text-muted hover:text-text-secondary hover:bg-muted/20 transition-colors"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
@@ -212,11 +212,11 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {seed.why_matters && (
                   <section>
-                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                      <span className="w-1 h-4 bg-blue-500 rounded-full" />
+                    <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                      <span className="w-1 h-4 bg-accent rounded-full" />
                       Why it matters
                     </h3>
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed pl-3">
+                    <p className="text-text-primary leading-relaxed pl-3">
                       {seed.why_matters}
                     </p>
                   </section>
@@ -224,59 +224,59 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
 
                 {seed.revisit_when && (
                   <section>
-                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-amber-500" />
+                    <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-warning" />
                       Revisit when
                     </h3>
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed pl-3">
+                    <p className="text-text-primary leading-relaxed pl-3">
                       {seed.revisit_when}
                     </p>
                   </section>
                 )}
 
                 <section>
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                    <span className="w-1 h-4 bg-green-500 rounded-full" />
+                  <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-success rounded-full" />
                     Content
                   </h3>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-sm text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap font-mono border border-gray-200 dark:border-gray-700">
+                  <div className="bg-bg-tertiary rounded-lg p-4 text-sm text-text-primary leading-relaxed whitespace-pre-wrap font-mono border border-border">
                     {seed.content}
                   </div>
                 </section>
 
-                <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                <section className="pt-4 border-t border-border">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500 dark:text-gray-400 block mb-1">
+                      <span className="text-text-muted block mb-1">
                         Created
                       </span>
-                      <span className="text-gray-800 dark:text-gray-200 font-medium">
+                      <span className="text-text-primary font-medium">
                         {new Date(seed.created_at).toLocaleString()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500 dark:text-gray-400 block mb-1">
+                      <span className="text-text-muted block mb-1">
                         Last Updated
                       </span>
-                      <span className="text-gray-800 dark:text-gray-200 font-medium">
+                      <span className="text-text-primary font-medium">
                         {new Date(seed.updated_at).toLocaleString()}
                       </span>
                     </div>
                     {seed.replanted && (
                       <>
                         <div>
-                          <span className="text-gray-500 dark:text-gray-400 block mb-1">
+                          <span className="text-text-muted block mb-1">
                             Replanted
                           </span>
-                          <span className="text-green-600 dark:text-green-400 font-medium">
+                          <span className="text-success font-medium">
                             Yes
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500 dark:text-gray-400 block mb-1">
+                          <span className="text-text-muted block mb-1">
                             Replant Count
                           </span>
-                          <span className="text-gray-800 dark:text-gray-200 font-medium">
+                          <span className="text-text-primary font-medium">
                             {seed.replant_count}
                           </span>
                         </div>
@@ -286,10 +286,10 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
                 </section>
               </div>
 
-              <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-6 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-bg-primary border-t border-border p-6 flex justify-end gap-3">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-100 active:scale-95"
+                  className="px-4 py-2 text-sm font-medium text-text-secondary bg-muted/20 hover:bg-muted/30 rounded-lg transition-all duration-100 active:scale-95"
                 >
                   Close
                 </button>
@@ -299,8 +299,8 @@ export const SeedDetailsModal = memo(function SeedDetailsModal({
                   className={cn(
                     "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-100 active:scale-95 flex items-center gap-2",
                     isCopied
-                      ? "bg-green-600 dark:bg-green-700 text-white cursor-default"
-                      : "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                      ? "bg-success text-white cursor-default"
+                      : "bg-accent text-white hover:bg-accent/90"
                   )}
                   aria-label={
                     isCopied

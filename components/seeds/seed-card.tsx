@@ -15,53 +15,53 @@ interface SeedCardProps {
 
 const TYPE_COLORS = {
   principle: {
-    bg: "bg-blue-50 dark:bg-blue-900/30",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-info/10",
+    text: "text-info",
+    border: "border-info/30",
   },
   pattern: {
-    bg: "bg-green-50 dark:bg-green-900/30",
-    text: "text-green-700 dark:text-green-300",
-    border: "border-green-200 dark:border-green-800",
+    bg: "bg-success/10",
+    text: "text-success",
+    border: "border-success/30",
   },
   question: {
-    bg: "bg-yellow-50 dark:bg-yellow-900/30",
-    text: "text-yellow-700 dark:text-yellow-300",
-    border: "border-yellow-200 dark:border-yellow-800",
+    bg: "bg-librarian/10",
+    text: "text-librarian",
+    border: "border-librarian/30",
   },
   route: {
-    bg: "bg-purple-50 dark:bg-purple-900/30",
-    text: "text-purple-700 dark:text-purple-300",
-    border: "border-purple-200 dark:border-purple-800",
+    bg: "bg-dojo/10",
+    text: "text-dojo",
+    border: "border-dojo/30",
   },
   artifact: {
-    bg: "bg-orange-50 dark:bg-orange-900/30",
-    text: "text-orange-700 dark:text-orange-300",
-    border: "border-orange-200 dark:border-orange-800",
+    bg: "bg-supervisor/10",
+    text: "text-supervisor",
+    border: "border-supervisor/30",
   },
   constraint: {
-    bg: "bg-red-50 dark:bg-red-900/30",
-    text: "text-red-700 dark:text-red-300",
-    border: "border-red-200 dark:border-red-800",
+    bg: "bg-error/10",
+    text: "text-error",
+    border: "border-error/30",
   },
 };
 
 const STATUS_CONFIG = {
   new: {
     Icon: Leaf,
-    color: "text-gray-400 dark:text-gray-500",
+    color: "text-muted",
   },
   growing: {
     Icon: TrendingUp,
-    color: "text-green-500 dark:text-green-400",
+    color: "text-success",
   },
   mature: {
     Icon: CheckCircle,
-    color: "text-blue-500 dark:text-blue-400",
+    color: "text-info",
   },
   compost: {
     Icon: X,
-    color: "text-red-400 dark:text-red-500",
+    color: "text-error",
   },
 };
 
@@ -122,7 +122,7 @@ export const SeedCard = memo(function SeedCard({
       role="article"
       aria-label={`Seed: ${seed.name}. Type: ${seed.type}. Status: ${seed.status}`}
       className={cn(
-        "group bg-white dark:bg-gray-900 rounded-lg border p-4 transition-all duration-200 flex flex-col h-full",
+        "group bg-card rounded-lg border p-4 transition-all duration-200 flex flex-col h-full",
         typeColors.border,
         "hover:shadow-lg"
       )}
@@ -161,31 +161,31 @@ export const SeedCard = memo(function SeedCard({
           </div>
           <button
             onClick={handleViewClick}
-            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors active:scale-95"
+            className="p-1.5 rounded-md hover:bg-muted/20 text-text-muted transition-colors active:scale-95"
             aria-label={`View details of ${seed.name}`}
           >
             <Eye className="w-4 h-4" />
           </button>
         </div>
 
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
+        <h3 className="font-semibold text-text-primary mb-2 line-clamp-2">
           {seed.name}
         </h3>
 
         {seed.why_matters && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+          <p className="text-sm text-text-secondary mb-2 line-clamp-2">
             {seed.why_matters}
           </p>
         )}
 
         {seed.revisit_when && (
-          <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
+          <p className="text-xs text-text-tertiary mb-3">
             <strong>Revisit when:</strong> {seed.revisit_when}
           </p>
         )}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800 space-y-2">
+      <div className="mt-auto pt-3 border-t border-border space-y-2">
         <div className="flex items-center gap-2">
           <button
             onClick={(e) => handleStatusClick(e, "new")}
@@ -193,8 +193,8 @@ export const SeedCard = memo(function SeedCard({
             className={cn(
               "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-100 active:scale-95",
               seed.status === "new"
-                ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                ? "bg-muted/20 text-muted/50 cursor-not-allowed"
+                : "bg-muted/30 text-text-secondary hover:bg-muted/40"
             )}
             aria-label={`Mark ${seed.name} as Keep`}
           >
@@ -206,8 +206,8 @@ export const SeedCard = memo(function SeedCard({
             className={cn(
               "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-100 active:scale-95",
               seed.status === "growing"
-                ? "bg-green-100 dark:bg-green-900/30 text-green-400 dark:text-green-600 cursor-not-allowed"
-                : "bg-green-200 dark:bg-green-700 text-green-700 dark:text-green-300 hover:bg-green-300 dark:hover:bg-green-600"
+                ? "bg-success/20 text-success/50 cursor-not-allowed"
+                : "bg-success/30 text-success hover:bg-success/40"
             )}
             aria-label={`Mark ${seed.name} as Grow`}
           >
@@ -219,8 +219,8 @@ export const SeedCard = memo(function SeedCard({
             className={cn(
               "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-100 active:scale-95",
               seed.status === "compost"
-                ? "bg-amber-100 dark:bg-amber-900/30 text-amber-400 dark:text-amber-600 cursor-not-allowed"
-                : "bg-amber-200 dark:bg-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-300 dark:hover:bg-amber-600"
+                ? "bg-supervisor/20 text-supervisor/50 cursor-not-allowed"
+                : "bg-supervisor/30 text-supervisor hover:bg-supervisor/40"
             )}
             aria-label={`Mark ${seed.name} as Compost`}
           >
@@ -231,14 +231,14 @@ export const SeedCard = memo(function SeedCard({
         <div className="flex items-center justify-between">
           <button
             onClick={handleDeleteClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all duration-100 active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-error hover:bg-error/10 transition-all duration-100 active:scale-95"
             aria-label={`Delete ${seed.name}`}
           >
             <Trash2 className="w-3.5 h-3.5" />
             Delete
           </button>
 
-          <div className="text-xs text-gray-400 dark:text-gray-600">
+          <div className="text-xs text-text-muted">
             {new Date(seed.updated_at).toLocaleDateString()}
           </div>
         </div>

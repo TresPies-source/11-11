@@ -9,8 +9,10 @@ import type { SeedRow, SeedFilters, SeedStatus } from "@/lib/seeds/types";
 import { SeedCard } from "./seed-card";
 import { SeedFiltersPanel } from "./filters-panel";
 import { SeedDetailsModal } from "./details-modal";
+import { PlantSeedModal } from "./plant-seed-modal";
 import { insertSeed, updateSeed, deleteSeed } from "@/lib/pglite/seeds";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 export function SeedsView() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +20,7 @@ export function SeedsView() {
   const [statusFilters, setStatusFilters] = useState<string[]>([]);
   const [selectedSeed, setSelectedSeed] = useState<SeedRow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -106,14 +109,25 @@ export function SeedsView() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Leaf className="h-8 w-8 text-green-600 dark:text-green-500" />
-            🌱 Seed Library
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your knowledge seeds through Keep, Grow, Compost, and Replant
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <Leaf className="h-8 w-8 text-success" />
+              🌱 Seed Library
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Manage your knowledge seeds through Keep, Grow, Compost, and Replant
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => setIsPlantModalOpen(true)}
+            className="flex-shrink-0"
+          >
+            <Plus className="w-5 h-5" />
+            Plant New Seed
+          </Button>
         </div>
 
         <div className="flex gap-6">
@@ -123,10 +137,10 @@ export function SeedsView() {
 
           <main className="flex-1">
             <div className="animate-pulse space-y-4">
-              <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-lg w-full max-w-md"></div>
+              <div className="h-12 bg-bg-secondary rounded-lg w-full max-w-md"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-80 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                  <div key={i} className="h-80 bg-bg-secondary rounded-lg"></div>
                 ))}
               </div>
             </div>
@@ -139,14 +153,25 @@ export function SeedsView() {
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Leaf className="h-8 w-8 text-green-600 dark:text-green-500" />
-            🌱 Seed Library
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your knowledge seeds through Keep, Grow, Compost, and Replant
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <Leaf className="h-8 w-8 text-success" />
+              🌱 Seed Library
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Manage your knowledge seeds through Keep, Grow, Compost, and Replant
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => setIsPlantModalOpen(true)}
+            className="flex-shrink-0"
+          >
+            <Plus className="w-5 h-5" />
+            Plant New Seed
+          </Button>
         </div>
 
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
@@ -176,14 +201,25 @@ export function SeedsView() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <Leaf className="h-8 w-8 text-green-600 dark:text-green-500" />
-          🌱 Seed Library
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your knowledge seeds through Keep, Grow, Compost, and Replant
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Leaf className="h-8 w-8 text-success" />
+            🌱 Seed Library
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Manage your knowledge seeds through Keep, Grow, Compost, and Replant
+          </p>
+        </div>
+        <Button
+          variant="primary"
+          size="md"
+          onClick={() => setIsPlantModalOpen(true)}
+          className="flex-shrink-0"
+        >
+          <Plus className="w-5 h-5" />
+          Plant New Seed
+        </Button>
       </div>
 
       {errorMessage && (
@@ -222,7 +258,7 @@ export function SeedsView() {
         <main className="flex-1">
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-muted" />
               <input
                 type="text"
                 placeholder="Search seeds by name or content..."
@@ -231,8 +267,8 @@ export function SeedsView() {
                 className={cn(
                   "w-full pl-12 pr-4 py-3 rounded-lg border transition-all duration-200",
                   "bg-background text-foreground",
-                  "border-border focus:border-blue-500 dark:focus:border-blue-400",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20",
+                  "border-border focus:border-accent",
+                  "focus:outline-none focus:ring-2 focus:ring-accent/20",
                   "placeholder:text-muted-foreground"
                 )}
               />
@@ -291,6 +327,12 @@ export function SeedsView() {
       </div>
 
       <SeedDetailsModal seed={selectedSeed} isOpen={isModalOpen} onClose={handleCloseModal} />
+      
+      <PlantSeedModal
+        isOpen={isPlantModalOpen}
+        onClose={() => setIsPlantModalOpen(false)}
+        onSuccess={refetch}
+      />
     </div>
   );
 }

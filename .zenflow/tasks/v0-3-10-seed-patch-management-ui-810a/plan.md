@@ -233,24 +233,57 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step 7: UI Components (DetailsModal)
+### [x] Step 7: UI Components (DetailsModal)
+<!-- chat-id: a8ae40c0-68b6-4ebf-af0d-46d8cb43b66c -->
 
 **Objective:** Create seed details modal
 
 **Tasks:**
-1. Create `components/seeds/details-modal.tsx` with:
-   - Full seed information display
-   - Export Memory Patch button
+1. ✅ Create `components/seeds/details-modal.tsx` with:
+   - Full seed information display (name, type, status, why_matters, revisit_when, content)
+   - Type-specific color schemes (blue/green/yellow/purple/orange/red)
+   - Status-specific icons and labels (New/Growing/Mature/Composted)
+   - Export Memory Patch button with copy to clipboard
    - Close button and ESC handler
+   - Click outside to close
+   - Replanted seed information display
+   - Dark mode support
+   - Framer Motion animations
+   - Accessibility features (ARIA attributes, keyboard navigation)
+2. ✅ Create comprehensive test suite (`__tests__/seeds/details-modal.test.tsx`)
+3. ✅ Add test script to package.json (`test:seeds-modal`)
 
 **Verification:**
-- Modal displays seed details
-- Export copies to clipboard
-- Close button works
-- ESC key closes modal
+- ✅ Modal displays seed details correctly
+- ✅ Export copies Memory Patch to clipboard
+- ✅ Shows "Copied!" feedback after export
+- ✅ Close button works
+- ✅ ESC key closes modal
+- ✅ Click outside closes modal
+- ✅ Handles null values (shows N/A)
+- ✅ Displays replanted information when applicable
+- ✅ All seeds tests passing (export + hook + card + filters + modal)
+- ✅ No TypeScript errors
+- ✅ No lint issues
 
 **Files Created:**
 - `components/seeds/details-modal.tsx`
+- `__tests__/seeds/details-modal.test.tsx`
+
+**Files Modified:**
+- `package.json` (added test:seeds-modal script, updated test:seeds)
+
+**Implementation Notes:**
+- Component uses memo for performance optimization
+- Memory Patch format includes all seed details with markdown formatting
+- Modal uses createPortal for proper z-index layering
+- Smooth transitions (200ms) with Framer Motion
+- Responsive design (max-w-3xl desktop, padding-4 mobile)
+- Max-h-[85vh] to prevent overflow, scrollable content area
+- Type and status badges match SeedCard styling
+- Date formatting uses toLocaleString() for proper timezone display
+- Proper accessibility (role="dialog", aria-modal, aria-labelledby)
+- Dark mode support for all colors and backgrounds
 
 ---
 

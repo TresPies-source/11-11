@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { BookHeart, Sparkles } from "lucide-react";
+import { BookHeart, Sparkles, LibraryBig } from "lucide-react";
 import type { PromptStatus } from "@/lib/pglite/types";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
@@ -18,6 +18,7 @@ import { LibrarianErrorBoundary } from "./LibrarianErrorBoundary";
 import { LibrarianNavigation } from "./LibrarianNavigation";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { cn } from "@/lib/utils";
 
 export function LibrarianView() {
@@ -181,21 +182,12 @@ export function LibrarianView() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main" aria-label="The Librarian's Home">
-      <motion.header
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
-          <BookHeart className="h-8 w-8 text-librarian" aria-hidden="true" />
-          The Librarian&apos;s Home
-        </h1>
-        <p className="text-text-secondary mt-2 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
-          Cultivate your prompts, grow your library, and watch your ideas flourish
-        </p>
-      </motion.header>
+      <PageHeader
+        title="Librarian"
+        subtitle="Search, discover, and manage your collective intelligence."
+        icon={LibraryBig}
+        iconClassName="text-librarian"
+      />
 
       <LibrarianNavigation savedPromptsCount={savedPrompts.length} />
 

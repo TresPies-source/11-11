@@ -81,7 +81,8 @@
     "react-resizable-panels": "^2.1.7",
     "tailwind-merge": "^2.6.0",
     "tiktoken": "^1.0.22",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.1",

@@ -6,6 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@electric-sql/pglite'],
   images: {
     remotePatterns: [
       {
@@ -28,6 +29,7 @@ const nextConfig = {
       layers: true,
     };
 
+    // Configure WASM loading for PGlite
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'webassembly/async',
@@ -42,12 +44,14 @@ const nextConfig = {
       'fs': false,
       'fs/promises': false,
       'path': false,
-    };
+      'url': false,
+    }
 
     // Ignore specific PGlite warnings
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),
       { module: /node_modules\/@electric-sql\/pglite/ },
+      /The generated code contains 'async\/await'/,
     ];
 
     return config;

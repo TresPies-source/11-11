@@ -525,6 +525,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 13: Documentation
+<!-- chat-id: 44f18bf9-2637-45ef-8f25-3fe49894a902 -->
 
 **Objective:** Complete feature documentation
 

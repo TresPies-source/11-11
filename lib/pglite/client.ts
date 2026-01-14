@@ -15,7 +15,7 @@ import { applyMigration010 } from './migrations/010_add_seeds';
 const isBrowser = typeof window !== 'undefined';
 
 // Use IndexedDB in browser, memory in server (Next.js API routes)
-const DB_PATH = isBrowser ? 'idb://11-11-db' : undefined;
+const DB_PATH = isBrowser ? 'idb://11-11-db' : 'memory://';
 export const DEFAULT_USER_ID = 'dev-user';
 
 let dbInstance: PGlite | null = null;
@@ -34,7 +34,8 @@ async function initializeDatabase(): Promise<PGlite> {
     console.log('[PGlite] Initializing database at:', DB_PATH ?? 'memory');
     console.log('[PGlite] Environment:', isBrowser ? 'Browser' : 'Server');
     
-    const db = await PGlite.create(DB_PATH);
+    const db = new PGlite(DB_PATH);
+    await db.waitReady;
     
     const isInitialized = await checkIfInitialized(db);
     

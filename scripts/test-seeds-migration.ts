@@ -20,7 +20,7 @@ async function testMigration() {
       ) as exists;
     `);
     
-    if (tableCheck.rows[0].exists) {
+    if ((tableCheck.rows[0] as any).exists) {
       console.log('✅ Seeds table created successfully');
     } else {
       console.error('❌ Seeds table NOT found');
@@ -73,7 +73,7 @@ async function testMigration() {
       testSeed.revisit_when
     ]);
     
-    console.log('✅ Test seed inserted:', insertResult.rows[0]);
+    console.log('✅ Test seed inserted:', insertResult.rows[0] as any);
     
     console.log('\n📊 Fetching all seeds...');
     const selectResult = await db.query('SELECT * FROM seeds;');
@@ -86,21 +86,21 @@ async function testMigration() {
       UPDATE seeds 
       SET status = 'growing' 
       WHERE id = $1;
-    `, [insertResult.rows[0].id]);
+    `, [(insertResult.rows[0] as any).id]);
     
     const updatedSeed = await db.query(`
       SELECT created_at, updated_at, status 
       FROM seeds 
       WHERE id = $1;
-    `, [insertResult.rows[0].id]);
+    `, [(insertResult.rows[0] as any).id]);
     
-    const created = new Date(updatedSeed.rows[0].created_at).getTime();
-    const updated = new Date(updatedSeed.rows[0].updated_at).getTime();
+    const created = new Date((updatedSeed.rows[0] as any).created_at).getTime();
+    const updated = new Date((updatedSeed.rows[0] as any).updated_at).getTime();
     
     if (updated > created) {
       console.log('✅ Timestamp trigger working correctly');
-      console.log(`  created_at: ${updatedSeed.rows[0].created_at}`);
-      console.log(`  updated_at: ${updatedSeed.rows[0].updated_at}`);
+      console.log(`  created_at: ${(updatedSeed.rows[0] as any).created_at}`);
+      console.log(`  updated_at: ${(updatedSeed.rows[0] as any).updated_at}`);
     } else {
       console.error('❌ Timestamp trigger NOT working');
       process.exit(1);

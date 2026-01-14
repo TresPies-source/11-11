@@ -45,7 +45,16 @@
     "test:packet-formatters": "tsx lib/packet/formatters.test.ts",
     "test:packet-export-api": "tsx __tests__/packet/export-api.test.ts",
     "test:packet-import-api": "tsx __tests__/packet/import-api.test.ts",
-    "test:packet": "npm run test:packet-schema && npm run test:packet-builder && npm run test:packet-formatters && npm run test:packet-export-api && npm run test:packet-import-api"
+    "test:packet": "npm run test:packet-schema && npm run test:packet-builder && npm run test:packet-formatters && npm run test:packet-export-api && npm run test:packet-import-api",
+    "test:seeds-api": "tsx __tests__/seeds/api.test.ts",
+    "test:seeds-export": "tsx __tests__/seeds/export.test.ts",
+    "test:seeds-hook": "tsx __tests__/seeds/useSeeds.test.ts",
+    "test:seeds-card": "tsx __tests__/seeds/seed-card.test.tsx",
+    "test:seeds-filters": "tsx __tests__/seeds/filters-panel.test.tsx",
+    "test:seeds-modal": "tsx __tests__/seeds/details-modal.test.tsx",
+    "test:seeds-view": "tsx __tests__/seeds/seeds-view.test.tsx",
+    "test:seeds-integration": "tsx __tests__/seeds/integration.test.ts",
+    "test:seeds": "npm run test:seeds-api && npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card && npm run test:seeds-filters && npm run test:seeds-modal && npm run test:seeds-view && npm run test:seeds-integration"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

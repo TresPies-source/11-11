@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends Omit<HTMLMotionProps<"button">, 'variant' | 'size'> {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'default' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   children: React.ReactNode;
@@ -26,6 +26,9 @@ const Button = React.memo(function Button({
   const variantStyles = {
     primary: "bg-text-accent text-white hover:bg-opacity-90",
     secondary: "bg-transparent text-white border border-bg-tertiary hover:border-text-accent",
+    default: "bg-primary text-primary-foreground hover:bg-primary/90",
+    ghost: "bg-transparent text-text-secondary hover:bg-bg-tertiary hover:text-text-primary",
+    destructive: "bg-error text-white hover:bg-error/90",
   };
   
   const sizeStyles = {

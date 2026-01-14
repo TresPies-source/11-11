@@ -9,6 +9,7 @@ import { EmptySearchState } from "@/components/shared/EmptySearchState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/Button";
 import { Globe, Filter, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -107,34 +108,24 @@ export function CommonsView() {
             <Filter className="h-4 w-4 text-text-tertiary" aria-hidden="true" />
             <span className="text-sm font-medium text-text-secondary" id="filter-label-commons">Filter:</span>
             <div className="flex gap-2" aria-labelledby="filter-label-commons">
-              <button
+              <Button
                 onClick={() => setFilter('all')}
+                variant={filter === 'all' ? 'default' : 'ghost'}
+                size="sm"
                 aria-label="Show all public prompts"
                 aria-pressed={filter === 'all'}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                  "focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2",
-                  filter === 'all'
-                    ? "bg-info text-white"
-                    : "bg-bg-tertiary text-text-secondary hover:bg-bg-secondary"
-                )}
               >
                 All Public
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setFilter('mine')}
+                variant={filter === 'mine' ? 'default' : 'ghost'}
+                size="sm"
                 aria-label="Show only my public prompts"
                 aria-pressed={filter === 'mine'}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                  "focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2",
-                  filter === 'mine'
-                    ? "bg-info text-white"
-                    : "bg-bg-tertiary text-text-secondary hover:bg-bg-secondary"
-                )}
               >
                 My Public
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -142,34 +133,24 @@ export function CommonsView() {
             <ArrowUpDown className="h-4 w-4 text-text-tertiary" aria-hidden="true" />
             <span className="text-sm font-medium text-text-secondary" id="sort-label-commons">Sort:</span>
             <div className="flex gap-2" aria-labelledby="sort-label-commons">
-              <button
+              <Button
                 onClick={() => setSort('recent')}
+                variant={sort === 'recent' ? 'default' : 'ghost'}
+                size="sm"
                 aria-label="Sort by most recent"
                 aria-pressed={sort === 'recent'}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                  "focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2",
-                  sort === 'recent'
-                    ? "bg-info text-white"
-                    : "bg-bg-tertiary text-text-secondary hover:bg-bg-secondary"
-                )}
               >
                 Recent
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setSort('score')}
+                variant={sort === 'score' ? 'default' : 'ghost'}
+                size="sm"
                 aria-label="Sort by highest score"
                 aria-pressed={sort === 'score'}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                  "focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2",
-                  sort === 'score'
-                    ? "bg-info text-white"
-                    : "bg-bg-tertiary text-text-secondary hover:bg-bg-secondary"
-                )}
               >
                 Highest Score
-              </button>
+              </Button>
             </div>
           </div>
         </div>

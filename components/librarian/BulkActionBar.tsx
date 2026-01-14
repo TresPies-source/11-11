@@ -57,8 +57,7 @@ export function BulkActionBar({
                   disabled={isLoading}
                   isLoading={isRestoring}
                   size="sm"
-                  variant="primary"
-                  className="bg-success hover:bg-opacity-90"
+                  variant="default"
                   aria-label={`Restore ${selectedCount} selected ${selectedCount === 1 ? 'prompt' : 'prompts'}`}
                 >
                   {!isRestoring && <RotateCcw className="h-4 w-4" />}
@@ -70,8 +69,7 @@ export function BulkActionBar({
                   disabled={isLoading}
                   isLoading={isDeleting}
                   size="sm"
-                  variant="primary"
-                  className="bg-error hover:bg-opacity-90"
+                  variant="destructive"
                   aria-label={`Delete ${selectedCount} selected ${selectedCount === 1 ? 'prompt' : 'prompts'}`}
                 >
                   {!isDeleting && <Trash2 className="h-4 w-4" />}

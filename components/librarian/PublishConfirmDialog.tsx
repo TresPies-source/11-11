@@ -61,8 +61,8 @@ export function PublishConfirmDialog({
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Globe className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                <div className="p-2 bg-accent rounded-lg">
+                  <Globe className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <h2
                   id="publish-dialog-title"
@@ -87,8 +87,8 @@ export function PublishConfirmDialog({
                 can edit the original.
               </p>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-                <p className="text-sm text-blue-800">
+              <div className="bg-accent border border-primary/20 rounded-md p-3">
+                <p className="text-sm text-primary-foreground">
                   <strong>Note:</strong> You can unpublish your prompt at any time to
                   make it private again.
                 </p>
@@ -99,7 +99,7 @@ export function PublishConfirmDialog({
                   type="checkbox"
                   checked={dontShowAgain}
                   onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 />
                 <span className="text-sm text-gray-700">
                   Don&apos;t show this again
@@ -115,7 +115,7 @@ export function PublishConfirmDialog({
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 px-4 py-2.5 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="flex-1 px-4 py-2.5 rounded-md bg-primary text-white font-medium hover:bg-primary/90 transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                   Make Public
                 </button>

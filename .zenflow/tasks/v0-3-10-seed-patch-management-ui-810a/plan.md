@@ -586,6 +586,7 @@ Do not make assumptions on important decisions — get clarification first.
 ---
 
 ### [ ] Step 14: Final Report
+<!-- chat-id: 1909b42c-6e03-483c-aa05-641c031136c2 -->
 
 **Objective:** Write completion report
 

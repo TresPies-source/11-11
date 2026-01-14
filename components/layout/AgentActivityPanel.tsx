@@ -39,7 +39,7 @@ export function AgentActivityPanel() {
     <div
       className={cn(
         "h-full flex flex-col bg-bg-secondary border-l border-bg-tertiary transition-all duration-300",
-        isCollapsed ? "w-20" : "w-full"
+        isCollapsed ? "w-0 border-0" : "w-full"
       )}
     >
       {/* Header */}

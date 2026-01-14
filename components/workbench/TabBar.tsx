@@ -20,6 +20,16 @@ export const TabBar = React.memo(function TabBar() {
 
   return (
     <div className="flex items-center bg-bg-primary border-b border-bg-tertiary overflow-x-auto scrollbar-thin scrollbar-thumb-bg-tertiary scrollbar-track-transparent">
+      <button
+        onClick={handleAddTab}
+        className={cn(
+          "flex items-center justify-center gap-2 px-4 h-10 flex-shrink-0 text-text-accent hover:text-text-primary hover:bg-bg-tertiary transition-colors font-medium border-r border-bg-tertiary"
+        )}
+        aria-label="Add new tab"
+      >
+        <Plus className="w-5 h-5" />
+        <span className="text-sm">New Tab</span>
+      </button>
       <div className="flex items-center flex-1 min-w-0">
         {tabs.map((tab) => (
           <Tab
@@ -31,15 +41,6 @@ export const TabBar = React.memo(function TabBar() {
           />
         ))}
       </div>
-      <button
-        onClick={handleAddTab}
-        className={cn(
-          "flex items-center justify-center w-10 h-10 flex-shrink-0 text-text-secondary hover:text-text-accent hover:bg-bg-secondary transition-colors"
-        )}
-        aria-label="Add new tab"
-      >
-        <Plus className="w-5 h-5" />
-      </button>
     </div>
   );
 });

@@ -16,7 +16,10 @@ export type HarnessEventType =
   | 'SAFETY_SWITCH'           // Safety Switch activated/deactivated
   | 'ERROR'                   // Error occurred
   | 'USER_INPUT'              // User message
-  | 'AGENT_RESPONSE';         // Agent response
+  | 'AGENT_RESPONSE'          // Agent response
+  | 'AGENT_ACTIVITY_START'    // Agent activity started
+  | 'AGENT_ACTIVITY_PROGRESS' // Agent activity progress update
+  | 'AGENT_ACTIVITY_COMPLETE'; // Agent activity completed
 
 /**
  * Extensible metadata for trace events.

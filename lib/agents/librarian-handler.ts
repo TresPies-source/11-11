@@ -12,6 +12,7 @@ import { generateEmbedding } from '../librarian/embeddings';
 import { MODEL_PRICING } from '../cost/constants';
 import type { ChatMessage, AgentInvocationContext } from './types';
 import { getDB } from '../pglite/client';
+import { logEvent, isTraceActive } from '../harness/trace';
 
 export interface LibrarianQuery {
   query: string;
@@ -161,6 +162,21 @@ export async function handleLibrarianQuery(
   const startTime = Date.now();
 
   try {
+    // Log activity start
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_START', 
+        {
+          agent_id: 'librarian',
+          message: 'Searching library for relevant prompts...',
+          progress: 0,
+        },
+        {
+          parent_type: 'agent_operation',
+          metadata: { query: query.query },
+        }
+      );
+    }
+
     // Extract clean search query
     const searchQuery = extractSearchQuery(query.query);
 
@@ -179,9 +195,52 @@ export async function handleLibrarianQuery(
       ...query.filters,
     };
 
+    // Log embedding generation progress
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_PROGRESS',
+        {
+          agent_id: 'librarian',
+          message: 'Generating query embedding...',
+          progress: 20,
+        },
+        {
+          parent_type: 'agent_operation',
+        }
+      );
+    }
+
     // Execute semantic search
     const userId = query.userId || 'anonymous';
+    
+    // Log database search progress
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_PROGRESS',
+        {
+          agent_id: 'librarian',
+          message: 'Searching database...',
+          progress: 50,
+        },
+        {
+          parent_type: 'agent_operation',
+        }
+      );
+    }
+    
     const searchResponse = await semanticSearch(searchQuery, userId, filters);
+
+    // Log ranking progress
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_PROGRESS',
+        {
+          agent_id: 'librarian',
+          message: 'Ranking results...',
+          progress: 80,
+        },
+        {
+          parent_type: 'agent_operation',
+        }
+      );
+    }
 
     // Track cost (embedding generation)
     // Estimate tokens for the query (approximate 1 token per 4 characters)
@@ -205,6 +264,24 @@ export async function handleLibrarianQuery(
 
     const duration = Date.now() - startTime;
 
+    // Log completion
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_COMPLETE',
+        {
+          agent_id: 'librarian',
+          message: `Found ${searchResponse.count} result${searchResponse.count !== 1 ? 's' : ''}`,
+          progress: 100,
+        },
+        {
+          parent_type: 'agent_operation',
+          metadata: {
+            result_count: searchResponse.count,
+            duration_ms: duration,
+          },
+        }
+      );
+    }
+
     return {
       results: searchResponse.results,
       query: searchQuery,
@@ -215,6 +292,23 @@ export async function handleLibrarianQuery(
       cost,
     };
   } catch (error) {
+    // Log error
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_COMPLETE',
+        {
+          agent_id: 'librarian',
+          message: 'Search failed',
+          status: 'error',
+        },
+        {
+          parent_type: 'agent_operation',
+          metadata: {
+            error: error instanceof Error ? error.message : String(error),
+          },
+        }
+      );
+    }
+
     if (error instanceof LibrarianError) {
       throw error;
     }

@@ -7,6 +7,8 @@ import { SyncStatusProvider } from "@/components/providers/SyncStatusProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { FileTreeProvider } from "@/components/providers/FileTreeProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ActivityProvider } from "@/components/providers/ActivityProvider";
+import { ActivityStatus } from "@/components/activity/ActivityStatus";
 
 export const metadata: Metadata = {
   title: "11-11 | Sustainable Intelligence OS",
@@ -41,17 +43,20 @@ export default function RootLayout({
       <body className="antialiased">
         <ThemeProvider>
           <ToastProvider>
-            <ContextBusProvider>
-              <MockSessionProvider>
-                <SyncStatusProvider>
-                  <FileTreeProvider>
-                    <RepositoryProvider>
-                      {children}
-                    </RepositoryProvider>
-                  </FileTreeProvider>
-                </SyncStatusProvider>
-              </MockSessionProvider>
-            </ContextBusProvider>
+            <ActivityProvider>
+              <ContextBusProvider>
+                <MockSessionProvider>
+                  <SyncStatusProvider>
+                    <FileTreeProvider>
+                      <RepositoryProvider>
+                        {children}
+                        <ActivityStatus />
+                      </RepositoryProvider>
+                    </FileTreeProvider>
+                  </SyncStatusProvider>
+                </MockSessionProvider>
+              </ContextBusProvider>
+            </ActivityProvider>
           </ToastProvider>
         </ThemeProvider>
       </body>

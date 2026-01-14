@@ -22,6 +22,7 @@ import { RoutingIndicator } from "@/components/agents/RoutingIndicator";
 import { AgentStatusBadge } from "@/components/agents/AgentStatusBadge";
 import { ExportButton } from "@/components/packet/export-button";
 import type { Agent, RoutingResult } from "@/lib/agents/types";
+import { useRoutingActivity } from "@/lib/agents/activity-integration";
 
 interface ChatPanelProps {
   session: Session;
@@ -48,6 +49,7 @@ const ChatPanelComponent = ({
   const [availableAgents, setAvailableAgents] = useState<Agent[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const persona = AGENT_PERSONAS.find((p) => p.id === session.persona);
+  const { trackRoutingActivity } = useRoutingActivity();
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -109,21 +111,31 @@ const ChatPanelComponent = ({
           .slice(-3)
           .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`);
 
-        const response = await fetch("/api/supervisor/route", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query,
-            conversation_context: conversationContext,
-            session_id: session.id,
-          }),
+        const result = await trackRoutingActivity(async () => {
+          const response = await fetch("/api/supervisor/route", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query,
+              conversation_context: conversationContext,
+              session_id: session.id,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Routing failed");
+          }
+
+          return await response.json() as RoutingResult;
+        }, {
+          onComplete: (agentId, agentName) => {
+            console.log(`[Activity] Routing complete: ${agentName} (${agentId})`);
+          },
+          onError: (error) => {
+            console.error("[Activity] Routing error:", error);
+          },
         });
 
-        if (!response.ok) {
-          throw new Error("Routing failed");
-        }
-
-        const result: RoutingResult = await response.json();
         setRoutingDecision(result);
 
         const agent = availableAgents.find((a) => a.id === result.agent_id);
@@ -140,7 +152,7 @@ const ChatPanelComponent = ({
         setIsRouting(false);
       }
     },
-    [selectedAgentMode, session.messages, session.id, availableAgents]
+    [selectedAgentMode, session.messages, session.id, availableAgents, trackRoutingActivity]
   );
 
   const handleSubmit = useCallback(

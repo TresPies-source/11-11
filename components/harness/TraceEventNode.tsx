@@ -26,6 +26,9 @@ const EVENT_TYPE_COLORS = {
   ERROR: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
   USER_INPUT: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400",
   AGENT_RESPONSE: "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400",
+  AGENT_ACTIVITY_START: "bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-400",
+  AGENT_ACTIVITY_PROGRESS: "bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400",
+  AGENT_ACTIVITY_COMPLETE: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
 } as const;
 
 export function TraceEventNode({ event, depth, onEventClick }: TraceEventNodeProps) {

@@ -324,6 +324,16 @@ export async function routeQuery(
         context_length: conversation_context.length,
         available_agents: available_agents.map(a => a.id),
       });
+
+      logEvent('AGENT_ACTIVITY_START', 
+        {
+          agent_id: 'supervisor',
+          message: 'Analyzing query and selecting agent...',
+        },
+        {
+          progress: 0,
+        }
+      );
     }
 
     if (!query || query.trim().length === 0) {
@@ -368,6 +378,18 @@ export async function routeQuery(
       return result;
     }
 
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_PROGRESS',
+        {
+          agent_id: 'supervisor',
+          message: 'Evaluating agent selection...',
+        },
+        {
+          progress: 50,
+        }
+      );
+    }
+
     const decision = await routeQueryWithLLM(
       query,
       conversation_context,
@@ -398,6 +420,19 @@ export async function routeQuery(
       }
 
       return result;
+    }
+
+    if (isTraceActive()) {
+      logEvent('AGENT_ACTIVITY_COMPLETE',
+        {
+          agent_id: 'supervisor',
+          message: `Routed to ${decision.agent_name}`,
+        },
+        {
+          progress: 100,
+          selected_agent: decision.agent_id,
+        }
+      );
     }
 
     if (spanId) {

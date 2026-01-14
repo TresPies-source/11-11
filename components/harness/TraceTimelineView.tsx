@@ -31,6 +31,9 @@ const EVENT_TYPE_COLORS = {
   ERROR: "bg-red-500 dark:bg-red-600",
   USER_INPUT: "bg-cyan-500 dark:bg-cyan-600",
   AGENT_RESPONSE: "bg-violet-500 dark:bg-violet-600",
+  AGENT_ACTIVITY_START: "bg-lime-500 dark:bg-lime-600",
+  AGENT_ACTIVITY_PROGRESS: "bg-sky-500 dark:bg-sky-600",
+  AGENT_ACTIVITY_COMPLETE: "bg-emerald-500 dark:bg-emerald-600",
 } as const;
 
 export function TraceTimelineView({ trace, className }: TraceTimelineViewProps) {

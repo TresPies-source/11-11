@@ -225,3 +225,23 @@ export interface ThemeContextValue {
   toggleTheme: () => void;
   systemTheme: Theme;
 }
+
+export interface AgentActivity {
+  agent_id: string;
+  status: 'idle' | 'active' | 'waiting' | 'complete' | 'error';
+  message: string;
+  progress?: number;
+  started_at: string;
+  ended_at?: string;
+  estimated_duration?: number;
+  metadata?: Record<string, any>;
+}
+
+export interface ActivityContextValue {
+  current: AgentActivity | null;
+  history: AgentActivity[];
+  setActivity: (activity: AgentActivity) => void;
+  updateActivity: (updates: Partial<AgentActivity>) => void;
+  clearActivity: () => void;
+  addToHistory: (activity: AgentActivity) => void;
+}

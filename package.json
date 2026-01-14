@@ -39,7 +39,13 @@
     "test:safety-recovery": "tsx __tests__/safety/recovery.test.ts",
     "test:safety-integration": "tsx __tests__/safety/integration.test.ts",
     "test:safety-e2e": "tsx __tests__/safety/e2e.test.ts",
-    "test:safety": "npm run test:safety-switch && npm run test:safety-conservative && npm run test:safety-recovery && npm run test:safety-integration && npm run test:safety-e2e"
+    "test:safety": "npm run test:safety-switch && npm run test:safety-conservative && npm run test:safety-recovery && npm run test:safety-integration && npm run test:safety-e2e",
+    "test:packet-schema": "tsx lib/packet/schema.test.ts",
+    "test:packet-builder": "tsx lib/packet/builder.test.ts",
+    "test:packet-formatters": "tsx lib/packet/formatters.test.ts",
+    "test:packet-export-api": "tsx __tests__/packet/export-api.test.ts",
+    "test:packet-import-api": "tsx __tests__/packet/import-api.test.ts",
+    "test:packet": "npm run test:packet-schema && npm run test:packet-builder && npm run test:packet-formatters && npm run test:packet-export-api && npm run test:packet-import-api"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

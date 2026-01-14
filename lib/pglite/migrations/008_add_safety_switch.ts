@@ -8,7 +8,7 @@ export const migration008 = `
 -- Stores Safety Switch activation and recovery events
 -- ============================================================
 CREATE TABLE IF NOT EXISTS safety_switch_events (
-  id TEXT PRIMARY KEY DEFAULT ('evt_' || lower(hex(randomblob(16)))),
+  id TEXT PRIMARY KEY DEFAULT ('evt_' || replace(gen_random_uuid()::text, '-', '')),
   session_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
   event_type TEXT NOT NULL,

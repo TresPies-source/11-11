@@ -20,6 +20,7 @@ import { useContextBus, useContextBusSubscription } from "@/hooks/useContextBus"
 import { AgentSelector } from "@/components/agents/AgentSelector";
 import { RoutingIndicator } from "@/components/agents/RoutingIndicator";
 import { AgentStatusBadge } from "@/components/agents/AgentStatusBadge";
+import { ExportButton } from "@/components/packet/export-button";
 import type { Agent, RoutingResult } from "@/lib/agents/types";
 
 interface ChatPanelProps {
@@ -248,6 +249,7 @@ const ChatPanelComponent = ({
             )}
           </div>
           <div className="flex items-center gap-1">
+            <ExportButton sessionId={session.id} variant="icon" />
             <button
               onClick={() => onMinimize(session.id)}
               className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"

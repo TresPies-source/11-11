@@ -169,9 +169,27 @@ export interface CostRecordInsert {
   created_at?: string;
 }
 
+export type DojoMode = 'Mirror' | 'Scout' | 'Gardener' | 'Implementation';
+
+export interface Artifact {
+  type: 'file' | 'link' | 'code' | 'image';
+  name: string;
+  content: string | null;
+  url: string | null;
+}
+
 export interface SessionRow {
   id: string;
   user_id: string;
+  title: string | null;
+  mode: DojoMode | null;
+  situation: string | null;
+  stake: string | null;
+  agent_path: string[];
+  next_move_action: string | null;
+  next_move_why: string | null;
+  next_move_test: string | null;
+  artifacts: Artifact[];
   total_tokens: number;
   total_cost_usd: number;
   created_at: string;
@@ -181,10 +199,67 @@ export interface SessionRow {
 export interface SessionInsert {
   id?: string;
   user_id: string;
+  title?: string | null;
+  mode?: DojoMode | null;
+  situation?: string | null;
+  stake?: string | null;
+  agent_path?: string[];
+  next_move_action?: string | null;
+  next_move_why?: string | null;
+  next_move_test?: string | null;
+  artifacts?: Artifact[];
   total_tokens?: number;
   total_cost_usd?: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface SessionPerspectiveRow {
+  id: string;
+  session_id: string;
+  text: string;
+  source: 'user' | 'agent';
+  created_at: string;
+}
+
+export interface SessionPerspectiveInsert {
+  id?: string;
+  session_id: string;
+  text: string;
+  source: 'user' | 'agent';
+  created_at?: string;
+}
+
+export interface SessionAssumptionRow {
+  id: string;
+  session_id: string;
+  text: string;
+  challenged: boolean;
+  created_at: string;
+}
+
+export interface SessionAssumptionInsert {
+  id?: string;
+  session_id: string;
+  text: string;
+  challenged?: boolean;
+  created_at?: string;
+}
+
+export interface SessionDecisionRow {
+  id: string;
+  session_id: string;
+  text: string;
+  rationale: string;
+  created_at: string;
+}
+
+export interface SessionDecisionInsert {
+  id?: string;
+  session_id: string;
+  text: string;
+  rationale: string;
+  created_at?: string;
 }
 
 export interface UserMonthlyUsageRow {

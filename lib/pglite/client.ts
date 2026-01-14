@@ -34,8 +34,7 @@ async function initializeDatabase(): Promise<PGlite> {
     console.log('[PGlite] Initializing database at:', DB_PATH);
     console.log('[PGlite] Environment:', isBrowser ? 'Browser' : 'Server');
     
-    const db = new PGlite(DB_PATH);
-    await db.waitReady;
+    const db = await PGlite.create(DB_PATH);
     
     const isInitialized = await checkIfInitialized(db);
     

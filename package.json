@@ -51,7 +51,8 @@
     "test:seeds-card": "tsx __tests__/seeds/seed-card.test.tsx",
     "test:seeds-filters": "tsx __tests__/seeds/filters-panel.test.tsx",
     "test:seeds-modal": "tsx __tests__/seeds/details-modal.test.tsx",
-    "test:seeds": "npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card && npm run test:seeds-filters && npm run test:seeds-modal"
+    "test:seeds-view": "tsx __tests__/seeds/seeds-view.test.tsx",
+    "test:seeds": "npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card && npm run test:seeds-filters && npm run test:seeds-modal && npm run test:seeds-view"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

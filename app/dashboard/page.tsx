@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { StatusDot } from '@/components/ui/StatusDot';
+import { NewProjectModal } from '@/components/dashboard/NewProjectModal';
+import { useProjects } from '@/hooks/useProjects';
 
 interface Agent {
   id: string;
@@ -29,10 +35,27 @@ const recentActivity: ActivityItem[] = [
 ];
 
 export default function Dashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { projects, addProject } = useProjects();
+
+  const handleCreateProject = (name: string, description: string) => {
+    addProject(name, description);
+  };
+
   return (
     <section className="p-12">
       <div className="flex flex-col gap-8">
-        <h1 className="text-4xl font-bold text-text-primary mb-8">Dashboard</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-text-primary">Dashboard</h1>
+          <Button
+            variant="primary"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-text-accent hover:bg-opacity-90"
+          >
+            <Plus className="w-5 h-5" />
+            <span>New Project</span>
+          </Button>
+        </div>
 
         <Card glow={true}>
           <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
@@ -84,6 +107,12 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+
+      <NewProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onCreate={handleCreateProject}
+      />
     </section>
   );
 }

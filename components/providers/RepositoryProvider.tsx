@@ -67,7 +67,9 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const activeTab = tabs.find(tab => tab.id === activeTabId) || null;
   const activeFile = activeTab ? fileNodeMap.get(activeTab.fileId) || null : null;
 
-  console.log('[RepositoryProvider] Using shared SyncStatus context');
+  useEffect(() => {
+    console.log('[RepositoryProvider] Using shared SyncStatus context');
+  }, []);
 
   const validateRestoredTabs = useCallback(async (restoredTabs: EditorTab[], currentActiveTabId: string | null) => {
     const validationPromises = restoredTabs.map(async (tab) => {

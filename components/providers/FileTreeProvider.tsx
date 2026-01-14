@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode, useState, useCallback, useEffect } from "react";
+import { createContext, useContext, ReactNode, useState, useCallback, useEffect, useRef } from "react";
 import { FileNode, DriveFile } from "@/lib/types";
 import { mockFileTree } from "@/data/mockFileTree";
 import { isDevelopmentMode } from "@/lib/constants";
@@ -161,10 +161,14 @@ export function FileTreeProvider({ children }: FileTreeProviderProps) {
   const [operationsInProgress, setOperationsInProgress] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasLoggedInit = useRef(false);
 
   const refreshFileTree = useCallback(async () => {
     if (isDevelopmentMode()) {
-      console.log("[FileTreeProvider] Running in dev mode - using mock file tree");
+      if (!hasLoggedInit.current) {
+        console.log("[FileTreeProvider] Running in dev mode - using mock file tree");
+        hasLoggedInit.current = true;
+      }
       return;
     }
 

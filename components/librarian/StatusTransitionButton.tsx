@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { updatePromptStatus } from "@/lib/pglite/prompts";
 import { useToast } from "@/hooks/useToast";
 import type { PromptStatus } from "@/lib/types";
-import { ANIMATION_EASE } from "@/lib/constants";
+import { Button } from "@/components/ui/Button";
 
 interface StatusTransitionButtonProps {
   promptId: string;
@@ -50,41 +49,28 @@ export function StatusTransitionButton({
     }
   };
 
-  const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
-  const variantClasses = variant === "primary"
-    ? "bg-green-500 text-white hover:bg-green-600"
-    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600";
-
   return (
-    <motion.button
+    <Button
       onClick={handleTransition}
       disabled={isLoading}
-      whileHover={{ scale: isLoading ? 1 : 1.05 }}
-      whileTap={{ scale: isLoading ? 1 : 0.95 }}
-      transition={{ duration: 0.2, ease: ANIMATION_EASE }}
-      className={`${baseClasses} ${variantClasses} ${className}`}
+      isLoading={isLoading}
+      size="sm"
+      variant={variant}
+      className={className}
+      aria-label={`${label} - Status transition from ${currentStatus} to ${targetStatus}`}
     >
-      {isLoading ? (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Saving...</span>
-        </>
-      ) : (
-        <>
-          {icon}
-          <span>{label}</span>
-        </>
-      )}
-    </motion.button>
+      {!isLoading && icon}
+      <span>{isLoading ? 'Saving...' : label}</span>
+    </Button>
   );
 }
 
 function getSuccessMessage(targetStatus: PromptStatus): string {
   switch (targetStatus) {
     case "saved":
-      return "🌺 Saved to Greenhouse!";
+      return "🌺 Saved to Saved Prompts!";
     case "active":
-      return "🌱 Moved to Seedlings";
+      return "🌱 Moved to Active Prompts";
     case "archived":
       return "📦 Archived successfully";
     case "draft":
@@ -97,9 +83,9 @@ function getSuccessMessage(targetStatus: PromptStatus): string {
 function getErrorMessage(targetStatus: PromptStatus): string {
   switch (targetStatus) {
     case "saved":
-      return "Failed to save to Greenhouse. Please try again.";
+      return "Failed to save to Saved Prompts. Please try again.";
     case "active":
-      return "Failed to move to Seedlings. Please try again.";
+      return "Failed to move to Active Prompts. Please try again.";
     case "archived":
       return "Failed to archive. Please try again.";
     case "draft":

@@ -1,10 +1,6 @@
-import { CommonsView } from "@/components/librarian/CommonsView";
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Commons - 11-11",
-  description: "Discover prompts shared by the community",
-};
+import { CommonsView } from "@/components/librarian/CommonsView";
 
 export default function CommonsPage() {
   return <CommonsView />;

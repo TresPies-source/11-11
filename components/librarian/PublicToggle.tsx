@@ -60,11 +60,11 @@ export function PublicToggle({
         className={cn(
           "inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
           isPublic
-            ? "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300",
+            ? "bg-info text-white hover:bg-opacity-90"
+            : "bg-bg-tertiary text-text-secondary hover:bg-bg-elevated",
           isDisabled && "opacity-50 cursor-not-allowed",
           "focus:ring-2 focus:ring-offset-2",
-          isPublic ? "focus:ring-blue-500" : "focus:ring-gray-500",
+          isPublic ? "focus:ring-info" : "focus:ring-text-accent",
           className
         )}
       >

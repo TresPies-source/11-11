@@ -18,7 +18,7 @@ export function PublicBadge({ variant = "default", className }: PublicBadgeProps
         isCompact
           ? "px-2 py-0.5 text-xs"
           : "px-3 py-1 text-sm",
-        "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+        "bg-info text-white",
         className
       )}
       role="status"

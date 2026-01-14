@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { Button } from "@/components/ui/Button";
 
 interface LibrarianErrorBoundaryProps {
   children: ReactNode;
@@ -18,14 +19,14 @@ function getSectionErrorMessage(section: "seedling" | "greenhouse" | "general"):
   switch (section) {
     case "seedling":
       return {
-        title: "Seedlings section encountered an error",
+        title: "Active Prompts section encountered an error",
         description:
           "We're having trouble displaying your active prompts. Don't worry, your work is safe.",
         icon: "🌱",
       };
     case "greenhouse":
       return {
-        title: "Greenhouse section encountered an error",
+        title: "Saved Prompts section encountered an error",
         description:
           "We're having trouble displaying your saved prompts. Don't worry, your library is safe.",
         icon: "🌺",
@@ -54,45 +55,49 @@ export function LibrarianErrorBoundary({
     const config = getSectionErrorMessage(section);
 
     return (
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-8 text-center">
-        <div className="text-5xl mb-4">{config.icon}</div>
-        <AlertTriangle className="h-10 w-10 text-amber-400 mx-auto mb-3" />
-        <h3 className="text-amber-900 font-semibold text-lg mb-2">
+      <div className="bg-bg-secondary border border-warning rounded-lg p-8 text-center">
+        <div className="text-5xl mb-4" aria-hidden="true">{config.icon}</div>
+        <AlertTriangle className="h-10 w-10 text-warning mx-auto mb-3" aria-hidden="true" />
+        <h3 className="text-text-primary font-semibold text-lg mb-2">
           {config.title}
         </h3>
-        <p className="text-amber-700 text-sm mb-4 max-w-md mx-auto">
+        <p className="text-text-secondary text-sm mb-4 max-w-md mx-auto">
           {config.description}
         </p>
 
         {process.env.NODE_ENV === "development" && (
-          <div className="bg-white border border-amber-200 rounded-md p-3 mb-4 text-left max-w-lg mx-auto">
-            <p className="text-amber-900 text-xs font-mono mb-1">
+          <div className="bg-bg-primary border border-bg-tertiary rounded-md p-3 mb-4 text-left max-w-lg mx-auto">
+            <p className="text-text-primary text-xs font-mono mb-1">
               <strong>Error:</strong> {error.message}
             </p>
-            <p className="text-amber-700 text-xs">
+            <p className="text-text-secondary text-xs">
               <strong>Section:</strong> {section}
             </p>
           </div>
         )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={retry}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm font-medium"
+            aria-label="Try again to load the section"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Try Again
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => window.location.reload()}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium"
+            aria-label="Reload the entire page"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Reload Page
-          </button>
+          </Button>
         </div>
 
-        <p className="text-amber-600 text-xs mt-4">
+        <p className="text-text-tertiary text-xs mt-4">
           If this problem persists, please refresh the page or contact support.
         </p>
       </div>

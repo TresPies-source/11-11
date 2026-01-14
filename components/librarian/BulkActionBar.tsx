@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { RotateCcw, Trash2, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface BulkActionBarProps {
   selectedCount: number;
@@ -32,7 +33,7 @@ export function BulkActionBar({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-md mb-6"
+          className="sticky top-0 z-40 bg-bg-secondary border-b border-bg-tertiary shadow-md mb-6"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between gap-4">
@@ -40,64 +41,42 @@ export function BulkActionBar({
                 <button
                   onClick={onClearSelection}
                   disabled={isLoading}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                  className="p-1.5 text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2"
                   aria-label="Clear selection"
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-text-primary">
                   {selectedCount} {selectedCount === 1 ? 'prompt' : 'prompts'} selected
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   onClick={onRestore}
                   disabled={isLoading}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-md transition-all duration-100 active:scale-95 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2",
-                    isRestoring
-                      ? "bg-green-400 cursor-wait"
-                      : "bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  )}
+                  isLoading={isRestoring}
+                  size="sm"
+                  variant="primary"
+                  className="bg-success hover:bg-opacity-90"
                   aria-label={`Restore ${selectedCount} selected ${selectedCount === 1 ? 'prompt' : 'prompts'}`}
                 >
-                  {isRestoring ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Restoring...</span>
-                    </>
-                  ) : (
-                    <>
-                      <RotateCcw className="h-4 w-4" />
-                      <span>Restore</span>
-                    </>
-                  )}
-                </button>
+                  {!isRestoring && <RotateCcw className="h-4 w-4" />}
+                  <span>{isRestoring ? 'Restoring...' : 'Restore'}</span>
+                </Button>
 
-                <button
+                <Button
                   onClick={onDelete}
                   disabled={isLoading}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-md transition-all duration-100 active:scale-95 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
-                    isDeleting
-                      ? "bg-red-400 cursor-wait"
-                      : "bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  )}
+                  isLoading={isDeleting}
+                  size="sm"
+                  variant="primary"
+                  className="bg-error hover:bg-opacity-90"
                   aria-label={`Delete ${selectedCount} selected ${selectedCount === 1 ? 'prompt' : 'prompts'}`}
                 >
-                  {isDeleting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Deleting...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete</span>
-                    </>
-                  )}
-                </button>
+                  {!isDeleting && <Trash2 className="h-4 w-4" />}
+                  <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
+                </Button>
               </div>
             </div>
           </div>

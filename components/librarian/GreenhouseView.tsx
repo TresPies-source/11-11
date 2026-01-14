@@ -41,11 +41,11 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
-            🌺 My Greenhouse
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-librarian" />
+            🌺 My Saved Prompts
           </h1>
-          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-text-secondary mt-2">Your cultivated prompts ready to bloom</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -56,11 +56,11 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
-            🌺 My Greenhouse
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-librarian" />
+            🌺 My Saved Prompts
           </h1>
-          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-text-secondary mt-2">Your cultivated prompts ready to bloom</p>
         </div>
         <ErrorState
           title="Unable to load prompts"
@@ -76,18 +76,18 @@ export function GreenhouseView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
-            🌺 My Greenhouse
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-librarian" />
+            🌺 My Saved Prompts
           </h1>
-          <p className="text-muted-foreground mt-2">Your cultivated prompts ready to bloom</p>
+          <p className="text-text-secondary mt-2">Your cultivated prompts ready to bloom</p>
         </div>
-        <div className="bg-secondary/50 border border-border rounded-lg p-12 text-center">
-          <Sprout className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <p className="text-foreground font-medium text-lg mb-2">
-            Your greenhouse is empty
+        <div className="bg-bg-secondary border border-bg-tertiary rounded-lg p-12 text-center">
+          <Sprout className="h-16 w-16 text-text-tertiary mx-auto mb-4" />
+          <p className="text-text-primary font-medium text-lg mb-2">
+            Your saved prompts library is empty
           </p>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-text-secondary text-sm">
             Create your first prompt in the 03_Prompts folder or fork one from the Commons
           </p>
         </div>
@@ -96,13 +96,13 @@ export function GreenhouseView() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main" aria-label="Saved Prompts Library">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <Sprout className="h-8 w-8 text-green-600 dark:text-green-500" />
-          🌺 My Greenhouse
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
+          <Sprout className="h-8 w-8 text-librarian" aria-hidden="true" />
+          🌺 My Saved Prompts
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-text-secondary mt-2" role="status" aria-live="polite">
           Your cultivated collection of {prompts.length} prompt{prompts.length !== 1 ? 's' : ''}
         </p>
       </div>
@@ -112,17 +112,18 @@ export function GreenhouseView() {
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="Search prompts by title, description, or tags..."
+          aria-label="Search saved prompts"
         />
       </div>
 
       {selectedTags.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted-foreground font-medium">Filtering by:</span>
+          <span className="text-sm text-text-tertiary font-medium">Filtering by:</span>
           {selectedTags.map((tag) => (
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/70 active:scale-95 transition-all duration-100"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-librarian text-white rounded-full text-sm font-medium hover:bg-text-accent active:scale-95 transition-all duration-100"
               aria-label={`Remove filter: ${tag}`}
             >
               {tag}
@@ -131,7 +132,7 @@ export function GreenhouseView() {
           ))}
           <button
             onClick={clearTagFilters}
-            className="text-sm text-muted-foreground hover:text-foreground underline"
+            className="text-sm text-text-tertiary hover:text-text-primary underline"
             aria-label="Clear all tag filters"
           >
             Clear all
@@ -148,7 +149,11 @@ export function GreenhouseView() {
           }}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          role="list"
+          aria-label={`${filteredPrompts.length} saved prompt${filteredPrompts.length !== 1 ? 's' : ''}`}
+        >
           {filteredPrompts.map((prompt) => (
             <PromptCard 
               key={prompt.id} 
@@ -159,6 +164,6 @@ export function GreenhouseView() {
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }

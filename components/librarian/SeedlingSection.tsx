@@ -64,11 +64,11 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
-            Seedlings
+          <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-librarian" />
+            Active Prompts
           </h2>
-          <p className="text-muted-foreground mt-1">Active prompts in development</p>
+          <p className="text-text-secondary mt-1">Active prompts in development</p>
         </div>
         <LoadingState count={6} />
       </div>
@@ -79,14 +79,14 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
-            Seedlings
+          <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-librarian" />
+            Active Prompts
           </h2>
-          <p className="text-muted-foreground mt-1">Active prompts in development</p>
+          <p className="text-text-secondary mt-1">Active prompts in development</p>
         </div>
         <ErrorState
-          title="Unable to load seedlings"
+          title="Unable to load active prompts"
           message={error}
           onRetry={onRetry || (() => {})}
           loading={loading}
@@ -99,18 +99,18 @@ export function SeedlingSection({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
-            Seedlings
+          <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+            <Sprout className="h-6 w-6 text-librarian" />
+            Active Prompts
           </h2>
-          <p className="text-muted-foreground mt-1">Active prompts in development</p>
+          <p className="text-text-secondary mt-1">Active prompts in development</p>
         </div>
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border border-green-200 dark:border-green-800 rounded-lg p-12 text-center">
-          <Sprout className="h-16 w-16 text-green-400 dark:text-green-600 mx-auto mb-4" />
-          <p className="text-foreground font-medium text-lg mb-2">
-            No seedlings yet
+        <div className="bg-bg-secondary border border-bg-tertiary rounded-lg p-12 text-center">
+          <Sprout className="h-16 w-16 text-librarian mx-auto mb-4" />
+          <p className="text-text-primary font-medium text-lg mb-2">
+            No active prompts yet
           </p>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-text-secondary text-sm">
             Start working on a prompt to see it here
           </p>
         </div>
@@ -128,18 +128,18 @@ export function SeedlingSection({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Sprout className="h-6 w-6 text-green-600 dark:text-green-500" />
-          Seedlings
+        <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+          <Sprout className="h-6 w-6 text-librarian" />
+          Active Prompts
         </h2>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-text-secondary mt-1">
           {prompts.length} active prompt{prompts.length !== 1 ? "s" : ""} in development
         </p>
       </div>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter seedlings by score range">
-          <span className="text-sm text-muted-foreground font-medium self-center" id="filter-label">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter active prompts by score range">
+          <span className="text-sm text-text-tertiary font-medium self-center" id="filter-label">
             Filter:
           </span>
           {scoreRanges.map((range) => {
@@ -151,10 +151,10 @@ export function SeedlingSection({
                 aria-pressed={isActive}
                 aria-label={`Filter by ${range.label}`}
                 className={cn(
-                  "px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background",
+                  "px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2",
                   isActive
-                    ? "bg-green-600 dark:bg-green-600 text-white"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? "bg-text-accent text-white"
+                    : "bg-bg-tertiary text-text-secondary hover:bg-bg-elevated"
                 )}
               >
                 {range.label}
@@ -164,16 +164,16 @@ export function SeedlingSection({
         </div>
 
         <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          <ArrowUpDown className="h-4 w-4 text-text-tertiary" aria-hidden="true" />
           <label htmlFor="seedling-sort" className="sr-only">
-            Sort seedlings by
+            Sort active prompts by
           </label>
           <select
             id="seedling-sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            aria-label="Sort seedlings by"
-            className="px-3 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-background text-foreground"
+            aria-label="Sort active prompts by"
+            className="px-3 py-1.5 text-sm border border-bg-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-transparent bg-bg-secondary text-text-primary"
           >
             <option value="recent">Recent</option>
             <option value="score-asc">Score (Low to High)</option>
@@ -183,13 +183,13 @@ export function SeedlingSection({
       </div>
 
       {sortedAndFilteredPrompts.length === 0 ? (
-        <div className="bg-secondary/50 border border-border rounded-lg p-8 text-center" role="status">
-          <p className="text-muted-foreground">
-            No seedlings match the selected filters
+        <div className="bg-bg-secondary border border-bg-tertiary rounded-lg p-8 text-center" role="status">
+          <p className="text-text-secondary">
+            No active prompts match the selected filters
           </p>
           <button
             onClick={() => setScoreFilter({ min: 0, max: 100 })}
-            className="mt-3 text-sm text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 font-medium focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background rounded-md px-2 py-1"
+            className="mt-3 text-sm text-librarian hover:text-text-accent font-medium focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2 rounded-md px-2 py-1"
             aria-label="Clear all filters"
           >
             Clear filters
@@ -197,10 +197,10 @@ export function SeedlingSection({
         </div>
       ) : (
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           layout
           role="list"
-          aria-label={`${sortedAndFilteredPrompts.length} seedling prompt${sortedAndFilteredPrompts.length !== 1 ? "s" : ""}`}
+          aria-label={`${sortedAndFilteredPrompts.length} active prompt${sortedAndFilteredPrompts.length !== 1 ? "s" : ""}`}
         >
           <AnimatePresence mode="popLayout">
             {sortedAndFilteredPrompts.map((prompt) => (

@@ -50,11 +50,11 @@ interface DimensionData {
 const getScoreColor = (score: number) => {
   const percentage = (score / 25) * 100;
   if (percentage < 50) {
-    return "text-red-600";
+    return "text-error";
   } else if (percentage < 75) {
-    return "text-yellow-600";
+    return "text-warning";
   } else {
-    return "text-green-600";
+    return "text-success";
   }
 };
 
@@ -115,14 +115,14 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
         return (
           <div
             key={dimension.key}
-            className="rounded-lg border border-border bg-card overflow-hidden"
+            className="rounded-lg border border-bg-tertiary bg-bg-secondary overflow-hidden"
           >
             <button
               onClick={() => toggleDimension(dimension.key)}
               className={cn(
                 "w-full px-4 py-3 flex items-center justify-between",
-                "hover:bg-secondary/50 transition-colors",
-                "text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset dark:focus-visible:ring-offset-background",
+                "hover:bg-bg-tertiary transition-colors",
+                "text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-inset",
                 !hasContent && "cursor-default"
               )}
               aria-expanded={isExpanded}
@@ -131,7 +131,7 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
               disabled={!hasContent}
             >
               <div className="flex items-center gap-3 flex-1">
-                <span className="font-medium text-foreground">
+                <span className="font-medium text-text-primary">
                   {dimension.label}
                 </span>
                 <span className={cn("font-semibold tabular-nums text-sm", getScoreColor(dimension.score))}>
@@ -143,7 +143,7 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
                   animate={{ rotate: isExpanded ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                  <ChevronDown className="w-5 h-5 text-text-tertiary" />
                 </motion.div>
               )}
             </button>
@@ -160,12 +160,12 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
                   role="region"
                   aria-label={`${dimension.label} feedback details`}
                 >
-                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border">
+                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-bg-tertiary">
                     {dimension.issues.length > 0 && (
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <AlertCircle className="w-4 h-4 text-orange-500 dark:text-orange-400" aria-hidden="true" />
-                          <h4 className="text-sm font-medium text-foreground">
+                          <AlertCircle className="w-4 h-4 text-warning" aria-hidden="true" />
+                          <h4 className="text-sm font-medium text-text-primary">
                             Issues
                           </h4>
                         </div>
@@ -173,7 +173,7 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
                           {dimension.issues.map((issue, idx) => (
                             <li
                               key={idx}
-                              className="text-sm text-muted-foreground list-disc"
+                              className="text-sm text-text-secondary list-disc"
                             >
                               {issue}
                             </li>
@@ -185,8 +185,8 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
                     {dimension.suggestions.length > 0 && (
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <Lightbulb className="w-4 h-4 text-blue-500 dark:text-blue-400" aria-hidden="true" />
-                          <h4 className="text-sm font-medium text-foreground">
+                          <Lightbulb className="w-4 h-4 text-info" aria-hidden="true" />
+                          <h4 className="text-sm font-medium text-text-primary">
                             Suggestions
                           </h4>
                         </div>
@@ -194,7 +194,7 @@ export const CritiqueDetails = memo(function CritiqueDetails({ critique, classNa
                           {dimension.suggestions.map((suggestion, idx) => (
                             <li
                               key={idx}
-                              className="text-sm text-muted-foreground list-disc"
+                              className="text-sm text-text-secondary list-disc"
                             >
                               {suggestion}
                             </li>

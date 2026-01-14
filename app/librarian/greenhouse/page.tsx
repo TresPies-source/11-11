@@ -1,10 +1,6 @@
-import { GreenhouseView } from "@/components/librarian/GreenhouseView";
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Greenhouse - 11-11",
-  description: "Your cultivated prompts ready to bloom",
-};
+import { GreenhouseView } from "@/components/librarian/GreenhouseView";
 
 export default function GreenhousePage() {
   return <GreenhouseView />;

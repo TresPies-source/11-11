@@ -2,8 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { BookHeart, Sparkles, Leaf, Globe, ArrowRight, Search as SearchIcon } from "lucide-react";
+import { BookHeart, Sparkles } from "lucide-react";
 import type { PromptStatus } from "@/lib/pglite/types";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
@@ -12,11 +11,11 @@ import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { useSuggestions } from "@/hooks/useSuggestions";
 import { SeedlingSection } from "./SeedlingSection";
 import { GreenhouseSection } from "./GreenhouseSection";
-import { SearchBar } from "./SearchBar";
-import { SearchResults } from "./SearchResults";
+import { SemanticSearchSection } from "./SemanticSearchSection";
 import { SuggestionsPanel } from "./SuggestionsPanel";
 import { RecentSearches } from "./RecentSearches";
 import { LibrarianErrorBoundary } from "./LibrarianErrorBoundary";
+import { LibrarianNavigation } from "./LibrarianNavigation";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { cn } from "@/lib/utils";
@@ -159,11 +158,11 @@ export function LibrarianView() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <BookHeart className="h-8 w-8 text-pink-600 dark:text-pink-500" />
+          <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
+            <BookHeart className="h-8 w-8 text-librarian" aria-hidden="true" />
             The Librarian&apos;s Home
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-text-secondary mt-2">
             Cultivate your prompts, grow your library
           </p>
         </div>
@@ -185,124 +184,38 @@ export function LibrarianView() {
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.2 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <BookHeart className="h-8 w-8 text-pink-600 dark:text-pink-500" aria-hidden="true" />
+        <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
+          <BookHeart className="h-8 w-8 text-librarian" aria-hidden="true" />
           The Librarian&apos;s Home
         </h1>
-        <p className="text-muted-foreground mt-2 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-yellow-500 dark:text-yellow-400" aria-hidden="true" />
+        <p className="text-text-secondary mt-2 flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
           Cultivate your prompts, grow your library, and watch your ideas flourish
         </p>
       </motion.header>
 
-      <motion.nav
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4"
-        aria-label="Librarian navigation"
-      >
-        <Link
-          href="/librarian/greenhouse"
-          className={cn(
-            "group relative overflow-hidden rounded-lg border-2 border-green-200 dark:border-green-800",
-            "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50",
-            "p-6 transition-all duration-300",
-            "hover:border-green-300 dark:hover:border-green-700 hover:shadow-lg hover:scale-[1.02]",
-            "focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-background"
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-2">
-                <Leaf className="h-6 w-6 text-green-600 dark:text-green-500" />
-                My Greenhouse
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                Your cultivated prompts ready to bloom
-              </p>
-              <p className="text-green-700 dark:text-green-400 font-medium text-sm mt-2">
-                {savedPrompts.length} {savedPrompts.length === 1 ? 'prompt' : 'prompts'} saved
-              </p>
-            </div>
-            <ArrowRight className="h-6 w-6 text-green-600 dark:text-green-500 transition-transform duration-300 group-hover:translate-x-1" />
-          </div>
-        </Link>
+      <LibrarianNavigation savedPromptsCount={savedPrompts.length} />
 
-        <Link
-          href="/librarian/commons"
-          className={cn(
-            "group relative overflow-hidden rounded-lg border-2 border-blue-200 dark:border-blue-800",
-            "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50",
-            "p-6 transition-all duration-300",
-            "hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg hover:scale-[1.02]",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-background"
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-2">
-                <Globe className="h-6 w-6 text-blue-600 dark:text-blue-500" />
-                The Global Commons
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                Discover prompts shared by the community
-              </p>
-              <p className="text-blue-700 dark:text-blue-400 font-medium text-sm mt-2">
-                Explore public prompts
-              </p>
-            </div>
-            <ArrowRight className="h-6 w-6 text-blue-600 dark:text-blue-500 transition-transform duration-300 group-hover:translate-x-1" />
-          </div>
-        </Link>
-      </motion.nav>
-
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="mb-8"
-        aria-label="Semantic search"
-      >
-        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 rounded-xl border-2 border-purple-200 dark:border-purple-800 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <SearchIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" aria-hidden="true" />
-            <h2 className="text-2xl font-bold text-foreground">Semantic Search</h2>
-          </div>
-          <p className="text-muted-foreground mb-6 text-sm">
-            Search your library using AI-powered semantic matching. Find prompts based on meaning, not just keywords.
-          </p>
-
-          <SearchBar
-            value={query}
-            onChange={setQuery}
-            onSearch={handleSearch}
-            loading={searchLoading}
-            resultCount={searchCount > 0 ? searchCount : undefined}
-            searchDuration={searchDuration > 0 ? searchDuration : undefined}
-          />
-
-          <div className="mt-6">
-            <SearchResults
-              results={searchResults}
-              loading={searchLoading}
-              error={searchError}
-              query={query}
-              onClearSearch={handleClearSearch}
-            />
-          </div>
-        </div>
-      </motion.section>
+      <SemanticSearchSection
+        query={query}
+        setQuery={setQuery}
+        onSearch={handleSearch}
+        searchLoading={searchLoading}
+        searchError={searchError}
+        searchResults={searchResults}
+        searchCount={searchCount}
+        searchDuration={searchDuration}
+        onClearSearch={handleClearSearch}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-card rounded-lg border border-border p-6 shadow-sm"
+          transition={{ duration: 0.2, delay: 0.15 }}
           aria-label="Suggestions"
         >
           <SuggestionsPanel
@@ -317,8 +230,8 @@ export function LibrarianView() {
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="bg-card rounded-lg border border-border p-6 shadow-sm"
+          transition={{ duration: 0.2, delay: 0.175 }}
+          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-6 shadow-sm"
           aria-label="Recent searches"
         >
           <RecentSearches
@@ -332,9 +245,9 @@ export function LibrarianView() {
         <motion.section
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-card rounded-lg border border-border p-6 shadow-sm"
-          aria-label="Seedlings - Active prompts"
+          transition={{ duration: 0.2, delay: 0.2 }}
+          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-6 shadow-sm"
+          aria-label="Active Prompts"
         >
           <LibrarianErrorBoundary
             section="seedling"
@@ -355,9 +268,9 @@ export function LibrarianView() {
         <motion.section
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
-          className="bg-card rounded-lg border border-border p-6 shadow-sm"
-          aria-label="Greenhouse - Saved prompts"
+          transition={{ duration: 0.2, delay: 0.225 }}
+          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-6 shadow-sm"
+          aria-label="Saved Prompts"
         >
           <LibrarianErrorBoundary
             section="greenhouse"

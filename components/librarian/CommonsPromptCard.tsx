@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Globe, Eye, User } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CritiqueScore } from "./CritiqueScore";
 import { PublicBadge } from "./PublicBadge";
 import { CopyToLibraryButton } from "./CopyToLibraryButton";
@@ -58,101 +60,92 @@ export const CommonsPromptCard = memo(function CommonsPromptCard({
     }
   }, [isOwner, router, prompt.id]);
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    hover: {
-      scale: 1.02,
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-      transition: { duration: 0.2, ease: "easeOut" },
-    },
-  };
-
   return (
     <motion.div
       layoutId={`commons-card-${prompt.id}`}
       layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
       role="article"
       aria-label={`Public prompt: ${title} by ${authorName}`}
-      className="group bg-white rounded-lg border border-gray-200 p-4 transition-all duration-200 flex flex-col h-full hover:shadow-lg hover:border-blue-300 cursor-pointer"
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover="hover"
+      className="cursor-pointer"
       onClick={handleCardClick}
     >
-      <div className="flex-1">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Globe className="h-5 w-5 text-blue-600 flex-shrink-0" aria-hidden="true" />
-            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-              {title}
-            </h3>
+      <Card glow={true} className="group flex flex-col h-full">
+        <div className="flex-1">
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Globe className="h-5 w-5 text-info flex-shrink-0" aria-hidden="true" />
+              <h3 className="font-sans font-semibold text-text-primary group-hover:text-info transition-colors line-clamp-2">
+                {title}
+              </h3>
+            </div>
+            <PublicBadge variant="compact" />
           </div>
-          <PublicBadge variant="compact" />
+
+          <p className="text-sm text-text-secondary mb-3 line-clamp-3">{description}</p>
+
+          <div className="flex items-center gap-3 text-xs text-text-tertiary mb-3">
+            <div className="flex items-center gap-1">
+              <User className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>by {authorName}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>Published {publishedAt}</span>
+            </div>
+          </div>
+
+          {isExpanded && (
+            <div className="mb-3 p-3 bg-bg-secondary rounded-md border border-bg-tertiary">
+              <pre className="text-sm text-text-secondary whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
+                {prompt.content}
+              </pre>
+            </div>
+          )}
+
+          <div className="mb-3">
+            <CritiqueScore score={prompt.latestCritique?.score ?? 0} size="sm" showLabel={true} />
+          </div>
         </div>
 
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3">{description}</p>
+        <div className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
+          {isOwner ? (
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit();
+              }}
+              aria-label={`View your public prompt: ${title}`}
+              className="w-full"
+            >
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              View My Prompt
+            </Button>
+          ) : (
+            <div onClick={(e) => e.stopPropagation()}>
+              <CopyToLibraryButton
+                promptId={prompt.id}
+                onCopyComplete={onCopyComplete}
+                className="w-full"
+              />
+            </div>
+          )}
 
-        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-          <div className="flex items-center gap-1">
-            <User className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>by {authorName}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span>Published {publishedAt}</span>
-          </div>
-        </div>
-
-        {isExpanded && (
-          <div className="mb-3 p-3 bg-gray-50 rounded-md border border-gray-200">
-            <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
-              {prompt.content}
-            </pre>
-          </div>
-        )}
-
-        <div className="mb-3">
-          <CritiqueScore score={prompt.latestCritique?.score ?? 0} size="sm" showLabel={true} />
-        </div>
-      </div>
-
-      <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
-        {isOwner ? (
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit();
+              handleCardClick();
             }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 active:scale-95 transition-all duration-100 text-sm font-medium"
+            className="w-full text-xs text-text-tertiary hover:text-text-secondary py-1 transition-colors"
+            aria-label={isExpanded ? "Collapse prompt content" : "Expand prompt content"}
           >
-            <Eye className="h-4 w-4" aria-hidden="true" />
-            View My Prompt
+            {isExpanded ? "Show less" : "Show full prompt"}
           </button>
-        ) : (
-          <div onClick={(e) => e.stopPropagation()}>
-            <CopyToLibraryButton
-              promptId={prompt.id}
-              onCopyComplete={onCopyComplete}
-              className="w-full"
-            />
-          </div>
-        )}
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCardClick();
-          }}
-          className="w-full text-xs text-gray-500 hover:text-gray-700 py-1"
-        >
-          {isExpanded ? "Show less" : "Show full prompt"}
-        </button>
-      </div>
+        </div>
+      </Card>
     </motion.div>
   );
 });

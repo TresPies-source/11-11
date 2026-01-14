@@ -14,24 +14,24 @@ interface CritiqueScoreProps {
 const getScoreColor = (score: number) => {
   if (score < 50) {
     return {
-      bg: "bg-red-100",
-      fill: "bg-red-500",
-      text: "text-red-700",
-      border: "border-red-200",
+      bg: "bg-bg-tertiary",
+      fill: "bg-error",
+      text: "text-error",
+      border: "border-error",
     };
   } else if (score < 75) {
     return {
-      bg: "bg-yellow-100",
-      fill: "bg-yellow-500",
-      text: "text-yellow-700",
-      border: "border-yellow-200",
+      bg: "bg-bg-tertiary",
+      fill: "bg-warning",
+      text: "text-warning",
+      border: "border-warning",
     };
   } else {
     return {
-      bg: "bg-green-100",
-      fill: "bg-green-500",
-      text: "text-green-700",
-      border: "border-green-200",
+      bg: "bg-bg-tertiary",
+      fill: "bg-success",
+      text: "text-success",
+      border: "border-success",
     };
   }
 };
@@ -79,7 +79,7 @@ export const CritiqueScore = memo(function CritiqueScore({
     >
       <div className="flex items-center justify-between gap-2">
         {showLabel && (
-          <span className={cn("font-medium text-muted-foreground", config.label)}>
+          <span className={cn("font-medium text-text-tertiary", config.label)}>
             Quality Score
           </span>
         )}

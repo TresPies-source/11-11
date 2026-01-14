@@ -7,6 +7,8 @@ import { Sprout, ChevronDown, Play, Archive, FileText } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import type { PromptStatus } from "@/lib/pglite/types";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CritiqueScore } from "./CritiqueScore";
 import { CritiqueDetails } from "./CritiqueDetails";
 import { ConfirmationDialog } from "./ConfirmationDialog";
@@ -101,46 +103,34 @@ export const SeedlingCard = memo(function SeedlingCard({
   const validTransitions = getValidTransitions(prompt.status);
   const isProcessing = isSaving || isTransitioning;
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    hover: {
-      scale: 1.02,
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-      transition: { duration: 0.2, ease: "easeOut" },
-    },
-  };
-
   return (
     <motion.div
       layoutId={`prompt-card-${prompt.id}`}
       layout
-      role="article"
-      aria-label={`Seedling prompt: ${title}. Score: ${critiqueScore} out of 100. Status: ${prompt.status}${isProcessing ? '. Currently processing.' : ''}`}
-      tabIndex={isProcessing ? -1 : 0}
-      className={cn(
-        "group bg-card rounded-lg border border-border p-4 transition-all duration-200 flex flex-col h-full focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background",
-        isProcessing 
-          ? "opacity-60 cursor-wait border-green-400 dark:border-green-600" 
-          : "hover:shadow-lg hover:border-green-300 dark:hover:border-green-700 cursor-pointer"
-      )}
-      variants={cardVariants}
-      initial="hidden"
-      animate={isProcessing ? { opacity: 0.6, scale: 0.98 } : "visible"}
-      exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.3, ease: "easeInOut" } }}
-      whileHover={isProcessing ? {} : "hover"}
-      onClick={isProcessing ? undefined : handleCardClick}
-      onKeyDown={isProcessing ? undefined : handleKeyPress}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isProcessing ? { opacity: 0.6, scale: 0.98 } : { opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.2, ease: "easeInOut" } }}
+      transition={{
+        layout: { duration: 0.2, ease: "easeInOut" },
+        opacity: { duration: 0.2 },
+      }}
       onHoverStart={() => !isProcessing && setIsHovering(true)}
       onHoverEnd={() => setIsHovering(false)}
-      transition={{
-        layout: { duration: 0.3, ease: "easeInOut" },
-      }}
+      role="article"
+      aria-label={`Active prompt: ${title}. Score: ${critiqueScore} out of 100. Status: ${prompt.status}${isProcessing ? '. Currently processing.' : ''}`}
+      tabIndex={isProcessing ? -1 : 0}
+      onClick={isProcessing ? undefined : handleCardClick}
+      onKeyDown={isProcessing ? undefined : handleKeyPress}
+      className={cn(
+        "h-full focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:outline-none rounded-xl",
+        isProcessing 
+          ? "cursor-wait" 
+          : "cursor-pointer"
+      )}
     >
+      <Card
+        className="group flex flex-col h-full"
+      >
       <div className="flex-1">
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex items-center gap-2 flex-1">
@@ -152,16 +142,16 @@ export const SeedlingCard = memo(function SeedlingCard({
               transition={{ duration: 0.2 }}
               aria-hidden="true"
             >
-              <Sprout className="h-5 w-5 text-green-600 dark:text-green-500 flex-shrink-0" />
+              <Sprout className="h-5 w-5 text-librarian flex-shrink-0" />
             </motion.div>
-            <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-2">
+            <h3 className="font-semibold text-text-primary group-hover:text-librarian transition-colors line-clamp-2">
               {title}
             </h3>
           </div>
           {prompt.visibility === 'public' && <PublicBadge variant="compact" />}
         </div>
 
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{description}</p>
+        <p className="text-sm text-text-secondary mb-3 line-clamp-3">{description}</p>
 
         <div className="mb-3 space-y-2">
           <CritiqueScore score={critiqueScore} size="sm" showLabel={true} />
@@ -173,7 +163,7 @@ export const SeedlingCard = memo(function SeedlingCard({
                   e.stopPropagation();
                   setShowDetails(!showDetails);
                 }}
-                className="w-full flex items-center justify-between px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded transition-colors"
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary rounded transition-colors"
                 aria-expanded={showDetails}
                 aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
               >
@@ -199,7 +189,7 @@ export const SeedlingCard = memo(function SeedlingCard({
         </div>
       </div>
 
-      <div className="mt-auto pt-3 border-t border-border space-y-2">
+      <div className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
         <div onClick={(e) => e.stopPropagation()}>
           <PublicToggle
             promptId={prompt.id}
@@ -209,65 +199,47 @@ export const SeedlingCard = memo(function SeedlingCard({
           />
         </div>
         {prompt.status === 'active' && onSaveToGreenhouse ? (
-          <button
+          <Button
             onClick={handleSaveClick}
             disabled={isProcessing}
-            aria-label={isSaving ? `Saving ${title} to greenhouse` : `Save ${title} to greenhouse`}
+            aria-label={isSaving ? `Saving ${title} to Saved Prompts` : `Save ${title} to Saved Prompts`}
             aria-busy={isSaving}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-md transition-all duration-100 text-sm font-medium",
-              isProcessing
-                ? "bg-muted text-muted-foreground cursor-not-allowed"
-                : "bg-green-600 dark:bg-green-600 text-white hover:bg-green-700 dark:hover:bg-green-700 active:scale-95 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background"
-            )}
+            variant="primary"
+            size="sm"
+            className="w-full"
           >
             <span className="text-base" aria-hidden="true">🌺</span>
-            {isSaving ? "Saving..." : "Save to Greenhouse"}
-          </button>
+            {isSaving ? "Saving..." : "Save to Saved Prompts"}
+          </Button>
         ) : null}
 
         {validTransitions.filter(t => t.to !== 'saved').map((transition) => {
-          const getButtonStyles = () => {
+          const getButtonIcon = () => {
             if (transition.to === 'active') {
-              return {
-                bg: "bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 focus-visible:ring-blue-500",
-                icon: <Play className="h-4 w-4" />,
-              };
+              return <Play className="h-4 w-4" />;
             } else if (transition.to === 'archived') {
-              return {
-                bg: "bg-amber-600 dark:bg-amber-600 hover:bg-amber-700 dark:hover:bg-amber-700 focus-visible:ring-amber-500",
-                icon: <Archive className="h-4 w-4" />,
-              };
+              return <Archive className="h-4 w-4" />;
             } else if (transition.to === 'draft') {
-              return {
-                bg: "bg-gray-600 dark:bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 focus-visible:ring-gray-500",
-                icon: <FileText className="h-4 w-4" />,
-              };
+              return <FileText className="h-4 w-4" />;
             }
-            return {
-              bg: "bg-gray-600 dark:bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 focus-visible:ring-gray-500",
-              icon: null,
-            };
+            return null;
           };
 
-          const styles = getButtonStyles();
+          const icon = getButtonIcon();
 
           return (
-            <button
+            <Button
               key={`${transition.from}-${transition.to}`}
               onClick={(e) => handleStatusTransition(e, transition.to, transition.label, transition.confirmationMessage)}
               disabled={isProcessing}
               aria-label={`${transition.label} ${title}`}
-              className={cn(
-                "w-full flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-md transition-all duration-100 text-sm font-medium",
-                isProcessing
-                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                  : `${styles.bg} text-white active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background`
-              )}
+              variant="secondary"
+              size="sm"
+              className="w-full"
             >
-              {styles.icon}
+              {icon}
               {isTransitioning ? "Processing..." : transition.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -282,6 +254,7 @@ export const SeedlingCard = memo(function SeedlingCard({
         onCancel={handleCancelTransition}
         variant="warning"
       />
+      </Card>
     </motion.div>
   );
 });

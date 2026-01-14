@@ -46,11 +46,11 @@ export function StatusFilter({
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <Filter className="h-4 w-4 text-gray-500" aria-hidden="true" />
+      <Filter className="h-4 w-4 text-text-tertiary" aria-hidden="true" />
       <select
         value={currentStatus}
         onChange={handleChange}
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors"
+        className="px-3 py-2 border border-bg-tertiary rounded-md text-sm font-medium text-text-primary bg-bg-secondary hover:bg-bg-tertiary focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-text-accent transition-colors"
         aria-label="Filter prompts by status"
       >
         <option value="all">{getLabel('all')}</option>

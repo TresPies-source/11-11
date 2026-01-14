@@ -57,27 +57,28 @@ function SearchHistoryCard({
       layout
       onClick={() => onSearchClick?.(search.query)}
       className={cn(
-        "group w-full text-left rounded-lg border-2 border-border p-3.5",
-        "bg-card hover:bg-accent/50 transition-all duration-200",
+        "group w-full text-left rounded-lg border border-bg-tertiary p-3.5",
+        "bg-bg-secondary hover:bg-bg-elevated transition-all duration-200",
         "hover:shadow-md hover:scale-[1.01]",
-        "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-background"
+        "focus:outline-none focus:ring-2 focus:ring-supervisor focus:ring-offset-2"
       )}
+      aria-label={`Search for ${search.query}`}
     >
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
-          <Search className="h-4 w-4 text-purple-600 dark:text-purple-400" aria-hidden="true" />
+          <Search className="h-4 w-4 text-librarian" aria-hidden="true" />
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-foreground line-clamp-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+          <p className="font-medium text-text-primary line-clamp-1 group-hover:text-supervisor transition-colors">
             {search.query}
           </p>
-          <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3 mt-1 text-xs text-text-tertiary">
             <span className="flex items-center gap-1">
               <TrendingUp className="h-3 w-3" aria-hidden="true" />
               {search.results_count} {search.results_count === 1 ? 'result' : 'results'}
             </span>
-            <span className="text-gray-400 dark:text-gray-600">•</span>
+            <span className="text-text-muted">•</span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" aria-hidden="true" />
               {formatTimeAgo(search.created_at)}
@@ -97,14 +98,14 @@ function LoadingState() {
           key={i}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: i * 0.1 }}
-          className="bg-card rounded-lg border-2 border-border p-3.5"
+          transition={{ duration: 0.2, delay: i * 0.05 }}
+          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-3.5"
         >
           <div className="flex items-start gap-3">
-            <div className="w-4 h-4 bg-purple-200 dark:bg-purple-800 rounded animate-pulse" />
+            <div className="w-4 h-4 bg-bg-tertiary rounded animate-pulse" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 animate-pulse" />
+              <div className="h-4 bg-bg-tertiary rounded w-3/4 animate-pulse" />
+              <div className="h-3 bg-bg-tertiary rounded w-1/2 animate-pulse" />
             </div>
           </div>
         </motion.div>
@@ -118,17 +119,18 @@ function ErrorState({ error, onRetry }: { error: string; onRetry?: () => void })
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className="bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-800 rounded-lg p-6 text-center"
+      transition={{ duration: 0.2 }}
+      className="bg-bg-secondary border border-error rounded-lg p-6 text-center"
       role="alert"
     >
-      <AlertCircle className="h-8 w-8 text-red-500 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-      <h3 className="text-sm font-semibold text-foreground mb-1">Failed to load search history</h3>
-      <p className="text-xs text-muted-foreground mb-3">{error}</p>
+      <AlertCircle className="h-8 w-8 text-error mx-auto mb-2" aria-hidden="true" />
+      <h3 className="text-sm font-semibold text-text-primary mb-1">Failed to load search history</h3>
+      <p className="text-xs text-text-secondary mb-3">{error}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-xs font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-background"
+          className="px-3 py-1.5 bg-error text-white rounded-lg hover:bg-opacity-90 transition-colors text-xs font-medium focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2"
+          aria-label="Retry loading search history"
         >
           Try again
         </button>
@@ -142,12 +144,12 @@ function EmptyState() {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center"
+      transition={{ duration: 0.2 }}
+      className="bg-bg-secondary border border-bg-tertiary rounded-lg p-6 text-center"
     >
-      <Clock className="h-10 w-10 text-blue-400 dark:text-blue-500 mx-auto mb-2" aria-hidden="true" />
-      <h3 className="text-sm font-semibold text-foreground mb-1">No search history</h3>
-      <p className="text-xs text-muted-foreground">
+      <Clock className="h-10 w-10 text-librarian mx-auto mb-2" aria-hidden="true" />
+      <h3 className="text-sm font-semibold text-text-primary mb-1">No search history</h3>
+      <p className="text-xs text-text-secondary">
         Your recent searches will appear here
       </p>
     </motion.div>
@@ -197,13 +199,13 @@ export function RecentSearches({
     <div className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-          <h2 className="text-lg font-bold text-foreground">Recent searches</h2>
+          <Clock className="h-5 w-5 text-librarian" aria-hidden="true" />
+          <h2 className="text-lg font-bold text-text-primary">Recent searches</h2>
         </div>
         {!loading && hasSearches && (
           <button
             onClick={fetchRecentSearches}
-            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium focus:outline-none focus:underline"
+            className="text-sm text-supervisor hover:text-opacity-90 transition-colors font-medium focus:outline-none focus:underline"
             aria-label="Refresh search history"
           >
             Refresh

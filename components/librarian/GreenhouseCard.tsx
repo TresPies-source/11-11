@@ -3,16 +3,16 @@
 import { useState, memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, PlayCircle, Pencil, ChevronDown, RefreshCw, Archive } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/useToast";
-import { usePromptStatus } from "@/hooks/usePromptStatus";
-import { ConfirmationDialog } from "./ConfirmationDialog";
+import { Card } from "@/components/ui/Card";
+import { Tag } from "@/components/ui/Tag";
 import { CritiqueScore } from "./CritiqueScore";
 import { CritiqueDetails } from "./CritiqueDetails";
 import { PublicToggle } from "./PublicToggle";
 import { PublicBadge } from "./PublicBadge";
+import { GreenhouseCardActions } from "./GreenhouseCardActions";
 
 interface GreenhouseCardProps {
   prompt: PromptWithCritique;
@@ -20,21 +20,9 @@ interface GreenhouseCardProps {
   onStatusChange?: () => void;
 }
 
-const tagColors = [
-  "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400",
-  "bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400",
-  "bg-pink-50 dark:bg-pink-950/50 text-pink-700 dark:text-pink-400",
-  "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400",
-  "bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400",
-];
-
 export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery, onStatusChange }: GreenhouseCardProps) {
   const router = useRouter();
-  const toast = useToast();
-  const { transitionStatus, transitioning } = usePromptStatus();
-  const [copied, setCopied] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
   const title = prompt.title;
   const description =
@@ -57,26 +45,6 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
     );
   }, []);
 
-  const handleQuickCopy = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (prompt.content) {
-      await navigator.clipboard.writeText(prompt.content);
-      toast.success("Prompt copied to clipboard");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  }, [prompt.content, toast]);
-
-  const handleRunInChat = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/?loadPrompt=${prompt.id}`);
-  }, [router, prompt.id]);
-
-  const handleEdit = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/librarian/greenhouse?edit=${prompt.id}`);
-  }, [router, prompt.id]);
-
   const handleCardClick = useCallback(() => {
     router.push(`/librarian/greenhouse?edit=${prompt.id}`);
   }, [router, prompt.id]);
@@ -88,51 +56,6 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
     }
   }, [handleCardClick]);
 
-  const handleReactivate = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const driveFileId = prompt.drive_file_id || null;
-    const success = await transitionStatus(prompt.id, "active", driveFileId);
-    
-    if (success) {
-      toast.success("🌱 Reactivated to Seedlings!");
-      onStatusChange?.();
-    } else {
-      toast.error("Failed to reactivate prompt");
-    }
-  }, [prompt.id, prompt.drive_file_id, transitionStatus, toast, onStatusChange]);
-
-  const handleArchive = useCallback(async () => {
-    const driveFileId = prompt.drive_file_id || null;
-    const success = await transitionStatus(prompt.id, "archived", driveFileId);
-    
-    if (success) {
-      toast.success("📦 Archived successfully");
-      setShowArchiveConfirm(false);
-      onStatusChange?.();
-    } else {
-      toast.error("Failed to archive prompt");
-      setShowArchiveConfirm(false);
-    }
-  }, [prompt.id, prompt.drive_file_id, transitionStatus, toast, onStatusChange]);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    hover: {
-      scale: 1.02,
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-      transition: { duration: 0.2, ease: "easeOut" },
-    },
-  };
-
-  const getTagColor = useCallback((index: number) => {
-    return tagColors[index % tagColors.length];
-  }, []);
-
   const critiqueScore = useMemo(() => prompt.latestCritique?.score ?? 0, [prompt.latestCritique?.score]);
 
   return (
@@ -140,55 +63,44 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
       layoutId={`prompt-card-${prompt.id}`}
       layout
       role="article"
-      aria-label={`Greenhouse prompt: ${title}. Score: ${critiqueScore} out of 100. ${tags.length > 0 ? `Tags: ${tags.join(", ")}` : ""}`}
+      aria-label={`Saved prompt: ${title}. Score: ${critiqueScore} out of 100. ${tags.length > 0 ? `Tags: ${tags.join(", ")}` : ""}`}
       tabIndex={0}
-      className="group bg-card rounded-lg border border-border p-4 hover:shadow-lg transition-shadow duration-200 hover:border-green-300 dark:hover:border-green-700 flex flex-col h-full cursor-pointer focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background"
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      whileHover="hover"
       onClick={handleCardClick}
       onKeyDown={handleKeyPress}
+      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
       transition={{
-        layout: { duration: 0.3, ease: "easeInOut" },
+        layout: { duration: 0.2, ease: "easeInOut" },
+        duration: 0.2,
       }}
     >
+      <Card glow={true} className="group flex flex-col h-full">
       <div className="flex-1">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-2xl flex-shrink-0" role="img" aria-label="flowering prompt">
+            <span className="text-2xl flex-shrink-0" role="img" aria-label="saved prompt">
               🌺
             </span>
-            <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-2 flex-1">
+            <h3 className="font-semibold text-text-primary group-hover:text-librarian transition-colors line-clamp-2 flex-1">
               {highlightText(title, searchQuery)}
             </h3>
           </div>
           {prompt.visibility === 'public' && <PublicBadge variant="compact" />}
         </div>
 
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-3 ml-10">
+        <p className="text-sm text-text-secondary mb-3 line-clamp-3 ml-10">
           {highlightText(description, searchQuery)}
         </p>
 
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3 ml-10">
             {tags.map((tag, index) => (
-              <motion.span
-                key={index}
-                className={cn(
-                  "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium",
-                  getTagColor(index)
-                )}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05, duration: 0.2 }}
-                whileHover={{
-                  scale: 1.05,
-                }}
-              >
-                {highlightText(tag, searchQuery)}
-              </motion.span>
+              <Tag 
+                key={index} 
+                label={tag}
+              />
             ))}
           </div>
         )}
@@ -207,7 +119,7 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
                   e.stopPropagation();
                   setShowDetails(!showDetails);
                 }}
-                className="w-full flex items-center justify-between px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded transition-colors"
+                className="w-full flex items-center justify-between px-2 py-1 text-xs text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary rounded transition-colors"
                 aria-expanded={showDetails}
                 aria-label={`${showDetails ? 'Hide' : 'Show'} detailed critique breakdown`}
               >
@@ -233,108 +145,23 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
         </div>
       </div>
 
-      <div className="mt-auto pt-3 border-t border-border space-y-2">
-        <div onClick={(e) => e.stopPropagation()}>
-          <PublicToggle
-            promptId={prompt.id}
-            visibility={prompt.visibility}
-            authorName={prompt.author_name || 'Anonymous'}
-            className="w-full"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleRunInChat}
-            aria-label={`Run ${title} in chat`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 dark:bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Run in Chat"
-            disabled={transitioning}
-          >
-            <PlayCircle className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Run</span>
-            <span className="sr-only sm:hidden">Run in chat</span>
-          </button>
-
-          <button
-            onClick={handleQuickCopy}
-            aria-label={copied ? `Copied ${title} to clipboard` : `Copy ${title} to clipboard`}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-all duration-100 text-sm font-medium active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed",
-              copied
-                ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 focus-visible:ring-green-500"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-gray-500"
-            )}
-            title="Copy to Clipboard"
-            disabled={transitioning}
-          >
-            {copied ? (
-              <>
-                <Check className="h-4 w-4" aria-hidden="true" />
-                <span className="hidden sm:inline">Copied</span>
-                <span className="sr-only sm:hidden">Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" aria-hidden="true" />
-                <span className="hidden sm:inline">Copy</span>
-                <span className="sr-only sm:hidden">Copy to clipboard</span>
-              </>
-            )}
-          </button>
-
-          <button
-            onClick={handleEdit}
-            aria-label={`Edit ${title}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Edit Prompt"
-            disabled={transitioning}
-          >
-            <Pencil className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Edit</span>
-            <span className="sr-only sm:hidden">Edit prompt</span>
-          </button>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            onClick={handleReactivate}
-            aria-label={`Reactivate ${title}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Reactivate to Seedlings"
-            disabled={transitioning}
-          >
-            <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Reactivate</span>
-            <span className="sr-only sm:hidden">Reactivate to seedlings</span>
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowArchiveConfirm(true);
-            }}
-            aria-label={`Archive ${title}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 active:scale-95 transition-all duration-100 text-sm font-medium focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Archive Prompt"
-            disabled={transitioning}
-          >
-            <Archive className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Archive</span>
-            <span className="sr-only sm:hidden">Archive prompt</span>
-          </button>
-        </div>
+      <div onClick={(e) => e.stopPropagation()} className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
+        <PublicToggle
+          promptId={prompt.id}
+          visibility={prompt.visibility}
+          authorName={prompt.author_name || 'Anonymous'}
+          className="w-full"
+        />
       </div>
 
-      <ConfirmationDialog
-        open={showArchiveConfirm}
-        title="Archive Prompt"
-        message="Archive this prompt? You can restore it later from the archive view."
-        confirmLabel="Archive"
-        cancelLabel="Cancel"
-        variant="warning"
-        onConfirm={handleArchive}
-        onCancel={() => setShowArchiveConfirm(false)}
+      <GreenhouseCardActions
+        promptId={prompt.id}
+        promptTitle={title}
+        promptContent={prompt.content}
+        driveFileId={prompt.drive_file_id || null}
+        onStatusChange={onStatusChange}
       />
+      </Card>
     </motion.div>
   );
 });

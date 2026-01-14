@@ -56,21 +56,21 @@ export function ConfirmationDialog({
   const variantStyles = {
     danger: {
       icon: AlertTriangle,
-      iconColor: "text-red-600",
-      iconBg: "bg-red-100",
-      confirmBg: "bg-red-600 hover:bg-red-700 focus-visible:ring-red-500",
+      iconColor: "text-error",
+      iconBg: "bg-bg-tertiary",
+      confirmBg: "bg-error hover:bg-opacity-90 focus-visible:ring-error",
     },
     warning: {
       icon: AlertTriangle,
-      iconColor: "text-amber-600",
-      iconBg: "bg-amber-100",
-      confirmBg: "bg-amber-600 hover:bg-amber-700 focus-visible:ring-amber-500",
+      iconColor: "text-warning",
+      iconBg: "bg-bg-tertiary",
+      confirmBg: "bg-warning hover:bg-opacity-90 focus-visible:ring-warning",
     },
     info: {
       icon: Info,
-      iconColor: "text-blue-600",
-      iconBg: "bg-blue-100",
-      confirmBg: "bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-500",
+      iconColor: "text-info",
+      iconBg: "bg-bg-tertiary",
+      confirmBg: "bg-info hover:bg-opacity-90 focus-visible:ring-info",
     },
   };
 
@@ -96,7 +96,7 @@ export function ConfirmationDialog({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative"
+              className="bg-bg-secondary border border-bg-tertiary rounded-lg shadow-2xl max-w-md w-full p-6 relative"
               role="dialog"
               aria-modal="true"
               aria-labelledby="dialog-title"
@@ -105,7 +105,7 @@ export function ConfirmationDialog({
             >
               <button
                 onClick={onCancel}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 rounded-md"
+                className="absolute top-4 right-4 text-text-tertiary hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2 rounded-md"
                 aria-label="Close dialog"
               >
                 <X className="h-5 w-5" />
@@ -119,13 +119,13 @@ export function ConfirmationDialog({
                 <div className="flex-1 pt-1">
                   <h2
                     id="dialog-title"
-                    className="text-lg font-semibold text-gray-900 mb-2"
+                    className="text-lg font-semibold text-text-primary mb-2"
                   >
                     {title}
                   </h2>
                   <p
                     id="dialog-description"
-                    className="text-sm text-gray-600 mb-6"
+                    className="text-sm text-text-secondary mb-6"
                   >
                     {message}
                   </p>
@@ -133,7 +133,7 @@ export function ConfirmationDialog({
                   <div className="flex gap-3 justify-end">
                     <button
                       onClick={onCancel}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 active:scale-95 transition-all duration-100 focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                      className="px-4 py-2 text-sm font-medium text-text-primary bg-bg-tertiary border border-bg-tertiary rounded-md hover:bg-bg-elevated active:scale-95 transition-all duration-100 focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2"
                     >
                       {cancelLabel}
                     </button>

@@ -77,19 +77,19 @@ export function SearchBar({
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2 }}
       className={cn("w-full", className)}
     >
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           {loading ? (
             <Loader2 
-              className="h-5 w-5 text-purple-600 dark:text-purple-400 animate-spin" 
+              className="h-5 w-5 text-librarian animate-spin" 
               aria-hidden="true" 
             />
           ) : (
             <Search 
-              className="h-5 w-5 text-purple-600 dark:text-purple-400" 
+              className="h-5 w-5 text-librarian" 
               aria-hidden="true" 
             />
           )}
@@ -109,16 +109,16 @@ export function SearchBar({
           className={cn(
             "block w-full h-14 pl-12 pr-12 text-base",
             "border-2 rounded-xl transition-all duration-200",
-            "bg-white dark:bg-gray-900",
-            "text-gray-900 dark:text-gray-100",
-            "placeholder-gray-400 dark:placeholder-gray-500",
+            "bg-bg-secondary",
+            "text-text-primary",
+            "placeholder-text-tertiary",
             isFocused
-              ? "border-purple-500 dark:border-purple-400 ring-4 ring-purple-100 dark:ring-purple-900/30"
-              : "border-gray-300 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600",
+              ? "border-supervisor ring-4 ring-supervisor/20"
+              : "border-bg-tertiary hover:border-supervisor/50",
             disabled && "opacity-50 cursor-not-allowed",
             "focus:outline-none"
           )}
-          aria-label="Semantic search input"
+          aria-label="Search prompts by semantic similarity"
           aria-busy={loading}
         />
 
@@ -133,12 +133,12 @@ export function SearchBar({
               disabled={disabled || loading}
               className={cn(
                 "absolute inset-y-0 right-0 pr-4 flex items-center",
-                "hover:bg-gray-50 dark:hover:bg-gray-800 rounded-r-xl transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-background"
+                "hover:bg-bg-tertiary rounded-r-xl transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-supervisor focus:ring-offset-2"
               )}
               aria-label="Clear search"
             >
-              <X className="h-5 w-5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
+              <X className="h-5 w-5 text-text-tertiary hover:text-text-secondary" />
             </motion.button>
           )}
         </AnimatePresence>
@@ -154,8 +154,8 @@ export function SearchBar({
             transition={{ duration: 0.2 }}
             className="mt-3 flex items-center gap-2 px-1"
           >
-            <Sparkles className="h-4 w-4 text-purple-500 dark:text-purple-400" aria-hidden="true" />
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <Sparkles className="h-4 w-4 text-librarian" aria-hidden="true" />
+            <p className="text-sm text-text-tertiary">
               Try:{" "}
               <AnimatePresence mode="wait">
                 <motion.span
@@ -163,8 +163,8 @@ export function SearchBar({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="inline-block italic text-purple-600 dark:text-purple-400"
+                  transition={{ duration: 0.2 }}
+                  className="inline-block italic text-librarian"
                 >
                   &ldquo;{searchHints[currentHint]}&rdquo;
                 </motion.span>
@@ -180,16 +180,16 @@ export function SearchBar({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.2 }}
-            className="mt-3 flex items-center gap-3 px-1 text-sm text-gray-600 dark:text-gray-400"
+            className="mt-3 flex items-center gap-3 px-1 text-sm text-text-secondary"
           >
             <span>
-              Found <span className="font-semibold text-purple-600 dark:text-purple-400">{resultCount}</span>{" "}
+              Found <span className="font-semibold text-supervisor">{resultCount}</span>{" "}
               {resultCount === 1 ? "result" : "results"}
             </span>
             {searchDuration !== undefined && (
               <>
-                <span className="text-gray-400 dark:text-gray-600">•</span>
-                <span className="text-gray-500 dark:text-gray-500">
+                <span className="text-text-muted">•</span>
+                <span className="text-text-tertiary">
                   {searchDuration}ms
                 </span>
               </>

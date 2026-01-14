@@ -8,6 +8,7 @@ import { SearchInput } from "@/components/shared/SearchInput";
 import { EmptySearchState } from "@/components/shared/EmptySearchState";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { Globe, Filter, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,13 +33,12 @@ export function CommonsView() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
-            <Globe className="h-8 w-8 text-info" />
-            The Global Commons
-          </h1>
-          <p className="text-text-secondary mt-2">Discover prompts shared by the community</p>
-        </div>
+        <PageHeader
+          title="The Global Commons"
+          subtitle="Discover prompts shared by the community"
+          icon={Globe}
+          iconClassName="text-blue-500"
+        />
         <LoadingState count={6} />
       </div>
     );
@@ -47,13 +47,12 @@ export function CommonsView() {
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
-            <Globe className="h-8 w-8 text-info" />
-            The Global Commons
-          </h1>
-          <p className="text-text-secondary mt-2">Discover prompts shared by the community</p>
-        </div>
+        <PageHeader
+          title="The Global Commons"
+          subtitle="Discover prompts shared by the community"
+          icon={Globe}
+          iconClassName="text-blue-500"
+        />
         <ErrorState
           title="Unable to load prompts"
           message={error}
@@ -67,13 +66,12 @@ export function CommonsView() {
   if (prompts.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
-            <Globe className="h-8 w-8 text-info" />
-            The Global Commons
-          </h1>
-          <p className="text-text-secondary mt-2">Discover prompts shared by the community</p>
-        </div>
+        <PageHeader
+          title="The Global Commons"
+          subtitle="Discover prompts shared by the community"
+          icon={Globe}
+          iconClassName="text-blue-500"
+        />
         <div className="bg-bg-secondary border border-bg-tertiary rounded-lg p-12 text-center">
           <Globe className="h-16 w-16 text-text-tertiary mx-auto mb-4" />
           <p className="text-text-primary font-medium text-lg mb-2">
@@ -89,15 +87,12 @@ export function CommonsView() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main" aria-label="Global Commons">
-      <div className="mb-8">
-        <h1 className="text-2xl font-sans font-bold text-text-primary flex items-center gap-3">
-          <Globe className="h-8 w-8 text-info" aria-hidden="true" />
-          The Global Commons
-        </h1>
-        <p className="text-text-secondary mt-2" role="status" aria-live="polite">
-          Discover {prompts.length} public prompt{prompts.length !== 1 ? 's' : ''}
-        </p>
-      </div>
+      <PageHeader
+        title="The Global Commons"
+        subtitle="Discover prompts shared by the community"
+        icon={Globe}
+        iconClassName="text-blue-500"
+      />
 
       <div className="mb-6 space-y-4">
         <SearchInput

@@ -245,3 +245,20 @@ export interface ActivityContextValue {
   clearActivity: () => void;
   addToHistory: (activity: AgentActivity) => void;
 }
+
+export type AgentStatusType = 'idle' | 'thinking' | 'working' | 'error';
+
+export interface AgentStatusInfo {
+  agentId: 'supervisor' | 'dojo' | 'librarian' | 'debugger';
+  status: AgentStatusType;
+  message?: string;
+  lastActive?: string;
+  progress?: number;
+}
+
+export interface AgentStatusMap {
+  supervisor: AgentStatusInfo;
+  dojo: AgentStatusInfo;
+  librarian: AgentStatusInfo;
+  debugger: AgentStatusInfo;
+}

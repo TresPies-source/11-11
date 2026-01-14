@@ -4,24 +4,10 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { StatusDot } from '@/components/ui/StatusDot';
 import { NewProjectModal } from '@/components/dashboard/NewProjectModal';
 import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed';
+import { AgentStatus } from '@/components/dashboard/AgentStatus';
 import { useProjects } from '@/hooks/useProjects';
-
-interface Agent {
-  id: string;
-  name: string;
-  icon: string;
-  status: 'idle' | 'working' | 'error' | 'success';
-}
-
-const agents: Agent[] = [
-  { id: 'supervisor', name: 'Supervisor', icon: '🎯', status: 'idle' },
-  { id: 'dojo', name: 'Dojo', icon: '🧠', status: 'idle' },
-  { id: 'librarian', name: 'Librarian', icon: '📚', status: 'idle' },
-  { id: 'debugger', name: 'Debugger', icon: '🔍', status: 'idle' },
-];
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,18 +54,7 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card>
-          <h2 className="text-2xl font-semibold mb-6">Agent Status</h2>
-          <div className="flex flex-col gap-4">
-            {agents.map((agent) => (
-              <div key={agent.id} className="flex items-center gap-3">
-                <span className="text-2xl">{agent.icon}</span>
-                <span className="text-base font-medium text-white flex-1">{agent.name}</span>
-                <StatusDot status={agent.status} size="md" />
-              </div>
-            ))}
-          </div>
-        </Card>
+        <AgentStatus />
 
         <RecentActivityFeed />
       </div>

@@ -41,7 +41,7 @@ export function NavigationSidebar() {
         <div className="h-px bg-bg-tertiary mb-6" />
         
         <nav className="flex flex-col gap-1">
-          <NavItem href="/" icon="🏠" label="Dashboard" />
+          <NavItem href="/dashboard" icon="🏠" label="Dashboard" />
           <NavItem href="/workbench" icon="💼" label="Workbench" />
           <NavItem href="/librarian" icon="📚" label="Librarian" />
           <NavItem href="/seeds" icon="🌱" label="Seeds" />

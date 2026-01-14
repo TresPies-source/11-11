@@ -64,3 +64,9 @@ Implement the task according to the technical specification and general engineer
    - What was implemented
    - How the solution was tested
    - The biggest issues or challenges encountered
+
+### [x] Step: Wire up Dashboard to Navigation
+<!-- chat-id: 28afbebe-0fd4-4bc0-93dd-9169f355cad3 -->
+<!-- agent: ZEN_CLI -->
+
+and test

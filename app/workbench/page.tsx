@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { Panel, PanelGroup, PanelResizeHandle, ImperativePanelHandle } from 'react-resizable-panels';
 import { useWorkbenchStore } from '@/lib/stores/workbench.store';
 import { TabBar } from '@/components/workbench/TabBar';
 import { Editor } from '@/components/workbench/Editor';
@@ -9,8 +9,9 @@ import { ActionBar } from '@/components/workbench/ActionBar';
 import { AgentActivityPanel } from '@/components/layout/AgentActivityPanel';
 
 export default function WorkbenchPage() {
-  const { tabs, addTab, setActiveTab } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, isAgentPanelOpen } = useWorkbenchStore();
   const initialized = useRef(false);
+  const agentPanelRef = useRef<ImperativePanelHandle>(null);
 
   useEffect(() => {
     if (!initialized.current && tabs.length === 0) {
@@ -25,6 +26,16 @@ export default function WorkbenchPage() {
     }
   }, [tabs.length, addTab, setActiveTab]);
 
+  useEffect(() => {
+    if (agentPanelRef.current) {
+      if (isAgentPanelOpen) {
+        agentPanelRef.current.expand();
+      } else {
+        agentPanelRef.current.collapse();
+      }
+    }
+  }, [isAgentPanelOpen]);
+
   return (
     <div className="flex flex-col h-screen bg-bg-primary">
       <TabBar />
@@ -34,7 +45,14 @@ export default function WorkbenchPage() {
             <Editor />
           </Panel>
           <PanelResizeHandle className="w-2 bg-bg-tertiary hover:bg-text-accent transition-colors" />
-          <Panel defaultSize={30} minSize={10} maxSize={40}>
+          <Panel 
+            ref={agentPanelRef}
+            defaultSize={30} 
+            minSize={10} 
+            maxSize={40}
+            collapsible={true}
+            collapsedSize={0}
+          >
             <AgentActivityPanel />
           </Panel>
         </PanelGroup>

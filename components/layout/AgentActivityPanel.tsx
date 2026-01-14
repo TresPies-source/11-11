@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { AgentActivityCard } from "@/components/agents/AgentActivityCard";
 import { SystemInfo } from "@/components/agents/SystemInfo";
 import { ActivityLog } from "@/components/agents/ActivityLog";
+import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { cn } from "@/lib/utils";
 
 const MOCK_AGENTS = [
@@ -32,6 +33,7 @@ const MOCK_AGENTS = [
 
 export function AgentActivityPanel() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { toggleAgentPanel } = useWorkbenchStore();
 
   return (
     <div
@@ -45,13 +47,49 @@ export function AgentActivityPanel() {
         {!isCollapsed && (
           <h2 className="text-lg font-medium text-text-primary">Agent Activity</h2>
         )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 hover:bg-bg-tertiary rounded-lg transition-colors text-text-secondary hover:text-text-primary"
-          aria-label={isCollapsed ? "Expand panel" : "Collapse panel"}
-          title={isCollapsed ? "Expand panel" : "Collapse panel"}
-        >
-          {isCollapsed ? (
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-2 hover:bg-bg-tertiary rounded-lg transition-colors text-text-secondary hover:text-text-primary"
+            aria-label={isCollapsed ? "Expand panel" : "Collapse panel"}
+            title={isCollapsed ? "Expand panel" : "Collapse panel"}
+          >
+            {isCollapsed ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            )}
+          </button>
+          <button
+            onClick={toggleAgentPanel}
+            className="p-2 hover:bg-bg-tertiary rounded-lg transition-colors text-text-secondary hover:text-text-primary"
+            aria-label="Close panel"
+            title="Close panel"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -63,24 +101,11 @@ export function AgentActivityPanel() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <polyline points="9 18 15 12 9 6" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          )}
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Scrollable Agent Cards Section */}

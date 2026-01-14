@@ -9,16 +9,19 @@ export interface PromptTab {
 interface WorkbenchState {
   tabs: PromptTab[];
   activeTabId: string | null;
+  isAgentPanelOpen: boolean;
   addTab: (tab: PromptTab) => void;
   removeTab: (id: string) => void;
   setActiveTab: (id: string) => void;
   updateTabContent: (id: string, content: string) => void;
   updateTabTitle: (id: string, title: string) => void;
+  toggleAgentPanel: () => void;
 }
 
 export const useWorkbenchStore = create<WorkbenchState>((set) => ({
   tabs: [],
   activeTabId: null,
+  isAgentPanelOpen: true,
   
   addTab: (tab) => set((state) => ({ 
     tabs: [...state.tabs, tab],
@@ -60,5 +63,9 @@ export const useWorkbenchStore = create<WorkbenchState>((set) => ({
     tabs: state.tabs.map((tab) => 
       tab.id === id ? { ...tab, title } : tab
     ),
+  })),
+  
+  toggleAgentPanel: () => set((state) => ({
+    isAgentPanelOpen: !state.isAgentPanelOpen
   })),
 }));

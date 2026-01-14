@@ -1,8 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 
 export function ActionBar() {
+  const { isAgentPanelOpen, toggleAgentPanel } = useWorkbenchStore();
+
   const handleTestWithDojo = () => {
     console.log("[Test with Dojo] button clicked");
   };
@@ -26,6 +29,11 @@ export function ActionBar() {
       <Button variant="secondary" onClick={handleExport}>
         Export
       </Button>
+      <div className="ml-auto">
+        <Button variant="secondary" onClick={toggleAgentPanel}>
+          {isAgentPanelOpen ? "Hide Agent Panel" : "Show Agent Panel"}
+        </Button>
+      </div>
     </div>
   );
 }

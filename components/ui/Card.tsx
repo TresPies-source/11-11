@@ -8,31 +8,25 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   glow?: boolean;
-  interactive?: boolean;
-  onClick?: () => void;
 }
 
 const Card = React.memo(function Card({
   children,
   className,
   glow = false,
-  interactive = false,
-  onClick,
 }: CardProps) {
   const baseStyles = "bg-bg-secondary border border-bg-tertiary rounded-xl p-6";
   
-  if (glow || interactive) {
+  if (glow) {
     return (
       <motion.div
-        className={cn(baseStyles, interactive && "cursor-pointer", className)}
+        className={cn(baseStyles, className)}
         whileHover={{
           borderColor: '#f5a623',
           boxShadow: '0 0 20px rgba(245, 166, 35, 0.15)',
           y: -2,
         }}
-        whileTap={interactive ? { scale: 0.98 } : undefined}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-        onClick={onClick}
+        transition={{ duration: 0.2 }}
       >
         {children}
       </motion.div>
@@ -40,7 +34,7 @@ const Card = React.memo(function Card({
   }
 
   return (
-    <div className={cn(baseStyles, className)} onClick={onClick}>
+    <div className={cn(baseStyles, className)}>
       {children}
     </div>
   );

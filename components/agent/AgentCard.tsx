@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { cn } from "@/lib/utils";
 
@@ -48,13 +47,10 @@ export function AgentCard({
   
   if (isCollapsed) {
     return (
-      <motion.div 
+      <div 
         className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-bg-tertiary/50 transition-colors cursor-pointer"
         title={`${name} - ${STATUS_LABELS[status]}`}
         aria-label={`${name} agent is ${STATUS_LABELS[status].toLowerCase()}`}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ duration: 0.1 }}
       >
         <div className="relative">
           <span className="text-2xl" aria-hidden="true">
@@ -64,21 +60,18 @@ export function AgentCard({
             <StatusDot status={dotStatus} size="md" />
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
   
   return (
-    <motion.div 
+    <div 
       className={cn(
         "p-3 rounded-lg border transition-all duration-fast",
         AGENT_COLORS[agentId]
       )}
       role="article"
       aria-label={`${name} agent card`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <div className="flex items-start gap-3">
         <div className="relative flex-shrink-0">
@@ -130,6 +123,6 @@ export function AgentCard({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

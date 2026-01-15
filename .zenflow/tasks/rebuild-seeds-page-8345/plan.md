@@ -281,9 +281,16 @@ export default function SeedsPage() {
 - [x] No console errors related to Seeds page changes
 - [x] Visual consistency with other pages achieved
 
-### [ ] Step: reimplement other files to match these new ones
+### [x] Step: reimplement other files to match these new ones
 <!-- chat-id: 7257d3e4-15c7-42d5-b54c-8347b8ecf3f8 -->
 <!-- agent: ZEN_CLI -->
 
 these files might be compliant but they're ugly and they don't look good. reimplement them from the ground up to look better and match requirements better
 seed-card.tsx, filters-panel.tsx, plant-seed-modal.tsx
+
+**Completed:**
+- Reimplemented `seed-card.tsx` with cleaner design system colors, better spacing, refined layout
+- Reimplemented `filters-panel.tsx` with improved color hierarchy, better active/inactive states
+- Reimplemented `plant-seed-modal.tsx` with cleaner modal design, better form layout, improved UX
+- All files now use consistent design system tokens (`bg-bg-secondary`, `text-text-primary`, etc.)
+- Verified build succeeds without errors

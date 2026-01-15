@@ -15,44 +15,44 @@ interface PlantSeedModalProps {
 }
 
 const SEED_TYPES: { value: SeedType; label: string; description: string }[] = [
-  { value: "principle", label: "Principle", description: "Core truths and guidelines" },
-  { value: "pattern", label: "Pattern", description: "Recurring solutions and approaches" },
-  { value: "question", label: "Question", description: "Important questions to explore" },
-  { value: "route", label: "Route", description: "Paths and directions to follow" },
-  { value: "artifact", label: "Artifact", description: "Key outputs and deliverables" },
-  { value: "constraint", label: "Constraint", description: "Limitations and boundaries" },
+  { value: "principle", label: "Principle", description: "Core truths & guidelines" },
+  { value: "pattern", label: "Pattern", description: "Recurring solutions" },
+  { value: "question", label: "Question", description: "Questions to explore" },
+  { value: "route", label: "Route", description: "Paths to follow" },
+  { value: "artifact", label: "Artifact", description: "Key deliverables" },
+  { value: "constraint", label: "Constraint", description: "Limitations & boundaries" },
 ];
 
 const TYPE_COLORS = {
   principle: {
     bg: "bg-info/10",
     text: "text-info",
-    border: "border-info/30",
+    border: "border-info/40",
   },
   pattern: {
     bg: "bg-success/10",
     text: "text-success",
-    border: "border-success/30",
+    border: "border-success/40",
   },
   question: {
     bg: "bg-librarian/10",
     text: "text-librarian",
-    border: "border-librarian/30",
+    border: "border-librarian/40",
   },
   route: {
     bg: "bg-dojo/10",
     text: "text-dojo",
-    border: "border-dojo/30",
+    border: "border-dojo/40",
   },
   artifact: {
     bg: "bg-supervisor/10",
     text: "text-supervisor",
-    border: "border-supervisor/30",
+    border: "border-supervisor/40",
   },
   constraint: {
     bg: "bg-error/10",
     text: "text-error",
-    border: "border-error/30",
+    border: "border-error/40",
   },
 };
 
@@ -101,17 +101,16 @@ export const PlantSeedModal = memo(function PlantSeedModal({
     if (!isOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
 
     document.addEventListener("keydown", handleEscape);
-
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, isSubmitting, onClose]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -170,8 +169,6 @@ export const PlantSeedModal = memo(function PlantSeedModal({
 
   if (!mounted) return null;
 
-  const selectedTypeColors = TYPE_COLORS[formData.type];
-
   const modal = (
     <AnimatePresence>
       {isOpen && (
@@ -181,7 +178,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={handleCancel}
             aria-hidden="true"
           />
@@ -192,16 +189,18 @@ export const PlantSeedModal = memo(function PlantSeedModal({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-bg-primary rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+              className="bg-bg-secondary border border-bg-tertiary rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
               role="dialog"
               aria-modal="true"
               aria-labelledby="plant-seed-modal-title"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-bg-primary border-b border-border p-6 flex items-start justify-between z-10">
+              <div className="sticky top-0 bg-bg-secondary border-b border-bg-tertiary p-6 flex items-start justify-between z-10">
                 <div className="flex-1 pr-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Leaf className="w-5 h-5 text-success" />
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                      <Leaf className="w-5 h-5 text-success" />
+                    </div>
                     <h2
                       id="plant-seed-modal-title"
                       className="text-2xl font-bold text-text-primary"
@@ -209,14 +208,14 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                       Plant New Seed
                     </h2>
                   </div>
-                  <p className="text-sm text-text-muted">
-                    Capture important knowledge for future reference
+                  <p className="text-sm text-text-tertiary">
+                    Capture knowledge for future reference
                   </p>
                 </div>
                 <button
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="p-2 rounded-md text-text-muted hover:text-text-secondary hover:bg-muted/20 transition-colors disabled:opacity-50"
+                  className="p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary/50 transition-all disabled:opacity-50"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
@@ -240,17 +239,18 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     }
                     disabled={isSubmitting}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border bg-bg-secondary text-text-primary",
-                      "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
+                      "w-full px-4 py-2.5 rounded-lg border bg-bg-tertiary text-text-primary",
+                      "focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
-                      errors.name ? "border-error" : "border-border"
+                      "placeholder:text-text-muted",
+                      errors.name ? "border-error" : "border-bg-elevated"
                     )}
                     placeholder="Give your seed a descriptive name"
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "seed-name-error" : undefined}
                   />
                   {errors.name && (
-                    <p id="seed-name-error" className="mt-1 text-sm text-error">
+                    <p id="seed-name-error" className="mt-1.5 text-sm text-error">
                       {errors.name}
                     </p>
                   )}
@@ -259,7 +259,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                 <div>
                   <label
                     htmlFor="seed-type"
-                    className="block text-sm font-semibold text-text-primary mb-2"
+                    className="block text-sm font-semibold text-text-primary mb-3"
                   >
                     Type <span className="text-error">*</span>
                   </label>
@@ -276,24 +276,24 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                           }
                           disabled={isSubmitting}
                           className={cn(
-                            "p-3 rounded-lg border-2 text-left transition-all duration-150",
-                            "hover:scale-105 active:scale-100",
+                            "p-3.5 rounded-lg border-2 text-left transition-all duration-200",
+                            "hover:scale-[1.02] active:scale-[0.98]",
                             "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
                             isSelected
                               ? `${colors.border} ${colors.bg}`
-                              : "border-border bg-bg-secondary hover:border-border/60"
+                              : "border-bg-tertiary bg-bg-tertiary/30 hover:border-bg-elevated"
                           )}
                           aria-pressed={isSelected}
                         >
                           <div
                             className={cn(
-                              "font-medium mb-1",
+                              "font-semibold text-sm mb-1",
                               isSelected ? colors.text : "text-text-primary"
                             )}
                           >
                             {type.label}
                           </div>
-                          <div className="text-xs text-text-muted">
+                          <div className="text-xs text-text-tertiary">
                             {type.description}
                           </div>
                         </button>
@@ -318,18 +318,18 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     disabled={isSubmitting}
                     rows={6}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border bg-bg-secondary text-text-primary font-mono text-sm",
-                      "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
+                      "w-full px-4 py-2.5 rounded-lg border bg-bg-tertiary text-text-primary font-mono text-sm",
+                      "focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
-                      "resize-none",
-                      errors.content ? "border-error" : "border-border"
+                      "resize-none placeholder:text-text-muted",
+                      errors.content ? "border-error" : "border-bg-elevated"
                     )}
                     placeholder="Enter the main content of your seed"
                     aria-invalid={!!errors.content}
                     aria-describedby={errors.content ? "seed-content-error" : undefined}
                   />
                   {errors.content && (
-                    <p id="seed-content-error" className="mt-1 text-sm text-error">
+                    <p id="seed-content-error" className="mt-1.5 text-sm text-error">
                       {errors.content}
                     </p>
                   )}
@@ -351,10 +351,10 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     disabled={isSubmitting}
                     rows={3}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border border-border bg-bg-secondary text-text-primary",
-                      "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
+                      "w-full px-4 py-2.5 rounded-lg border border-bg-elevated bg-bg-tertiary text-text-primary",
+                      "focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
-                      "resize-none"
+                      "resize-none placeholder:text-text-muted"
                     )}
                     placeholder="Explain why this seed is important (optional)"
                   />
@@ -376,27 +376,28 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     }
                     disabled={isSubmitting}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border border-border bg-bg-secondary text-text-primary",
-                      "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
-                      "disabled:opacity-50 disabled:cursor-not-allowed"
+                      "w-full px-4 py-2.5 rounded-lg border border-bg-elevated bg-bg-tertiary text-text-primary",
+                      "focus:outline-none focus:ring-2 focus:ring-text-accent focus:border-transparent",
+                      "disabled:opacity-50 disabled:cursor-not-allowed",
+                      "placeholder:text-text-muted"
                     )}
                     placeholder="When should this seed be revisited? (optional)"
                   />
                 </div>
 
                 {errors.submit && (
-                  <div className="p-3 rounded-lg bg-error/10 border border-error/30">
-                    <p className="text-sm text-error">{errors.submit}</p>
+                  <div className="p-4 rounded-lg bg-error/10 border border-error/30">
+                    <p className="text-sm text-error font-medium">{errors.submit}</p>
                   </div>
                 )}
               </form>
 
-              <div className="sticky bottom-0 bg-bg-primary border-t border-border p-6 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-bg-secondary border-t border-bg-tertiary p-6 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-sm font-medium text-text-secondary bg-muted/20 hover:bg-muted/30 rounded-lg transition-all duration-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-2.5 text-sm font-medium text-text-secondary bg-transparent border border-bg-tertiary hover:border-text-tertiary hover:text-text-primary rounded-lg transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
@@ -405,9 +406,9 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                   className={cn(
-                    "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-100 active:scale-95 flex items-center gap-2",
-                    "bg-accent text-white hover:bg-accent/90",
-                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent"
+                    "px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-150 active:scale-95 flex items-center gap-2",
+                    "bg-text-accent text-white hover:bg-opacity-90",
+                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-text-accent"
                   )}
                   aria-label="Plant new seed"
                 >

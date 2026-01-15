@@ -13,20 +13,50 @@ interface FiltersPanelProps {
 const TYPES: SeedType[] = ["principle", "pattern", "question", "route", "artifact", "constraint"];
 const STATUSES: SeedStatus[] = ["new", "growing", "mature", "compost"];
 
-const TYPE_COLORS: Record<SeedType, string> = {
-  principle: "bg-info/20 text-info hover:bg-info/30",
-  pattern: "bg-success/20 text-success hover:bg-success/30",
-  question: "bg-librarian/20 text-librarian hover:bg-librarian/30",
-  route: "bg-dojo/20 text-dojo hover:bg-dojo/30",
-  artifact: "bg-supervisor/20 text-supervisor hover:bg-supervisor/30",
-  constraint: "bg-error/20 text-error hover:bg-error/30",
+const TYPE_COLORS: Record<SeedType, { active: string; inactive: string }> = {
+  principle: { 
+    active: "bg-info/20 text-info border-info/40", 
+    inactive: "hover:bg-info/10 hover:text-info" 
+  },
+  pattern: { 
+    active: "bg-success/20 text-success border-success/40", 
+    inactive: "hover:bg-success/10 hover:text-success" 
+  },
+  question: { 
+    active: "bg-librarian/20 text-librarian border-librarian/40", 
+    inactive: "hover:bg-librarian/10 hover:text-librarian" 
+  },
+  route: { 
+    active: "bg-dojo/20 text-dojo border-dojo/40", 
+    inactive: "hover:bg-dojo/10 hover:text-dojo" 
+  },
+  artifact: { 
+    active: "bg-supervisor/20 text-supervisor border-supervisor/40", 
+    inactive: "hover:bg-supervisor/10 hover:text-supervisor" 
+  },
+  constraint: { 
+    active: "bg-error/20 text-error border-error/40", 
+    inactive: "hover:bg-error/10 hover:text-error" 
+  },
 };
 
-const STATUS_COLORS: Record<SeedStatus, string> = {
-  new: "bg-muted/20 text-muted hover:bg-muted/30",
-  growing: "bg-success/20 text-success hover:bg-success/30",
-  mature: "bg-info/20 text-info hover:bg-info/30",
-  compost: "bg-error/20 text-error hover:bg-error/30",
+const STATUS_COLORS: Record<SeedStatus, { active: string; inactive: string }> = {
+  new: { 
+    active: "bg-bg-tertiary/50 text-text-muted border-bg-tertiary", 
+    inactive: "hover:bg-bg-tertiary/30 hover:text-text-secondary" 
+  },
+  growing: { 
+    active: "bg-success/20 text-success border-success/40", 
+    inactive: "hover:bg-success/10 hover:text-success" 
+  },
+  mature: { 
+    active: "bg-info/20 text-info border-info/40", 
+    inactive: "hover:bg-info/10 hover:text-info" 
+  },
+  compost: { 
+    active: "bg-error/20 text-error border-error/40", 
+    inactive: "hover:bg-error/10 hover:text-error" 
+  },
 };
 
 export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFiltersChange }: FiltersPanelProps) {
@@ -57,37 +87,38 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
   const hasActiveFilters = (filters.type && filters.type.length > 0) || (filters.status && filters.status.length > 0);
 
   return (
-    <aside className="bg-background border border-border rounded-lg p-4 space-y-6">
+    <aside className="bg-bg-secondary border border-bg-tertiary rounded-xl p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <Filter className="h-4 w-4" />
+        <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2.5">
+          <Filter className="h-5 w-5 text-text-accent" />
           Filters
         </h2>
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
+            className="text-sm text-text-tertiary hover:text-text-primary underline underline-offset-2 transition-colors"
             aria-label="Clear all filters"
           >
-            Clear all
+            Clear
           </button>
         )}
       </div>
 
-      <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Type</h3>
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Type</h3>
         <div className="flex flex-wrap gap-2">
           {TYPES.map((type) => {
             const isActive = filters.type?.includes(type);
+            const colors = TYPE_COLORS[type];
             return (
               <button
                 key={type}
                 onClick={() => toggleType(type)}
                 className={cn(
-                  "inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-100 active:scale-95 capitalize",
+                  "inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 active:scale-95 capitalize border",
                   isActive
-                    ? TYPE_COLORS[type]
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? colors.active
+                    : "bg-bg-tertiary/30 text-text-secondary border-transparent " + colors.inactive
                 )}
                 aria-label={`Filter by ${type}`}
                 aria-pressed={isActive}
@@ -99,20 +130,21 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
         </div>
       </div>
 
-      <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Status</h3>
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Status</h3>
         <div className="flex flex-wrap gap-2">
           {STATUSES.map((status) => {
             const isActive = filters.status?.includes(status);
+            const colors = STATUS_COLORS[status];
             return (
               <button
                 key={status}
                 onClick={() => toggleStatus(status)}
                 className={cn(
-                  "inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-100 active:scale-95 capitalize",
+                  "inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 active:scale-95 capitalize border",
                   isActive
-                    ? STATUS_COLORS[status]
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? colors.active
+                    : "bg-bg-tertiary/30 text-text-secondary border-transparent " + colors.inactive
                 )}
                 aria-label={`Filter by ${status}`}
                 aria-pressed={isActive}

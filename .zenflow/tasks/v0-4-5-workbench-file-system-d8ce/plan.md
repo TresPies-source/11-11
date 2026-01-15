@@ -137,7 +137,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ---
 
-### [ ] Task 2.2: Implement File Opening Logic
+### [x] Task 2.2: Implement File Opening Logic
+<!-- chat-id: 2023d65d-b965-4a59-a9f5-ece63ff138b9 -->
 **Goal:** Enable opening files from tree into editor tabs
 
 **Files:**

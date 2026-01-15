@@ -10,9 +10,10 @@ import { ActionBar } from "./ActionBar";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
 import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "react-resizable-panels";
+import { FileNode } from "@/lib/types";
 
 export function WorkbenchView() {
-  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError, openFileTab } = useWorkbenchStore();
   const initialized = useRef(false);
   const toast = useToast();
   const supervisor = useSupervisor();
@@ -168,11 +169,37 @@ export function WorkbenchView() {
     toast.success("Prompt exported as JSON and Markdown");
   };
 
+  const handleOpenFile = async (file: FileNode) => {
+    if (file.type === "folder") {
+      return;
+    }
+
+    toast.info("Opening file...");
+
+    try {
+      const response = await fetch(`/api/drive/content/${file.id}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to fetch file content");
+      }
+
+      const data = await response.json();
+      const content = data.content || "";
+
+      openFileTab(file.id, file.name, file.path, content);
+      toast.success(`Opened ${file.name}`);
+    } catch (error) {
+      console.error("[OpenFile] Error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to open file");
+    }
+  };
+
   return (
     <div className="h-full bg-bg-primary">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
-          <WorkbenchFileTreePanel onOpenFile={() => {}} />
+          <WorkbenchFileTreePanel onOpenFile={handleOpenFile} />
         </ResizablePanel>
         
         <ResizableHandle className="w-1 bg-border hover:bg-border-hover transition-colors" />

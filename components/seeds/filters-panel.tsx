@@ -57,7 +57,7 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
   const hasActiveFilters = (filters.type && filters.type.length > 0) || (filters.status && filters.status.length > 0);
 
   return (
-    <aside className="bg-bg-secondary border border-bg-tertiary rounded-lg p-4 space-y-6">
+    <aside className="bg-bg-secondary border border-bg-tertiary rounded-lg p-4 space-y-6 transition-all duration-300 ease-in-out">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
           <Filter className="h-4 w-4" />

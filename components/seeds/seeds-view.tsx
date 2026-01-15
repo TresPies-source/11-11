@@ -276,7 +276,7 @@ export function SeedsView() {
             />
           </aside>
 
-          <main className="flex-1">
+          <main className="flex-1 transition-all duration-300 ease-in-out">
             <div className="mb-4 sm:mb-6">
               <div className="relative">
                 <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-text-muted" />
@@ -310,19 +310,23 @@ export function SeedsView() {
               </div>
             ) : (
               <>
-                <div className="mb-4 text-sm text-text-secondary">
+                <div className="mb-4 text-sm text-text-secondary transition-opacity duration-200">
                   Showing {seeds.length} {seeds.length === 1 ? "seed" : "seeds"}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                   {seeds.map((seed) => (
-                    <SeedCard
+                    <div
                       key={seed.id}
-                      seed={seed}
-                      onView={handleViewSeed}
-                      onUpdateStatus={handleUpdateStatus}
-                      onDelete={handleDeleteSeed}
-                    />
+                      className="animate-fade-in"
+                    >
+                      <SeedCard
+                        seed={seed}
+                        onView={handleViewSeed}
+                        onUpdateStatus={handleUpdateStatus}
+                        onDelete={handleDeleteSeed}
+                      />
+                    </div>
                   ))}
                 </div>
               </>

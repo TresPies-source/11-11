@@ -41,3 +41,9 @@ Save a brief summary of what was done to `{@artifacts_path}/report.md` if signif
 <!-- agent: ZEN_CLI -->
 
 clicking on the filter buttons "makes the whole screen flash" in a distracting way, so does entering text in the search bar. find and remove the animation that does this.
+
+### [x] Step: related problem
+<!-- chat-id: 9e4aa1bb-7465-415a-8d89-3f0198feb166 -->
+<!-- agent: ZEN_CLI -->
+
+clicking through the filter buttons causes the filter panel to resize and the seedsview to reload, however, these happen in an abrupt way. any way to make it look nicer?

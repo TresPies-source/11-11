@@ -168,7 +168,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ### Phase 3: File Save Integration
 
-### [ ] Task 3.1: Verify/Implement PUT Endpoint for File Content
+### [x] Task 3.1: Verify/Implement PUT Endpoint for File Content
+<!-- chat-id: 76012b30-c2cb-4111-b1e2-2ff762e75426 -->
 **Goal:** Ensure endpoint exists for saving file content
 
 **Files:**

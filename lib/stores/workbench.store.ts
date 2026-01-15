@@ -9,16 +9,23 @@ export interface PromptTab {
 interface WorkbenchState {
   tabs: PromptTab[];
   activeTabId: string | null;
+  isRunning: boolean;
+  activeTabError: string | null;
   addTab: (tab: PromptTab) => void;
   removeTab: (id: string) => void;
   setActiveTab: (id: string) => void;
   updateTabContent: (id: string, content: string) => void;
   updateTabTitle: (id: string, title: string) => void;
+  setRunning: (isRunning: boolean) => void;
+  setActiveTabError: (error: string | null) => void;
+  updateTabId: (oldId: string, newId: string) => void;
 }
 
 export const useWorkbenchStore = create<WorkbenchState>((set) => ({
   tabs: [],
   activeTabId: null,
+  isRunning: false,
+  activeTabError: null,
   
   addTab: (tab) => set((state) => ({ 
     tabs: [...state.tabs, tab],
@@ -60,5 +67,16 @@ export const useWorkbenchStore = create<WorkbenchState>((set) => ({
     tabs: state.tabs.map((tab) => 
       tab.id === id ? { ...tab, title } : tab
     ),
+  })),
+  
+  setRunning: (isRunning) => set({ isRunning }),
+  
+  setActiveTabError: (error) => set({ activeTabError: error }),
+  
+  updateTabId: (oldId, newId) => set((state) => ({
+    tabs: state.tabs.map((tab) =>
+      tab.id === oldId ? { ...tab, id: newId } : tab
+    ),
+    activeTabId: state.activeTabId === oldId ? newId : state.activeTabId
   })),
 }));

@@ -5,7 +5,7 @@ import { useWorkbenchStore } from '@/lib/stores/workbench.store';
 import type { editor } from 'monaco-editor';
 
 export function Editor() {
-  const { tabs, activeTabId, updateTabContent } = useWorkbenchStore();
+  const { tabs, activeTabId, updateTabContent, isRunning, activeTabError, setActiveTabError } = useWorkbenchStore();
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
   const handleEditorMount = (editor: editor.IStandaloneCodeEditor, monaco: any) => {
@@ -56,34 +56,63 @@ export function Editor() {
   }
 
   return (
-    <MonacoEditor
-      height="100%"
-      language="markdown"
-      value={activeTab.content}
-      onChange={(value) => {
-        if (value !== undefined) {
-          updateTabContent(activeTab.id, value);
-        }
-      }}
-      onMount={handleEditorMount}
-      theme="dojo-genesis"
-      options={{
-        minimap: { enabled: false },
-        fontSize: 14,
-        fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-        lineNumbers: 'on',
-        wordWrap: 'on',
-        scrollBeyondLastLine: false,
-        automaticLayout: true,
-        tabSize: 2,
-        insertSpaces: true,
-        renderWhitespace: 'selection',
-        bracketPairColorization: { enabled: true },
-        smoothScrolling: true,
-        cursorBlinking: 'smooth',
-        cursorSmoothCaretAnimation: 'on',
-        padding: { top: 16, bottom: 16 },
-      }}
-    />
+    <div className="flex flex-col h-full">
+      {activeTabError && (
+        <div className="bg-error/10 border-b border-error/25 text-error px-4 py-3 flex items-center justify-between">
+          <span className="text-sm">{activeTabError}</span>
+          <button
+            onClick={() => setActiveTabError(null)}
+            className="ml-4 hover:opacity-70 transition-opacity"
+            aria-label="Dismiss error"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 4L4 12M4 4L12 12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
+      <MonacoEditor
+        height="100%"
+        language="markdown"
+        value={activeTab.content}
+        onChange={(value) => {
+          if (value !== undefined && !isRunning) {
+            updateTabContent(activeTab.id, value);
+          }
+        }}
+        onMount={handleEditorMount}
+        theme="dojo-genesis"
+        options={{
+          minimap: { enabled: false },
+          fontSize: 14,
+          fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+          lineNumbers: 'on',
+          wordWrap: 'on',
+          scrollBeyondLastLine: false,
+          automaticLayout: true,
+          tabSize: 2,
+          insertSpaces: true,
+          renderWhitespace: 'selection',
+          bracketPairColorization: { enabled: true },
+          smoothScrolling: true,
+          cursorBlinking: 'smooth',
+          cursorSmoothCaretAnimation: 'on',
+          padding: { top: 16, bottom: 16 },
+          readOnly: isRunning,
+        }}
+      />
+    </div>
   );
 }

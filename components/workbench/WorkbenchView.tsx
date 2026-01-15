@@ -8,9 +8,12 @@ import { TabBar } from "./TabBar";
 import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
+import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { FileNode } from "@/lib/types";
 
 export function WorkbenchView() {
-  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError, openFileTab } = useWorkbenchStore();
   const initialized = useRef(false);
   const toast = useToast();
   const supervisor = useSupervisor();
@@ -27,6 +30,19 @@ export function WorkbenchView() {
       setActiveTab(welcomeTab.id);
     }
   }, [tabs.length, addTab, setActiveTab]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRun = async () => {
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
@@ -77,6 +93,33 @@ export function WorkbenchView() {
     }
 
     try {
+      if (activeTab.isFileBased && activeTab.fileId) {
+        console.log("[Save] Saving file-based tab:", activeTab.fileId);
+        
+        const response = await fetch(`/api/drive/content/${activeTab.fileId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: activeTab.content,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          
+          if (response.status === 404) {
+            toast.error("This file no longer exists. The tab will remain open but cannot be saved.");
+            return;
+          }
+          
+          throw new Error(errorData.error || "Failed to save file");
+        }
+
+        console.log("[Save] File saved successfully");
+        toast.success("File saved successfully");
+        return;
+      }
+
       const isNewSeed = !activeTab.id.startsWith("seed-");
       
       if (isNewSeed) {
@@ -166,18 +209,57 @@ export function WorkbenchView() {
     toast.success("Prompt exported as JSON and Markdown");
   };
 
+  const handleOpenFile = async (file: FileNode) => {
+    if (file.type === "folder") {
+      return;
+    }
+
+    toast.info("Opening file...");
+
+    try {
+      const response = await fetch(`/api/drive/content/${file.id}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to fetch file content");
+      }
+
+      const data = await response.json();
+      const content = data.content || "";
+
+      openFileTab(file.id, file.name, file.path, content);
+      toast.success(`Opened ${file.name}`);
+    } catch (error) {
+      console.error("[OpenFile] Error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to open file");
+    }
+  };
+
   return (
-    <div className="flex h-full bg-bg-primary">
-      <div className="flex flex-col flex-1 min-w-0">
-        <TabBar />
-        <div className="flex-1 overflow-hidden">
-          <Editor />
-        </div>
-        <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
-      </div>
-      <div className="w-80 flex-shrink-0">
-        <AgentActivityPanel />
-      </div>
+    <div className="h-full bg-bg-primary">
+      <PanelGroup direction="horizontal">
+        <Panel defaultSize={20} minSize={15} maxSize={35} aria-label="File explorer panel">
+          <WorkbenchFileTreePanel onOpenFile={handleOpenFile} />
+        </Panel>
+        
+        <PanelResizeHandle className="w-1 bg-border hover:bg-border-hover transition-colors" aria-label="Resize file explorer" />
+        
+        <Panel defaultSize={60} aria-label="Editor panel">
+          <div className="flex flex-col h-full">
+            <TabBar />
+            <div className="flex-1 overflow-hidden">
+              <Editor />
+            </div>
+            <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
+          </div>
+        </Panel>
+        
+        <PanelResizeHandle className="w-1 bg-border hover:bg-border-hover transition-colors" aria-label="Resize agent activity panel" />
+        
+        <Panel defaultSize={20} aria-label="Agent activity panel">
+          <AgentActivityPanel />
+        </Panel>
+      </PanelGroup>
     </div>
   );
 }

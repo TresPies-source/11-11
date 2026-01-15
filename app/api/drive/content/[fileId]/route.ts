@@ -458,6 +458,72 @@ export async function GET(
   }
 }
 
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { fileId: string } }
+) {
+  try {
+    const { fileId } = params;
+    const body = await request.json();
+    const { content } = body;
+
+    if (!content || typeof content !== "string") {
+      return NextResponse.json(
+        { error: "Invalid request body - 'content' field required" },
+        { status: 400 }
+      );
+    }
+
+    if (isDevMode()) {
+      console.warn(
+        `[Drive API] Running in dev mode - simulating content update for fileId: ${fileId}`
+      );
+
+      MOCK_CONTENT[fileId] = content;
+
+      return NextResponse.json({
+        success: true,
+        fileId,
+        modifiedTime: new Date().toISOString(),
+      });
+    }
+
+    const session = await getAuthSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized - no valid session" },
+        { status: 401 }
+      );
+    }
+
+    const driveClient = await createDriveClient(session.accessToken);
+    const result = await driveClient.updateFileContent(fileId, content);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("[Drive API] Error updating file content:", error);
+
+    if (error instanceof AuthError) {
+      return NextResponse.json(
+        { error: "Authentication failed" },
+        { status: 401 }
+      );
+    }
+
+    if (error instanceof NotFoundError) {
+      return NextResponse.json(
+        { error: "File not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Failed to update file content in Google Drive" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { fileId: string } }

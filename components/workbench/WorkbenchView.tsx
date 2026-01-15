@@ -9,7 +9,7 @@ import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
 import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "react-resizable-panels";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { FileNode } from "@/lib/types";
 
 export function WorkbenchView() {
@@ -30,6 +30,19 @@ export function WorkbenchView() {
       setActiveTab(welcomeTab.id);
     }
   }, [tabs.length, addTab, setActiveTab]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRun = async () => {
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
@@ -93,6 +106,12 @@ export function WorkbenchView() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+          
+          if (response.status === 404) {
+            toast.error("This file no longer exists. The tab will remain open but cannot be saved.");
+            return;
+          }
+          
           throw new Error(errorData.error || "Failed to save file");
         }
 
@@ -218,14 +237,14 @@ export function WorkbenchView() {
 
   return (
     <div className="h-full bg-bg-primary">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
+      <PanelGroup direction="horizontal">
+        <Panel defaultSize={20} minSize={15} maxSize={35} aria-label="File explorer panel">
           <WorkbenchFileTreePanel onOpenFile={handleOpenFile} />
-        </ResizablePanel>
+        </Panel>
         
-        <ResizableHandle className="w-1 bg-border hover:bg-border-hover transition-colors" />
+        <PanelResizeHandle className="w-1 bg-border hover:bg-border-hover transition-colors" aria-label="Resize file explorer" />
         
-        <ResizablePanel defaultSize={60}>
+        <Panel defaultSize={60} aria-label="Editor panel">
           <div className="flex flex-col h-full">
             <TabBar />
             <div className="flex-1 overflow-hidden">
@@ -233,14 +252,14 @@ export function WorkbenchView() {
             </div>
             <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
           </div>
-        </ResizablePanel>
+        </Panel>
         
-        <ResizableHandle className="w-1 bg-border hover:bg-border-hover transition-colors" />
+        <PanelResizeHandle className="w-1 bg-border hover:bg-border-hover transition-colors" aria-label="Resize agent activity panel" />
         
-        <ResizablePanel defaultSize={20}>
+        <Panel defaultSize={20} aria-label="Agent activity panel">
           <AgentActivityPanel />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </Panel>
+      </PanelGroup>
     </div>
   );
 }

@@ -30,24 +30,25 @@ export function WorkbenchFileTreePanel({ onOpenFile }: WorkbenchFileTreePanelPro
   };
 
   return (
-    <div className="flex flex-col h-full bg-bg-primary border-r border-bg-tertiary">
+    <div className="flex flex-col h-full bg-bg-primary border-r border-bg-tertiary" style={{ minWidth: '200px' }}>
       <div className="flex items-center gap-2 px-4 py-3 border-b border-bg-tertiary bg-bg-secondary">
-        <Folder className="w-4 h-4 text-text-accent" />
+        <Folder className="w-4 h-4 text-text-accent" aria-hidden="true" />
         <h2 className="text-sm font-semibold text-text-primary">Files</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2">
+      <div className="flex-1 overflow-y-auto p-2" role="region" aria-label="File explorer">
         {isLoading ? (
-          <div className="flex items-center justify-center h-32">
-            <Loader2 className="w-6 h-6 text-text-accent animate-spin" />
+          <div className="flex items-center justify-center h-32" role="status" aria-label="Loading files">
+            <Loader2 className="w-6 h-6 text-text-accent animate-spin" aria-hidden="true" />
+            <span className="sr-only">Loading files...</span>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center h-32 gap-2 px-4">
-            <AlertCircle className="w-6 h-6 text-red-500" />
+          <div className="flex flex-col items-center justify-center h-32 gap-2 px-4" role="alert" aria-live="polite">
+            <AlertCircle className="w-6 h-6 text-red-500" aria-hidden="true" />
             <p className="text-xs text-center text-text-secondary">{error}</p>
           </div>
         ) : fileTree.length === 0 ? (
-          <div className="flex items-center justify-center h-32">
+          <div className="flex items-center justify-center h-32" role="status">
             <p className="text-xs text-text-secondary">No files found</p>
           </div>
         ) : (

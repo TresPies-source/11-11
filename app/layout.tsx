@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ActivityProvider } from "@/components/providers/ActivityProvider";
 import { ActivityStatus } from "@/components/activity/ActivityStatus";
 import { ResizableLayout } from "@/components/layout/ResizableLayout";
+import { OnboardingWrapper } from "@/components/onboarding/OnboardingWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -67,6 +68,7 @@ export default function RootLayout({
                           {children}
                         </ResizableLayout>
                         <ActivityStatus />
+                        <OnboardingWrapper />
                       </RepositoryProvider>
                     </FileTreeProvider>
                   </SyncStatusProvider>

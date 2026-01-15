@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, memo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, RotateCcw, Trash2, Clock } from "lucide-react";
+import { Copy, Check, RotateCcw, Trash2, Clock, Eye } from "lucide-react";
 import type { PromptWithCritique } from "@/lib/pglite/prompts";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
@@ -28,6 +29,7 @@ export const ArchiveCard = memo(function ArchiveCard({
   onDelete,
   searchQuery,
 }: ArchiveCardProps) {
+  const router = useRouter();
   const toast = useToast();
   const [copied, setCopied] = useState(false);
 
@@ -92,6 +94,11 @@ export const ArchiveCard = memo(function ArchiveCard({
       handleCheckboxChange();
     }
   }, [handleCheckboxChange]);
+
+  const handleViewDetails = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/librarian/${prompt.id}`);
+  }, [router, prompt.id]);
 
   return (
     <motion.div
@@ -172,6 +179,18 @@ export const ArchiveCard = memo(function ArchiveCard({
         </div>
 
         <div className="mt-auto pt-3 border-t border-bg-tertiary">
+          <div className="flex gap-2 mb-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleViewDetails}
+              aria-label={`View details for ${title}`}
+              className="w-full"
+            >
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              View Details
+            </Button>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="primary"

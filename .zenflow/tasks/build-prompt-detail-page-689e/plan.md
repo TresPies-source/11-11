@@ -64,3 +64,7 @@ Implement the task according to the technical specification and general engineer
    - What was implemented
    - How the solution was tested
    - The biggest issues or challenges encountered
+
+### [x] Step: wire up prompt detail page throughout application
+<!-- chat-id: e1809a7f-a561-40fa-8831-228142009107 -->
+<!-- agent: ZEN_CLI -->

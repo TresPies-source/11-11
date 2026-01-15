@@ -45,7 +45,7 @@ export const SeedlingCard = memo(function SeedlingCard({
   const critiqueScore = prompt.latestCritique?.score ?? 0;
 
   const handleCardClick = useCallback(() => {
-    router.push(`/?loadPrompt=${prompt.id}`);
+    router.push(`/librarian/${prompt.id}`);
   }, [router, prompt.id]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {

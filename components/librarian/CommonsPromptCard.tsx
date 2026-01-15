@@ -54,11 +54,10 @@ export const CommonsPromptCard = memo(function CommonsPromptCard({
     setIsExpanded(!isExpanded);
   }, [isExpanded]);
 
-  const handleEdit = useCallback(() => {
-    if (isOwner) {
-      router.push(`/librarian/greenhouse?edit=${prompt.id}`);
-    }
-  }, [isOwner, router, prompt.id]);
+  const handleViewDetails = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/librarian/${prompt.id}`);
+  }, [router, prompt.id]);
 
   return (
     <motion.div
@@ -110,21 +109,18 @@ export const CommonsPromptCard = memo(function CommonsPromptCard({
         </div>
 
         <div className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
-          {isOwner ? (
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEdit();
-              }}
-              aria-label={`View your public prompt: ${title}`}
-              className="w-full"
-            >
-              <Eye className="h-4 w-4" aria-hidden="true" />
-              View My Prompt
-            </Button>
-          ) : (
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={handleViewDetails}
+            aria-label={`View details for ${title}`}
+            className="w-full"
+          >
+            <Eye className="h-4 w-4" aria-hidden="true" />
+            View Details
+          </Button>
+
+          {!isOwner && (
             <div onClick={(e) => e.stopPropagation()}>
               <CopyToLibraryButton
                 promptId={prompt.id}

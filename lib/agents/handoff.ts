@@ -9,6 +9,8 @@ import {
 import { getAgentById, isValidAgentId } from './supervisor';
 import { invokeLibrarianAgent } from './librarian-handler';
 import { invokeDojoAgent } from './dojo-handler';
+import { invokeBuilderAgent } from './builder-handler';
+import { invokeDebuggerAgent } from './debugger-handler';
 import { startSpan, endSpan, logEvent, isTraceActive } from '../harness/trace';
 
 export interface HandoffEvent {
@@ -261,10 +263,11 @@ export async function invokeAgent(
     case AGENT_IDS.DOJO:
       return await invokeDojoAgent(context);
     
+    case AGENT_IDS.BUILDER:
+      return await invokeBuilderAgent(context);
+    
     case AGENT_IDS.DEBUGGER:
-      // Debugger agent handler will be implemented in future feature
-      console.log('[AGENT_INVOKE] Debugger agent invoked (not yet implemented)');
-      return { message: 'Debugger agent response placeholder' };
+      return await invokeDebuggerAgent(context);
     
     default:
       throw new HandoffError(

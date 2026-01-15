@@ -107,6 +107,7 @@ export const AGENT_IDS = {
   DOJO: 'dojo',
   LIBRARIAN: 'librarian',
   DEBUGGER: 'debugger',
+  BUILDER: 'builder',
 } as const;
 
 export type AgentId = typeof AGENT_IDS[keyof typeof AGENT_IDS];

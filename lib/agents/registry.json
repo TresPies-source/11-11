@@ -63,6 +63,23 @@
         "User wants to explore perspectives (without conflicts)"
       ],
       "default": false
+    },
+    {
+      "id": "builder",
+      "name": "Builder Agent",
+      "icon": "🛠️",
+      "tagline": "Code generation and execution",
+      "description": "Generates and modifies code based on user requests. Use for creating new components, writing functions, or modifying existing files.",
+      "when_to_use": [
+        "User wants to create a new file, component, or function",
+        "User asks to 'build', 'create', 'generate code for', 'write a function for', or 'implement' a feature"
+      ],
+      "when_not_to_use": [
+        "User wants to explore ideas (Handoff to Dojo)",
+        "User is searching for documentation (Handoff to Librarian)",
+        "User has a bug or conflict in their reasoning (Handoff to Debugger)"
+      ],
+      "default": false
     }
   ]
 }

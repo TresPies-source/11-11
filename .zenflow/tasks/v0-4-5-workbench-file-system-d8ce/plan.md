@@ -197,7 +197,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ---
 
-### [ ] Task 3.2: Update Save Handler for File-Based Tabs
+### [x] Task 3.2: Update Save Handler for File-Based Tabs
+<!-- chat-id: 1e64d5b6-855c-4fdf-a357-5cd2fe0cc3c6 -->
 **Goal:** Enable saving file-based tabs back to Google Drive
 
 **Files:**

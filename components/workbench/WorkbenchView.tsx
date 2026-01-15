@@ -80,6 +80,27 @@ export function WorkbenchView() {
     }
 
     try {
+      if (activeTab.isFileBased && activeTab.fileId) {
+        console.log("[Save] Saving file-based tab:", activeTab.fileId);
+        
+        const response = await fetch(`/api/drive/content/${activeTab.fileId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: activeTab.content,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to save file");
+        }
+
+        console.log("[Save] File saved successfully");
+        toast.success("File saved successfully");
+        return;
+      }
+
       const isNewSeed = !activeTab.id.startsWith("seed-");
       
       if (isNewSeed) {

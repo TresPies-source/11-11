@@ -9,9 +9,10 @@ interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   isCollapsed?: boolean;
+  onClick?: () => void;
 }
 
-function NavItemComponent({ href, icon, label, isCollapsed = false }: NavItemProps) {
+function NavItemComponent({ href, icon, label, isCollapsed = false, onClick }: NavItemProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
@@ -19,6 +20,7 @@ function NavItemComponent({ href, icon, label, isCollapsed = false }: NavItemPro
     <Link
       href={href}
       title={isCollapsed ? label : undefined}
+      onClick={onClick}
       className={`
         flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-2 py-2 rounded-md transition-all duration-fast
         ${isActive 

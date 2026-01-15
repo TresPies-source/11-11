@@ -16,7 +16,7 @@ export const RecentActivityFeed = React.memo(function RecentActivityFeed() {
   if (recentActivities.length === 0) {
     return (
       <Card>
-        <h2 className="text-2xl font-semibold mb-6">Recent Activity</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Recent Activity</h2>
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-bg-tertiary/30 mb-3">
             <Clock className="w-6 h-6 text-text-secondary" />
@@ -34,7 +34,7 @@ export const RecentActivityFeed = React.memo(function RecentActivityFeed() {
 
   return (
     <Card>
-      <h2 className="text-2xl font-semibold mb-6">Recent Activity</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Recent Activity</h2>
       <div className="flex flex-col gap-2">
         {recentActivities.map((activity, index) => (
           <ActivityItem

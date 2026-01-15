@@ -23,12 +23,12 @@ export const TabBar = React.memo(function TabBar() {
       <button
         onClick={handleAddTab}
         className={cn(
-          "flex items-center justify-center gap-2 px-4 h-10 flex-shrink-0 text-text-accent hover:text-text-primary hover:bg-bg-tertiary transition-colors font-medium border-r border-bg-tertiary"
+          "flex items-center justify-center gap-2 px-2 sm:px-4 h-10 flex-shrink-0 text-text-accent hover:text-text-primary hover:bg-bg-tertiary transition-colors font-medium border-r border-bg-tertiary"
         )}
         aria-label="Add new tab"
       >
-        <Plus className="w-5 h-5" />
-        <span className="text-sm">New Tab</span>
+        <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+        <span className="text-xs sm:text-sm hidden sm:inline">New Tab</span>
       </button>
       <div className="flex items-center flex-1 min-w-0">
         {tabs.map((tab) => (

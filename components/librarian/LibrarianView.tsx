@@ -51,7 +51,7 @@ export function LibrarianView() {
   }, [clearResults, setQuery]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main" aria-label="The Librarian's Home">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8" role="main" aria-label="The Librarian's Home">
       <PageHeader
         title="Librarian"
         subtitle="Search, discover, and manage your collective intelligence."
@@ -73,7 +73,7 @@ export function LibrarianView() {
         onClearSearch={handleClearSearch}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,7 +93,7 @@ export function LibrarianView() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 0.175 }}
-          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-6 shadow-sm"
+          className="bg-bg-secondary rounded-lg border border-bg-tertiary p-4 sm:p-6 shadow-sm"
           aria-label="Recent searches"
         >
           <RecentSearches

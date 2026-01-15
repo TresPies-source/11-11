@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { NavItem } from "./NavItem";
+import { cn } from "@/lib/utils";
 
 interface ProjectItem {
   id: string;
@@ -13,6 +14,11 @@ interface RecentItem {
   id: string;
   name: string;
   type: string;
+}
+
+interface NavigationSidebarProps {
+  isMobileOpen?: boolean;
+  onMobileToggle?: (open: boolean) => void;
 }
 
 const mockProjects: ProjectItem[] = [
@@ -27,7 +33,7 @@ const mockRecentItems: RecentItem[] = [
   { id: '3', name: 'API Documentation', type: 'doc' },
 ];
 
-export function NavigationSidebar() {
+export function NavigationSidebar({ isMobileOpen = false, onMobileToggle }: NavigationSidebarProps = {}) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -44,7 +50,25 @@ export function NavigationSidebar() {
   };
 
   return (
-    <aside className={`h-screen bg-bg-secondary border-r border-bg-tertiary p-6 flex flex-col justify-between transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[240px]'}`}>
+    <>
+      {/* Mobile hamburger button */}
+      {onMobileToggle && (
+        <button
+          onClick={() => onMobileToggle(!isMobileOpen)}
+          className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-md bg-bg-secondary border border-bg-tertiary text-text-primary hover:bg-bg-tertiary transition-colors"
+          aria-label={isMobileOpen ? "Close navigation" : "Open navigation"}
+        >
+          {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      )}
+      
+      <aside className={cn(
+        "h-screen bg-bg-secondary border-r border-bg-tertiary p-4 sm:p-6 flex flex-col justify-between transition-all duration-300",
+        isCollapsed ? 'w-[80px]' : 'w-[240px]',
+        // Mobile styles
+        onMobileToggle && "fixed top-0 left-0 z-40 lg:relative",
+        onMobileToggle && !isMobileOpen && "-translate-x-full lg:translate-x-0"
+      )}>
       <div className="flex flex-col">
         <div className={`flex items-center mb-2 ${isCollapsed ? 'justify-center' : 'gap-2'}`}>
           {!isCollapsed && <span className="text-2xl">🌳</span>}
@@ -69,10 +93,34 @@ export function NavigationSidebar() {
         </button>
         
         <nav className="flex flex-col gap-1">
-          <NavItem href="/dashboard" icon="🏠" label="Dashboard" isCollapsed={isCollapsed} />
-          <NavItem href="/workbench" icon="💼" label="Workbench" isCollapsed={isCollapsed} />
-          <NavItem href="/librarian" icon="📚" label="Librarian" isCollapsed={isCollapsed} />
-          <NavItem href="/seeds" icon="🌱" label="Seeds" isCollapsed={isCollapsed} />
+          <NavItem 
+            href="/dashboard" 
+            icon="🏠" 
+            label="Dashboard" 
+            isCollapsed={isCollapsed}
+            onClick={() => onMobileToggle?.(false)}
+          />
+          <NavItem 
+            href="/workbench" 
+            icon="💼" 
+            label="Workbench" 
+            isCollapsed={isCollapsed}
+            onClick={() => onMobileToggle?.(false)}
+          />
+          <NavItem 
+            href="/librarian" 
+            icon="📚" 
+            label="Librarian" 
+            isCollapsed={isCollapsed}
+            onClick={() => onMobileToggle?.(false)}
+          />
+          <NavItem 
+            href="/seeds" 
+            icon="🌱" 
+            label="Seeds" 
+            isCollapsed={isCollapsed}
+            onClick={() => onMobileToggle?.(false)}
+          />
         </nav>
       </div>
 
@@ -112,5 +160,6 @@ export function NavigationSidebar() {
         </div>
       )}
     </aside>
+    </>
   );
 }

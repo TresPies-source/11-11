@@ -18,14 +18,14 @@ export default function Dashboard() {
   };
 
   return (
-    <section className="p-12">
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-text-primary">Dashboard</h1>
+    <section className="p-4 sm:p-6 md:p-8 lg:p-12">
+      <div className="flex flex-col gap-6 md:gap-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">Dashboard</h1>
           <Button
             variant="primary"
             onClick={() => setIsModalOpen(true)}
-            className="bg-text-accent hover:bg-opacity-90"
+            className="bg-text-accent hover:bg-opacity-90 w-full sm:w-auto"
           >
             <Plus className="w-5 h-5" />
             <span>New Project</span>
@@ -33,23 +33,27 @@ export default function Dashboard() {
         </div>
 
         <Card glow={true}>
-          <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4">
             <Button variant="secondary">
               <span>🧠</span>
-              <span>New Dojo Session</span>
+              <span className="hidden sm:inline">New Dojo Session</span>
+              <span className="sm:hidden">Dojo Session</span>
             </Button>
             <Button variant="secondary">
               <span>✍️</span>
-              <span>Write Prompt</span>
+              <span className="hidden sm:inline">Write Prompt</span>
+              <span className="sm:hidden">Write</span>
             </Button>
             <Button variant="secondary">
               <span>📚</span>
-              <span>Search Library</span>
+              <span className="hidden sm:inline">Search Library</span>
+              <span className="sm:hidden">Library</span>
             </Button>
             <Button variant="secondary">
               <span>🌱</span>
-              <span>Plant Seed</span>
+              <span className="hidden sm:inline">Plant Seed</span>
+              <span className="sm:hidden">Seed</span>
             </Button>
           </div>
         </Card>

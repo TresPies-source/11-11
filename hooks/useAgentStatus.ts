@@ -4,7 +4,7 @@ import { AgentStatusInfo, AgentStatusMap, AgentStatusType } from "@/lib/types";
 
 const POLLING_INTERVAL = 2500;
 
-const AGENT_IDS = ['supervisor', 'dojo', 'librarian', 'debugger'] as const;
+const AGENT_IDS = ['supervisor', 'dojo', 'librarian', 'debugger', 'builder'] as const;
 
 export interface UseAgentStatusReturn {
   agentStatuses: AgentStatusMap;
@@ -123,6 +123,7 @@ export function useAgentStatus(): UseAgentStatusReturn {
       dojo: deriveAgentStatusFromActivity('dojo', current, history),
       librarian: deriveAgentStatusFromActivity('librarian', current, history),
       debugger: deriveAgentStatusFromActivity('debugger', current, history),
+      builder: deriveAgentStatusFromActivity('builder', current, history),
     };
 
     return {
@@ -130,6 +131,7 @@ export function useAgentStatus(): UseAgentStatusReturn {
       dojo: apiStatuses.dojo || derivedStatuses.dojo,
       librarian: apiStatuses.librarian || derivedStatuses.librarian,
       debugger: apiStatuses.debugger || derivedStatuses.debugger,
+      builder: apiStatuses.builder || derivedStatuses.builder,
     };
   }, [current, history, apiStatuses]);
 

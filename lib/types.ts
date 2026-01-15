@@ -249,7 +249,7 @@ export interface ActivityContextValue {
 export type AgentStatusType = 'idle' | 'thinking' | 'working' | 'error';
 
 export interface AgentStatusInfo {
-  agentId: 'supervisor' | 'dojo' | 'librarian' | 'debugger';
+  agentId: 'supervisor' | 'dojo' | 'librarian' | 'debugger' | 'builder';
   status: AgentStatusType;
   message?: string;
   lastActive?: string;
@@ -261,4 +261,5 @@ export interface AgentStatusMap {
   dojo: AgentStatusInfo;
   librarian: AgentStatusInfo;
   debugger: AgentStatusInfo;
+  builder: AgentStatusInfo;
 }

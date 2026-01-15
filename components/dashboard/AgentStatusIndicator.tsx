@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Brain, Search, Bug, GitBranch } from "lucide-react";
+import { Brain, Search, Bug, GitBranch, Wrench } from "lucide-react";
 import { AgentStatusInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ const AGENT_ICONS = {
   dojo: Brain,
   librarian: Search,
   debugger: Bug,
+  builder: Wrench,
 } as const;
 
 const AGENT_COLORS = {
@@ -20,6 +21,7 @@ const AGENT_COLORS = {
   dojo: '#f39c5a',
   librarian: '#ffd699',
   debugger: '#6b7f91',
+  builder: '#4a90e2',
 } as const;
 
 const AGENT_NAMES = {
@@ -27,6 +29,7 @@ const AGENT_NAMES = {
   dojo: 'Dojo',
   librarian: 'Librarian',
   debugger: 'Debugger',
+  builder: 'Builder',
 } as const;
 
 const STATUS_COLORS = {

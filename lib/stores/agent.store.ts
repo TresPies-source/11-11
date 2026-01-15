@@ -43,6 +43,12 @@ const createDefaultStatuses = (): AgentStatusMap => ({
     message: 'Ready',
     progress: 0,
   },
+  builder: {
+    agentId: 'builder',
+    status: 'idle',
+    message: 'Ready',
+    progress: 0,
+  },
 });
 
 export const useAgentStore = create<AgentActivityState>((set) => ({

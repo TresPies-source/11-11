@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -10,6 +11,7 @@ import { AgentStatus } from '@/components/dashboard/AgentStatus';
 import { useProjects } from '@/hooks/useProjects';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { projects, addProject } = useProjects();
 
@@ -35,7 +37,7 @@ export default function Dashboard() {
         <Card glow={true}>
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4">
-            <Button variant="secondary">
+            <Button variant="secondary" onClick={() => router.push('/dojo/new')}>
               <span>🧠</span>
               <span className="hidden sm:inline">New Dojo Session</span>
               <span className="sm:hidden">Dojo Session</span>

@@ -3,14 +3,17 @@
 import { useEffect, useRef } from "react";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { useToast } from "@/hooks/useToast";
+import { useSupervisor } from "@/hooks/useSupervisor";
 import { TabBar } from "./TabBar";
 import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
+import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
 
 export function WorkbenchView() {
-  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, isRunning, setRunning, setActiveTabError } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError } = useWorkbenchStore();
   const initialized = useRef(false);
   const toast = useToast();
+  const supervisor = useSupervisor();
 
   useEffect(() => {
     if (!initialized.current && tabs.length === 0) {
@@ -37,38 +40,32 @@ export function WorkbenchView() {
       return;
     }
 
-    setRunning(true);
+    if (supervisor.isLoading) {
+      toast.error("A run is already in progress");
+      return;
+    }
+
     setActiveTabError(null);
 
     try {
       console.log("[Run] Executing prompt with Supervisor:", activeTab.title);
+      toast.info("Running prompt...");
       
-      const response = await fetch("/api/supervisor/route/route", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: activeTab.content,
-          conversation_context: [],
-          session_id: crypto.randomUUID(),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to run prompt");
+      await supervisor.run(activeTab.content);
+      
+      if (!supervisor.error) {
+        toast.success("Run completed successfully");
       }
-
-      const routingResult = await response.json();
-      console.log("[Run] Routing decision:", routingResult);
-      
-      toast.success("Dojo run initiated successfully");
     } catch (error) {
       console.error("[Run] Error:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to run prompt";
       setActiveTabError(errorMessage);
       toast.error(errorMessage);
-    } finally {
-      setRunning(false);
+    }
+    
+    if (supervisor.error) {
+      setActiveTabError(supervisor.error);
+      toast.error(supervisor.error);
     }
   };
 
@@ -170,12 +167,17 @@ export function WorkbenchView() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-bg-primary">
-      <TabBar />
-      <div className="flex-1 overflow-hidden">
-        <Editor />
+    <div className="flex h-full bg-bg-primary">
+      <div className="flex flex-col flex-1 min-w-0">
+        <TabBar />
+        <div className="flex-1 overflow-hidden">
+          <Editor />
+        </div>
+        <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
       </div>
-      <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={isRunning} />
+      <div className="w-80 flex-shrink-0">
+        <AgentActivityPanel />
+      </div>
     </div>
   );
 }

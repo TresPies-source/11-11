@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { Loader2 } from "lucide-react";
 
 interface ActionBarProps {
   onRun: () => void;
@@ -16,8 +17,9 @@ export function ActionBar({ onRun, onSave, onExport, isRunning }: ActionBarProps
         variant="primary" 
         onClick={onRun} 
         disabled={isRunning}
-        className={`text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 ${isRunning ? 'animate-pulse' : ''}`}
+        className="text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
       >
+        {isRunning && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
         {isRunning ? 'Running...' : 'Run with Dojo'}
       </Button>
       <Button 

@@ -108,7 +108,7 @@ export function AgentCard({
               <div className="w-full bg-bg-tertiary rounded-full h-1.5 overflow-hidden">
                 <div 
                   className={cn(
-                    "h-full rounded-full transition-all duration-normal",
+                    "h-full rounded-full transition-all duration-normal ease-out",
                     `bg-${agentId}`
                   )}
                   style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}

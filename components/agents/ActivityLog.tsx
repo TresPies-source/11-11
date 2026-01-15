@@ -51,7 +51,7 @@ export function ActivityLog({ activities = DEFAULT_ACTIVITIES, isCollapsed = fal
         {displayedActivities.map((activity, index) => (
           <div
             key={index}
-            className="text-xs text-text-tertiary flex items-start gap-1"
+            className="text-xs text-text-tertiary flex items-start gap-1 animate-in fade-in duration-fast"
             title={activity.message}
           >
             {activity.agent && (

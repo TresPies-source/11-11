@@ -5,7 +5,8 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { AgentCard } from "@/components/agent/AgentCard";
 import { SystemInfo } from "@/components/agents/SystemInfo";
 import { ActivityLog } from "@/components/agents/ActivityLog";
-import { useAgentStatus } from "@/hooks/useAgentStatus";
+import { useAgentStore } from "@/lib/stores/agent.store";
+import { HarnessEvent } from "@/lib/harness/types";
 
 const AGENT_METADATA = {
   supervisor: { name: "Supervisor", icon: "👔" },
@@ -16,12 +17,24 @@ const AGENT_METADATA = {
 
 const AGENT_ORDER: Array<keyof typeof AGENT_METADATA> = ['supervisor', 'dojo', 'librarian', 'debugger'];
 
+const extractAgentFromEvent = (event: HarnessEvent): 'supervisor' | 'dojo' | 'librarian' | 'debugger' | undefined => {
+  const agentId = event.metadata?.agent_id || event.inputs?.agent_id || event.outputs?.agent_id;
+  if (agentId && ['supervisor', 'dojo', 'librarian', 'debugger'].includes(agentId)) {
+    return agentId as 'supervisor' | 'dojo' | 'librarian' | 'debugger';
+  }
+  return undefined;
+};
+
+const extractMessageFromEvent = (event: HarnessEvent): string => {
+  return event.inputs?.message || event.metadata?.message || event.event_type;
+};
+
 interface AgentActivityPanelProps {
   onToggle?: () => void;
 }
 
 export function AgentActivityPanel({ onToggle }: AgentActivityPanelProps = {}) {
-  const { agentStatuses } = useAgentStatus();
+  const { statuses, cost, duration, trace, isRunning } = useAgentStore();
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelWidth, setPanelWidth] = useState(320);
   
@@ -76,7 +89,7 @@ export function AgentActivityPanel({ onToggle }: AgentActivityPanelProps = {}) {
       <div className="flex-1 overflow-y-auto p-6 space-y-3">
         {AGENT_ORDER.map((agentId) => {
           const metadata = AGENT_METADATA[agentId];
-          const status = agentStatuses[agentId];
+          const status = statuses[agentId];
           
           return (
             <AgentCard
@@ -94,9 +107,19 @@ export function AgentActivityPanel({ onToggle }: AgentActivityPanelProps = {}) {
       </div>
 
       <div className={`border-t border-bg-tertiary ${isCollapsed ? 'p-2' : 'p-6'} space-y-4`}>
-        <SystemInfo isCollapsed={isCollapsed} />
+        <SystemInfo 
+          cost={`$${cost.toFixed(4)}`} 
+          duration={`${duration.toFixed(1)}s`} 
+          isCollapsed={isCollapsed} 
+        />
         <div className={`border-t border-bg-tertiary ${isCollapsed ? 'pt-2' : 'pt-4'}`}>
-          <ActivityLog isCollapsed={isCollapsed} />
+          <ActivityLog 
+            activities={trace.slice(-5).reverse().map(event => ({
+              agent: extractAgentFromEvent(event),
+              message: extractMessageFromEvent(event),
+            }))}
+            isCollapsed={isCollapsed} 
+          />
         </div>
       </div>
     </div>

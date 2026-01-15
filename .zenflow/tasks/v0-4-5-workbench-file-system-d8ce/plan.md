@@ -80,7 +80,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ---
 
-### [ ] Task 1.2: Update WorkbenchView with Resizable Panel Layout
+### [x] Task 1.2: Update WorkbenchView with Resizable Panel Layout
+<!-- chat-id: 77afd38d-3057-4b69-ab77-2e1025b4c0d2 -->
 **Goal:** Add 3-panel resizable layout to Workbench
 
 **Files:**

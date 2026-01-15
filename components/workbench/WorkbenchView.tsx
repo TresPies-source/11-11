@@ -8,6 +8,8 @@ import { TabBar } from "./TabBar";
 import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
+import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "react-resizable-panels";
 
 export function WorkbenchView() {
   const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError } = useWorkbenchStore();
@@ -167,17 +169,30 @@ export function WorkbenchView() {
   };
 
   return (
-    <div className="flex h-full bg-bg-primary">
-      <div className="flex flex-col flex-1 min-w-0">
-        <TabBar />
-        <div className="flex-1 overflow-hidden">
-          <Editor />
-        </div>
-        <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
-      </div>
-      <div className="w-80 flex-shrink-0">
-        <AgentActivityPanel />
-      </div>
+    <div className="h-full bg-bg-primary">
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
+          <WorkbenchFileTreePanel onOpenFile={() => {}} />
+        </ResizablePanel>
+        
+        <ResizableHandle className="w-1 bg-border hover:bg-border-hover transition-colors" />
+        
+        <ResizablePanel defaultSize={60}>
+          <div className="flex flex-col h-full">
+            <TabBar />
+            <div className="flex-1 overflow-hidden">
+              <Editor />
+            </div>
+            <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
+          </div>
+        </ResizablePanel>
+        
+        <ResizableHandle className="w-1 bg-border hover:bg-border-hover transition-colors" />
+        
+        <ResizablePanel defaultSize={20}>
+          <AgentActivityPanel />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

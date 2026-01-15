@@ -12,6 +12,7 @@ import { ActivityProvider } from "@/components/providers/ActivityProvider";
 import { ActivityStatus } from "@/components/activity/ActivityStatus";
 import { ResizableLayout } from "@/components/layout/ResizableLayout";
 import { OnboardingWrapper } from "@/components/onboarding/OnboardingWrapper";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,7 +66,9 @@ export default function RootLayout({
                     <FileTreeProvider>
                       <RepositoryProvider>
                         <ResizableLayout>
-                          {children}
+                          <PageTransition>
+                            {children}
+                          </PageTransition>
                         </ResizableLayout>
                         <ActivityStatus />
                         <OnboardingWrapper />

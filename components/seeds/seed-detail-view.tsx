@@ -169,12 +169,12 @@ export const SeedDetailView = memo(function SeedDetailView({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-screen"
+      className="p-12 flex flex-col min-h-screen"
     >
       <div className="mb-6">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-100 active:scale-95"
+          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors duration-100 active:scale-95"
           aria-label="Back to seeds list"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -206,8 +206,8 @@ export const SeedDetailView = memo(function SeedDetailView({
         )}
       </AnimatePresence>
 
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex-1 flex flex-col">
-        <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-background border border-border rounded-lg overflow-hidden flex-1 flex flex-col">
+        <div className="bg-bg-secondary border-b border-border p-6">
           <div className="flex items-center gap-2 mb-3">
             <span
               className={cn(
@@ -229,17 +229,17 @@ export const SeedDetailView = memo(function SeedDetailView({
               {statusConfig.label}
             </span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{seed.name}</h1>
+          <h1 className="text-3xl font-bold text-text-primary">{seed.name}</h1>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {seed.why_matters && (
             <section>
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
                 <span className="w-1 h-4 bg-accent rounded-full" />
                 Why it matters
               </h3>
-              <p className="text-gray-900 dark:text-gray-100 leading-relaxed pl-3">
+              <p className="text-text-primary leading-relaxed pl-3">
                 {seed.why_matters}
               </p>
             </section>
@@ -247,22 +247,22 @@ export const SeedDetailView = memo(function SeedDetailView({
 
           {seed.revisit_when && (
             <section>
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-warning" />
                 Revisit when
               </h3>
-              <p className="text-gray-900 dark:text-gray-100 leading-relaxed pl-3">
+              <p className="text-text-primary leading-relaxed pl-3">
                 {seed.revisit_when}
               </p>
             </section>
           )}
 
           <section>
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
               <span className="w-1 h-4 bg-success rounded-full" />
               Content
             </h3>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-sm text-gray-900 dark:text-gray-100 leading-relaxed whitespace-pre-wrap font-mono border border-gray-200 dark:border-gray-700">
+            <div className="bg-bg-secondary rounded-lg p-4 text-sm text-text-primary leading-relaxed whitespace-pre-wrap font-mono border border-border">
               {seed.content}
             </div>
           </section>
@@ -270,28 +270,28 @@ export const SeedDetailView = memo(function SeedDetailView({
           <section className="pt-4 border-t border-border">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500 dark:text-gray-400 block mb-1">Created</span>
-                <span className="text-gray-900 dark:text-gray-100 font-medium">
+                <span className="text-text-tertiary block mb-1">Created</span>
+                <span className="text-text-primary font-medium">
                   {new Date(seed.created_at).toLocaleString()}
                 </span>
               </div>
               <div>
-                <span className="text-gray-500 dark:text-gray-400 block mb-1">Last Updated</span>
-                <span className="text-gray-900 dark:text-gray-100 font-medium">
+                <span className="text-text-tertiary block mb-1">Last Updated</span>
+                <span className="text-text-primary font-medium">
                   {new Date(seed.updated_at).toLocaleString()}
                 </span>
               </div>
               {seed.replanted && (
                 <>
                   <div>
-                    <span className="text-gray-500 dark:text-gray-400 block mb-1">Replanted</span>
+                    <span className="text-text-tertiary block mb-1">Replanted</span>
                     <span className="text-success font-medium">Yes</span>
                   </div>
                   <div>
-                    <span className="text-gray-500 dark:text-gray-400 block mb-1">
+                    <span className="text-text-tertiary block mb-1">
                       Replant Count
                     </span>
-                    <span className="text-gray-900 dark:text-gray-100 font-medium">
+                    <span className="text-text-primary font-medium">
                       {seed.replant_count}
                     </span>
                   </div>
@@ -301,10 +301,10 @@ export const SeedDetailView = memo(function SeedDetailView({
           </section>
         </div>
 
-        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6">
+        <div className="sticky bottom-0 bg-bg-secondary border-t border-border p-6">
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              <h4 className="text-sm font-semibold text-text-secondary mb-3">
                 Lifecycle Actions
               </h4>
               <div className="flex items-center gap-3">
@@ -315,7 +315,7 @@ export const SeedDetailView = memo(function SeedDetailView({
                     "flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-100 active:scale-95",
                     seed.status === "new"
                       ? "bg-muted/20 text-muted/50 cursor-not-allowed"
-                      : "bg-muted/30 text-gray-700 dark:text-gray-300 hover:bg-muted/40"
+                      : "bg-muted/30 text-text-secondary hover:bg-muted/40"
                   )}
                 >
                   Keep

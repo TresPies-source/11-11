@@ -124,14 +124,14 @@ export function SeedsView() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="p-12">
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
               <Leaf className="h-8 w-8 text-success" />
               Seed Library
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-text-secondary mt-2">
               Manage your knowledge seeds through Keep, Grow, Compost, and Replant
             </p>
           </div>
@@ -148,15 +148,15 @@ export function SeedsView() {
 
         <div className="flex gap-6">
           <aside className="w-64 flex-shrink-0">
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-96 animate-pulse" />
+            <div className="bg-background border border-border rounded-lg p-4 h-96 animate-pulse" />
           </aside>
 
           <main className="flex-1">
             <div className="animate-pulse space-y-4">
-              <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-lg w-full max-w-md"></div>
+              <div className="h-12 bg-muted rounded-lg w-full max-w-md"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-80 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                  <div key={i} className="h-80 bg-muted rounded-lg"></div>
                 ))}
               </div>
             </div>
@@ -168,14 +168,14 @@ export function SeedsView() {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="p-12">
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
               <Leaf className="h-8 w-8 text-success" />
               Seed Library
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-text-secondary mt-2">
               Manage your knowledge seeds through Keep, Grow, Compost, and Replant
             </p>
           </div>
@@ -236,15 +236,15 @@ export function SeedsView() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        className="p-12"
       >
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
               <Leaf className="h-8 w-8 text-success" />
               Seed Library
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-text-secondary mt-2">
               Manage your knowledge seeds through Keep, Grow, Compost, and Replant
             </p>
           </div>
@@ -295,7 +295,7 @@ export function SeedsView() {
           <main className="flex-1">
             <div className="mb-6">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-muted" />
                 <input
                   type="text"
                   placeholder="Search seeds by name or content..."
@@ -314,11 +314,11 @@ export function SeedsView() {
 
             {isEmpty ? (
               <div className="bg-secondary/50 border border-border rounded-lg p-12 text-center">
-                <Leaf className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-900 dark:text-gray-100 font-medium text-lg mb-2">
+                <Leaf className="h-16 w-16 text-text-muted mx-auto mb-4" />
+                <p className="text-text-primary font-medium text-lg mb-2">
                   {hasActiveFilters ? "No seeds match your filters" : "Your seed library is empty"}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-text-secondary text-sm">
                   {hasActiveFilters
                     ? "Try adjusting your search or filters"
                     : "Seeds will appear here as you create them in your knowledge garden"}
@@ -326,7 +326,7 @@ export function SeedsView() {
               </div>
             ) : (
               <>
-                <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                <div className="mb-4 text-sm text-text-secondary">
                   Showing {seeds.length} {seeds.length === 1 ? "seed" : "seeds"}
                 </div>
 

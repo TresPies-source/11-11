@@ -3,30 +3,24 @@
 import { Button } from "@/components/ui/Button";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 
-export function ActionBar() {
+interface ActionBarProps {
+  onTest: () => void;
+  onSave: () => void;
+  onExport: () => void;
+}
+
+export function ActionBar({ onTest, onSave, onExport }: ActionBarProps) {
   const { isAgentPanelOpen, toggleAgentPanel } = useWorkbenchStore();
-
-  const handleTestWithDojo = () => {
-    console.log("[Test with Dojo] button clicked");
-  };
-
-  const handleSave = () => {
-    console.log("[Save] button clicked");
-  };
-
-  const handleExport = () => {
-    console.log("[Export] button clicked");
-  };
 
   return (
     <div className="flex items-center gap-4 bg-bg-secondary border-t border-bg-tertiary px-6 py-4">
-      <Button variant="primary" onClick={handleTestWithDojo}>
-        Test with Dojo
+      <Button variant="primary" onClick={onTest}>
+        Test
       </Button>
-      <Button variant="secondary" onClick={handleSave}>
+      <Button variant="secondary" onClick={onSave}>
         Save
       </Button>
-      <Button variant="secondary" onClick={handleExport}>
+      <Button variant="secondary" onClick={onExport}>
         Export
       </Button>
       <div className="ml-auto">

@@ -4,6 +4,9 @@ export interface PromptTab {
   id: string;
   title: string;
   content: string;
+  fileId?: string;
+  filePath?: string;
+  isFileBased?: boolean;
 }
 
 interface WorkbenchState {
@@ -19,9 +22,11 @@ interface WorkbenchState {
   setRunning: (isRunning: boolean) => void;
   setActiveTabError: (error: string | null) => void;
   updateTabId: (oldId: string, newId: string) => void;
+  openFileTab: (fileId: string, fileName: string, filePath: string, content: string) => void;
+  getTabByFileId: (fileId: string) => PromptTab | undefined;
 }
 
-export const useWorkbenchStore = create<WorkbenchState>((set) => ({
+export const useWorkbenchStore = create<WorkbenchState>((set, get) => ({
   tabs: [],
   activeTabId: null,
   isRunning: false,
@@ -79,4 +84,30 @@ export const useWorkbenchStore = create<WorkbenchState>((set) => ({
     ),
     activeTabId: state.activeTabId === oldId ? newId : state.activeTabId
   })),
+  
+  openFileTab: (fileId, fileName, filePath, content) => set((state) => {
+    const existingTab = state.tabs.find((tab) => tab.fileId === fileId);
+    
+    if (existingTab) {
+      return { activeTabId: existingTab.id };
+    }
+    
+    const newTab: PromptTab = {
+      id: `file-${fileId}`,
+      title: fileName,
+      content,
+      fileId,
+      filePath,
+      isFileBased: true
+    };
+    
+    return {
+      tabs: [...state.tabs, newTab],
+      activeTabId: newTab.id
+    };
+  }),
+  
+  getTabByFileId: (fileId) => {
+    return get().tabs.find((tab) => tab.fileId === fileId);
+  },
 }));

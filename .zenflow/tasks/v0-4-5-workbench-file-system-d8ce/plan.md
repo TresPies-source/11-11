@@ -109,7 +109,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ### Phase 2: File-Based Tab System
 
-### [ ] Task 2.1: Extend Workbench Store for File-Based Tabs
+### [x] Task 2.1: Extend Workbench Store for File-Based Tabs
+<!-- chat-id: 13836fe3-59f4-4e15-9fcb-957ea39a4a75 -->
 **Goal:** Add support for file-based tabs in workbench store
 
 **Files:**

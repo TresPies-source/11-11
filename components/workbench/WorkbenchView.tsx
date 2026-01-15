@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Panel, PanelGroup, PanelResizeHandle, ImperativePanelHandle } from "react-resizable-panels";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { useToast } from "@/hooks/useToast";
 import { TabBar } from "./TabBar";
 import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
-import { AgentActivityPanel } from "@/components/layout/AgentActivityPanel";
 
 export function WorkbenchView() {
-  const { tabs, addTab, setActiveTab, isAgentPanelOpen, activeTabId } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, activeTabId } = useWorkbenchStore();
   const initialized = useRef(false);
-  const agentPanelRef = useRef<ImperativePanelHandle>(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -27,16 +24,6 @@ export function WorkbenchView() {
       setActiveTab(welcomeTab.id);
     }
   }, [tabs.length, addTab, setActiveTab]);
-
-  useEffect(() => {
-    if (agentPanelRef.current) {
-      if (isAgentPanelOpen) {
-        agentPanelRef.current.expand();
-      } else {
-        agentPanelRef.current.collapse();
-      }
-    }
-  }, [isAgentPanelOpen]);
 
   const handleTest = () => {
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
@@ -121,25 +108,10 @@ export function WorkbenchView() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-bg-primary">
+    <div className="flex flex-col h-full bg-bg-primary">
       <TabBar />
       <div className="flex-1 overflow-hidden">
-        <PanelGroup direction="horizontal">
-          <Panel defaultSize={70} minSize={30}>
-            <Editor />
-          </Panel>
-          <PanelResizeHandle className="w-2 bg-bg-tertiary hover:bg-text-accent transition-colors" />
-          <Panel
-            ref={agentPanelRef}
-            defaultSize={30}
-            minSize={10}
-            maxSize={40}
-            collapsible={true}
-            collapsedSize={0}
-          >
-            <AgentActivityPanel />
-          </Panel>
-        </PanelGroup>
+        <Editor />
       </div>
       <ActionBar onTest={handleTest} onSave={handleSave} onExport={handleExport} />
     </div>

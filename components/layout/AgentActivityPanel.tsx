@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { AgentCard } from "@/components/agent/AgentCard";
 import { SystemInfo } from "@/components/agents/SystemInfo";
 import { ActivityLog } from "@/components/agents/ActivityLog";
@@ -15,7 +16,11 @@ const AGENT_METADATA = {
 
 const AGENT_ORDER: Array<keyof typeof AGENT_METADATA> = ['supervisor', 'dojo', 'librarian', 'debugger'];
 
-export function AgentActivityPanel() {
+interface AgentActivityPanelProps {
+  onToggle?: () => void;
+}
+
+export function AgentActivityPanel({ onToggle }: AgentActivityPanelProps = {}) {
   const { agentStatuses } = useAgentStatus();
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelWidth, setPanelWidth] = useState(320);
@@ -45,6 +50,26 @@ export function AgentActivityPanel() {
       {!isCollapsed && (
         <div className="flex items-center justify-between p-6 border-b border-bg-tertiary">
           <h2 className="text-lg font-medium text-text-primary">Agent Activity</h2>
+          {onToggle && (
+            <button
+              onClick={onToggle}
+              className="p-1.5 rounded-md hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+              aria-label="Collapse Agent Activity Panel"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      )}
+      {isCollapsed && onToggle && (
+        <div className="flex items-center justify-center p-2 border-b border-bg-tertiary">
+          <button
+            onClick={onToggle}
+            className="p-1.5 rounded-md hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+            aria-label="Expand Agent Activity Panel"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
         </div>
       )}
 

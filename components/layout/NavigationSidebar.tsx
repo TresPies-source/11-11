@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 import { NavItem } from "./NavItem";
 
 interface ProjectItem {
@@ -26,61 +28,89 @@ const mockRecentItems: RecentItem[] = [
 ];
 
 export function NavigationSidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('sidebar-collapsed');
+    if (stored !== null) {
+      setIsCollapsed(stored === 'true');
+    }
+  }, []);
+
+  const toggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem('sidebar-collapsed', String(newState));
+  };
+
   return (
-    <aside className="w-[240px] h-screen bg-bg-secondary border-r border-bg-tertiary p-6 flex flex-col justify-between">
+    <aside className={`h-screen bg-bg-secondary border-r border-bg-tertiary p-6 flex flex-col justify-between transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[240px]'}`}>
       <div className="flex flex-col">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-2xl">🌳</span>
-          <span className="font-semibold text-lg text-text-primary">Dojo Genesis</span>
+        <div className={`flex items-center mb-2 ${isCollapsed ? 'justify-center' : 'gap-2'}`}>
+          {!isCollapsed && <span className="text-2xl">🌳</span>}
+          {!isCollapsed && <span className="font-semibold text-lg text-text-primary">Dojo Genesis</span>}
+          {isCollapsed && <span className="text-2xl">🌳</span>}
         </div>
         
-        <div className="text-sm text-text-secondary mb-6">
-          user@example.com
-        </div>
+        {!isCollapsed && (
+          <div className="text-sm text-text-secondary mb-6">
+            user@example.com
+          </div>
+        )}
         
         <div className="h-px bg-bg-tertiary mb-6" />
+
+        <button
+          onClick={toggleCollapse}
+          className="mb-4 p-2 rounded-md hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
+        </button>
         
         <nav className="flex flex-col gap-1">
-          <NavItem href="/dashboard" icon="🏠" label="Dashboard" />
-          <NavItem href="/workbench" icon="💼" label="Workbench" />
-          <NavItem href="/librarian" icon="📚" label="Librarian" />
-          <NavItem href="/seeds" icon="🌱" label="Seeds" />
+          <NavItem href="/dashboard" icon="🏠" label="Dashboard" isCollapsed={isCollapsed} />
+          <NavItem href="/workbench" icon="💼" label="Workbench" isCollapsed={isCollapsed} />
+          <NavItem href="/librarian" icon="📚" label="Librarian" isCollapsed={isCollapsed} />
+          <NavItem href="/seeds" icon="🌱" label="Seeds" isCollapsed={isCollapsed} />
         </nav>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <div>
-          <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide mb-3">
-            Projects
-          </h3>
-          <div className="flex flex-col gap-1">
-            {mockProjects.map((project) => (
-              <div
-                key={project.id}
-                className="text-sm text-text-secondary pl-2 py-1.5 truncate hover:text-text-primary cursor-pointer transition-colors duration-fast"
-              >
-                {project.name}
-              </div>
-            ))}
+      {!isCollapsed && (
+        <div className="flex flex-col gap-6">
+          <div>
+            <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide mb-3">
+              Projects
+            </h3>
+            <div className="flex flex-col gap-1">
+              {mockProjects.map((project) => (
+                <div
+                  key={project.id}
+                  className="text-sm text-text-secondary pl-2 py-1.5 truncate hover:text-text-primary cursor-pointer transition-colors duration-fast"
+                >
+                  {project.name}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide mb-3">
-            Recent
-          </h3>
-          <div className="flex flex-col gap-1">
-            {mockRecentItems.map((item) => (
-              <div
-                key={item.id}
-                className="text-sm text-text-secondary pl-2 py-1.5 truncate hover:text-text-primary cursor-pointer transition-colors duration-fast"
-              >
-                {item.name}
-              </div>
-            ))}
+          <div>
+            <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wide mb-3">
+              Recent
+            </h3>
+            <div className="flex flex-col gap-1">
+              {mockRecentItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="text-sm text-text-secondary pl-2 py-1.5 truncate hover:text-text-primary cursor-pointer transition-colors duration-fast"
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 }

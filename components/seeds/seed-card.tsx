@@ -122,7 +122,7 @@ export const SeedCard = memo(function SeedCard({
       role="article"
       aria-label={`Seed: ${seed.name}. Type: ${seed.type}. Status: ${seed.status}`}
       className={cn(
-        "group bg-card rounded-lg border p-4 transition-all duration-200 flex flex-col h-full",
+        "group bg-bg-secondary rounded-lg border p-4 transition-all duration-200 flex flex-col h-full",
         typeColors.border,
         "hover:shadow-lg"
       )}
@@ -161,7 +161,7 @@ export const SeedCard = memo(function SeedCard({
           </div>
           <button
             onClick={handleViewClick}
-            className="p-1.5 rounded-md hover:bg-muted/20 text-text-muted transition-colors active:scale-95"
+            className="p-1.5 rounded-md hover:bg-bg-tertiary text-text-muted transition-colors active:scale-95"
             aria-label={`View details of ${seed.name}`}
           >
             <Eye className="w-4 h-4" />
@@ -185,7 +185,7 @@ export const SeedCard = memo(function SeedCard({
         )}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-border space-y-2">
+      <div className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
         <div className="flex items-center gap-2">
           <button
             onClick={(e) => handleStatusClick(e, "new")}
@@ -193,8 +193,8 @@ export const SeedCard = memo(function SeedCard({
             className={cn(
               "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-100 active:scale-95",
               seed.status === "new"
-                ? "bg-muted/20 text-muted/50 cursor-not-allowed"
-                : "bg-muted/30 text-text-secondary hover:bg-muted/40"
+                ? "bg-bg-tertiary/30 text-text-muted cursor-not-allowed"
+                : "bg-bg-tertiary/50 text-text-secondary hover:bg-bg-tertiary"
             )}
             aria-label={`Mark ${seed.name} as Keep`}
           >

@@ -148,15 +148,15 @@ export function SeedsView() {
 
         <div className="flex gap-6">
           <aside className="w-64 flex-shrink-0">
-            <div className="bg-background border border-border rounded-lg p-4 h-96 animate-pulse" />
+            <div className="bg-bg-secondary border border-bg-tertiary rounded-lg p-4 h-96 animate-pulse" />
           </aside>
 
           <main className="flex-1">
             <div className="animate-pulse space-y-4">
-              <div className="h-12 bg-muted rounded-lg w-full max-w-md"></div>
+              <div className="h-12 bg-bg-tertiary/30 rounded-lg w-full max-w-md"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-80 bg-muted rounded-lg"></div>
+                  <div key={i} className="h-80 bg-bg-tertiary/30 rounded-lg"></div>
                 ))}
               </div>
             </div>
@@ -190,17 +190,17 @@ export function SeedsView() {
           </Button>
         </div>
 
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+        <div className="bg-error/10 border border-error/30 rounded-lg p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 Unable to load seeds
               </h3>
-              <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+              <p className="text-text-secondary mb-4">{error}</p>
               <button
                 onClick={refetch}
-                className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
+                className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/90 transition-colors"
               >
                 Try Again
               </button>
@@ -264,16 +264,16 @@ export function SeedsView() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="mb-6 bg-error/10 border border-error/30 rounded-lg p-4"
           >
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-700 dark:text-red-300">{errorMessage}</p>
+                <p className="text-text-secondary">{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+                className="text-error hover:text-error/80"
               >
                 Dismiss
               </button>
@@ -303,17 +303,17 @@ export function SeedsView() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className={cn(
                     "w-full pl-12 pr-4 py-3 rounded-lg border transition-all duration-200",
-                    "bg-background text-foreground",
-                    "border-border focus:border-accent",
-                    "focus:outline-none focus:ring-2 focus:ring-accent/20",
-                    "placeholder:text-muted-foreground"
+                    "bg-bg-secondary text-text-primary",
+                    "border-bg-tertiary focus:border-text-accent",
+                    "focus:outline-none focus:ring-2 focus:ring-text-accent/20",
+                    "placeholder:text-text-muted"
                   )}
                 />
               </div>
             </div>
 
             {isEmpty ? (
-              <div className="bg-secondary/50 border border-border rounded-lg p-12 text-center">
+              <div className="bg-bg-tertiary/30 border border-bg-tertiary rounded-lg p-12 text-center">
                 <Leaf className="h-16 w-16 text-text-muted mx-auto mb-4" />
                 <p className="text-text-primary font-medium text-lg mb-2">
                   {hasActiveFilters ? "No seeds match your filters" : "Your seed library is empty"}

@@ -188,16 +188,16 @@ export const SeedDetailView = memo(function SeedDetailView({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="mb-6 bg-error/10 border border-error/30 rounded-lg p-4"
           >
             <div className="flex items-start gap-3">
-              <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <X className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-700 dark:text-red-300">{errorMessage}</p>
+                <p className="text-text-secondary">{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+                className="text-error hover:text-error/80"
               >
                 Dismiss
               </button>
@@ -206,8 +206,8 @@ export const SeedDetailView = memo(function SeedDetailView({
         )}
       </AnimatePresence>
 
-      <div className="bg-background border border-border rounded-lg overflow-hidden flex-1 flex flex-col">
-        <div className="bg-bg-secondary border-b border-border p-6">
+      <div className="bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden flex-1 flex flex-col">
+        <div className="bg-bg-secondary border-b border-bg-tertiary p-6">
           <div className="flex items-center gap-2 mb-3">
             <span
               className={cn(
@@ -262,12 +262,12 @@ export const SeedDetailView = memo(function SeedDetailView({
               <span className="w-1 h-4 bg-success rounded-full" />
               Content
             </h3>
-            <div className="bg-bg-secondary rounded-lg p-4 text-sm text-text-primary leading-relaxed whitespace-pre-wrap font-mono border border-border">
+            <div className="bg-bg-tertiary rounded-lg p-4 text-sm text-text-primary leading-relaxed whitespace-pre-wrap font-mono border border-bg-tertiary">
               {seed.content}
             </div>
           </section>
 
-          <section className="pt-4 border-t border-border">
+          <section className="pt-4 border-t border-bg-tertiary">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-text-tertiary block mb-1">Created</span>
@@ -301,7 +301,7 @@ export const SeedDetailView = memo(function SeedDetailView({
           </section>
         </div>
 
-        <div className="sticky bottom-0 bg-bg-secondary border-t border-border p-6">
+        <div className="sticky bottom-0 bg-bg-secondary border-t border-bg-tertiary p-6">
           <div className="space-y-4">
             <div>
               <h4 className="text-sm font-semibold text-text-secondary mb-3">
@@ -314,8 +314,8 @@ export const SeedDetailView = memo(function SeedDetailView({
                   className={cn(
                     "flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-100 active:scale-95",
                     seed.status === "new"
-                      ? "bg-muted/20 text-muted/50 cursor-not-allowed"
-                      : "bg-muted/30 text-text-secondary hover:bg-muted/40"
+                      ? "bg-bg-tertiary/30 text-text-muted cursor-not-allowed"
+                      : "bg-bg-tertiary/50 text-text-secondary hover:bg-bg-tertiary"
                   )}
                 >
                   Keep

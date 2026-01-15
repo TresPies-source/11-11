@@ -57,16 +57,16 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
   const hasActiveFilters = (filters.type && filters.type.length > 0) || (filters.status && filters.status.length > 0);
 
   return (
-    <aside className="bg-background border border-border rounded-lg p-4 space-y-6">
+    <aside className="bg-bg-secondary border border-bg-tertiary rounded-lg p-4 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
           <Filter className="h-4 w-4" />
           Filters
         </h2>
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
+            className="text-sm text-text-secondary hover:text-text-primary underline transition-colors"
             aria-label="Clear all filters"
           >
             Clear all
@@ -75,7 +75,7 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Type</h3>
+        <h3 className="text-sm font-medium text-text-primary mb-3">Type</h3>
         <div className="flex flex-wrap gap-2">
           {TYPES.map((type) => {
             const isActive = filters.type?.includes(type);
@@ -87,7 +87,7 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
                   "inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-100 active:scale-95 capitalize",
                   isActive
                     ? TYPE_COLORS[type]
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    : "bg-bg-tertiary/50 text-text-secondary hover:bg-bg-tertiary"
                 )}
                 aria-label={`Filter by ${type}`}
                 aria-pressed={isActive}
@@ -100,7 +100,7 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Status</h3>
+        <h3 className="text-sm font-medium text-text-primary mb-3">Status</h3>
         <div className="flex flex-wrap gap-2">
           {STATUSES.map((status) => {
             const isActive = filters.status?.includes(status);
@@ -112,7 +112,7 @@ export const SeedFiltersPanel = memo(function SeedFiltersPanel({ filters, onFilt
                   "inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-100 active:scale-95 capitalize",
                   isActive
                     ? STATUS_COLORS[status]
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    : "bg-bg-tertiary/50 text-text-secondary hover:bg-bg-tertiary"
                 )}
                 aria-label={`Filter by ${status}`}
                 aria-pressed={isActive}

@@ -8,6 +8,7 @@ import {
 } from './types';
 import { getAgentById, isValidAgentId } from './supervisor';
 import { invokeLibrarianAgent } from './librarian-handler';
+import { invokeDojoAgent } from './dojo-handler';
 import { startSpan, endSpan, logEvent, isTraceActive } from '../harness/trace';
 
 export interface HandoffEvent {
@@ -258,9 +259,7 @@ export async function invokeAgent(
       return await invokeLibrarianAgent(context);
     
     case AGENT_IDS.DOJO:
-      // Dojo agent handler will be implemented in future feature
-      console.log('[AGENT_INVOKE] Dojo agent invoked (not yet implemented)');
-      return { message: 'Dojo agent response placeholder' };
+      return await invokeDojoAgent(context);
     
     case AGENT_IDS.DEBUGGER:
       // Debugger agent handler will be implemented in future feature

@@ -39,6 +39,7 @@ export function ResizableLayout({ children }: ResizableLayoutProps) {
         minSize={8} 
         maxSize={32}
         collapsible={true}
+        collapsedSize={8}
       >
         <AgentActivityPanel onToggle={handleToggleAgentPanel} />
       </Panel>

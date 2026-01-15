@@ -198,7 +198,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
               aria-labelledby="plant-seed-modal-title"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-bg-primary border-b border-border p-6 flex items-start justify-between z-10">
+              <div className="sticky top-0 bg-bg-primary border-b border-bg-tertiary p-6 flex items-start justify-between z-10">
                 <div className="flex-1 pr-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Leaf className="w-5 h-5 text-success" />
@@ -243,7 +243,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                       "w-full px-4 py-2 rounded-lg border bg-bg-secondary text-text-primary",
                       "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
-                      errors.name ? "border-error" : "border-border"
+                      errors.name ? "border-error" : "border-bg-tertiary"
                     )}
                     placeholder="Give your seed a descriptive name"
                     aria-invalid={!!errors.name}
@@ -281,7 +281,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                             "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
                             isSelected
                               ? `${colors.border} ${colors.bg}`
-                              : "border-border bg-bg-secondary hover:border-border/60"
+                              : "border-bg-tertiary bg-bg-secondary hover:border-bg-tertiary/60"
                           )}
                           aria-pressed={isSelected}
                         >
@@ -322,7 +322,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                       "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
                       "resize-none",
-                      errors.content ? "border-error" : "border-border"
+                      errors.content ? "border-error" : "border-bg-tertiary"
                     )}
                     placeholder="Enter the main content of your seed"
                     aria-invalid={!!errors.content}
@@ -351,7 +351,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     disabled={isSubmitting}
                     rows={3}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border border-border bg-bg-secondary text-text-primary",
+                      "w-full px-4 py-2 rounded-lg border border-bg-tertiary bg-bg-secondary text-text-primary",
                       "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
                       "resize-none"
@@ -376,7 +376,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                     }
                     disabled={isSubmitting}
                     className={cn(
-                      "w-full px-4 py-2 rounded-lg border border-border bg-bg-secondary text-text-primary",
+                      "w-full px-4 py-2 rounded-lg border border-bg-tertiary bg-bg-secondary text-text-primary",
                       "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                       "disabled:opacity-50 disabled:cursor-not-allowed"
                     )}
@@ -391,7 +391,7 @@ export const PlantSeedModal = memo(function PlantSeedModal({
                 )}
               </form>
 
-              <div className="sticky bottom-0 bg-bg-primary border-t border-border p-6 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-bg-primary border-t border-bg-tertiary p-6 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={handleCancel}

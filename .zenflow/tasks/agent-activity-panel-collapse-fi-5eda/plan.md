@@ -64,3 +64,15 @@ Implement the task according to the technical specification and general engineer
    - What was implemented
    - How the solution was tested
    - The biggest issues or challenges encountered
+
+### [x] Step: plant new seed modal
+<!-- chat-id: ddc13bce-f535-4d87-9b0d-e7a31fc708d6 -->
+<!-- agent: ZEN_CLI -->
+
+needs to replace grey outlines with theme outlines (I think they're navy)
+
+### [x] Step: Make Agent Activity Panel Openable
+<!-- chat-id: 2a71b4a1-ea68-4d1a-9537-2aa7dd282acb -->
+<!-- agent: ZEN_CLI -->
+
+right now after closing the agent activity panel we're unable to open it again

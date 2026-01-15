@@ -330,34 +330,17 @@ export function SeedsView() {
                   Showing {seeds.length} {seeds.length === 1 ? "seed" : "seeds"}
                 </div>
 
-                <AnimatePresence mode="popLayout">
-                  <motion.div
-                    layout
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
-                  >
-                    {seeds.map((seed) => (
-                      <motion.div
-                        key={seed.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{
-                          layout: { duration: 0.3, ease: "easeInOut" },
-                          opacity: { duration: 0.2 },
-                          scale: { duration: 0.2 },
-                        }}
-                      >
-                        <SeedCard
-                          seed={seed}
-                          onView={handleViewSeed}
-                          onUpdateStatus={handleUpdateStatus}
-                          onDelete={handleDeleteSeed}
-                        />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                  {seeds.map((seed) => (
+                    <SeedCard
+                      key={seed.id}
+                      seed={seed}
+                      onView={handleViewSeed}
+                      onUpdateStatus={handleUpdateStatus}
+                      onDelete={handleDeleteSeed}
+                    />
+                  ))}
+                </div>
               </>
             )}
           </main>

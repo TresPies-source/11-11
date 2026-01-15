@@ -136,3 +136,13 @@ body {
     background: #f3f4f6;
   }
 }
+
+[data-panel-group-direction] {
+  transition: all 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-panel-group-direction] {
+    transition: none;
+  }
+}

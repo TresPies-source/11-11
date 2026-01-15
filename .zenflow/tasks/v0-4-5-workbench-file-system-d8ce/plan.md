@@ -57,7 +57,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ### Phase 1: Layout & Integration
 
-### [ ] Task 1.1: Create WorkbenchFileTreePanel Component
+### [x] Task 1.1: Create WorkbenchFileTreePanel Component
+<!-- chat-id: 3ebd89cb-4893-440a-97dd-a0f002eff3a7 -->
 **Goal:** Create wrapper component for FileTree in Workbench context
 
 **Files:**

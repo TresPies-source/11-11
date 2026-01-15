@@ -35,3 +35,9 @@ Implement the task directly based on the task description.
 4. Perform basic manual verification if applicable
 
 Save a brief summary of what was done to `{@artifacts_path}/report.md` if significant changes were made.
+
+### [x] Step: revert changes and fix main issue
+<!-- chat-id: 09181b15-68c9-454f-aed3-982a53ebba3f -->
+<!-- agent: ZEN_CLI -->
+
+clicking on the filter buttons "makes the whole screen flash" in a distracting way, so does entering text in the search bar. find and remove the animation that does this.

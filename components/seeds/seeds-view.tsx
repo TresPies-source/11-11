@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Search, Plus, AlertCircle } from "lucide-react";
 import { useSeeds } from "@/hooks/useSeeds";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -217,27 +216,17 @@ export function SeedsView() {
 
   if (viewMode === "detail" && selectedSeed) {
     return (
-      <AnimatePresence mode="wait">
-        <SeedDetailView
-          seed={selectedSeed}
-          onBack={handleBackToList}
-          onUpdate={handleUpdateStatusFromDetail}
-          onDelete={handleDeleteFromDetail}
-        />
-      </AnimatePresence>
+      <SeedDetailView
+        seed={selectedSeed}
+        onBack={handleBackToList}
+        onUpdate={handleUpdateStatusFromDetail}
+        onDelete={handleDeleteFromDetail}
+      />
     );
   }
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key="list-view"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="p-4 sm:p-6 md:p-8 lg:p-12"
-      >
+    <div className="p-4 sm:p-6 md:p-8 lg:p-12">
         <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-text-primary flex items-center gap-2 sm:gap-3">
@@ -260,12 +249,7 @@ export function SeedsView() {
         </div>
 
         {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-6 bg-error/10 border border-error/30 rounded-lg p-4"
-          >
+          <div className="mb-6 bg-error/10 border border-error/30 rounded-lg p-4">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
               <div className="flex-1">
@@ -278,7 +262,7 @@ export function SeedsView() {
                 Dismiss
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
@@ -351,7 +335,6 @@ export function SeedsView() {
           onClose={() => setIsPlantModalOpen(false)}
           onSuccess={refetch}
         />
-      </motion.div>
-    </AnimatePresence>
+    </div>
   );
 }

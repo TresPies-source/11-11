@@ -1,28 +1,32 @@
 # Fix Seeds Loading Animation - Implementation Report
 
 ## Summary
-Removed distracting animations when clicking filters on the `/seeds` page to create a clean loading experience.
+Removed distracting screen flash animation when clicking filters or entering text in the search bar on the `/seeds` page.
 
 ## Changes Made
 
 ### File: `components/seeds/seeds-view.tsx`
 
-**Removed framer-motion animations from seed cards grid (lines 333-360):**
-- Removed `AnimatePresence` wrapper with `mode="popLayout"`
-- Removed `motion.div` wrapper for the grid container
-- Removed individual `motion.div` wrappers for each seed card with scale/opacity animations
-- Replaced with simple `div` elements using standard grid layout
+**Removed page-level framer-motion animations that caused screen flashing:**
+- Removed `AnimatePresence mode="wait"` wrapper around main view (lines 232-240)
+- Removed `AnimatePresence mode="wait"` wrapper around detail view (lines 220-228)
+- Removed `motion.div` with opacity transitions from main container
+- Removed `motion.div` animation from error message display
+- Removed unused `framer-motion` imports
 
-**Animation details that were removed:**
-- `initial={{ opacity: 0, scale: 0.9 }}`
-- `animate={{ opacity: 1, scale: 1 }}`
-- `exit={{ opacity: 0, scale: 0.9 }}`
-- Layout transitions with 0.3s duration
+**Animation properties that were removed:**
+- Main container: `initial={{ opacity: 0 }}`, `animate={{ opacity: 1 }}`, `exit={{ opacity: 0 }}`
+- Transition duration: `0.3s`
+- Error message: `initial={{ opacity: 0, y: -10 }}`, `animate={{ opacity: 1, y: 0 }}`
 
 ## Testing
-- ✅ Seeds view tests passed
 - ✅ TypeScript type checking passed
 - ✅ Linting passed with no errors
 
 ## Impact
-The seeds grid now updates instantly when filters are applied, eliminating the distracting fade/scale animation while maintaining all functionality.
+The entire page no longer flashes/fades when:
+- Clicking filter buttons
+- Entering text in the search bar
+- Switching between list and detail views
+
+The page now provides an instant, clean loading experience without distracting animations.

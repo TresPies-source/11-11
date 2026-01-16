@@ -117,6 +117,8 @@ export interface FeedFilters {
   dateFrom: string | null;
   dateTo: string | null;
   search: string;
+  status?: string[];
+  visibility?: string[];
 }
 
 /**

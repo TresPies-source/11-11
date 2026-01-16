@@ -42,6 +42,18 @@ export async function getFeedArtifacts(
         paramIndex++;
       }
       
+      if (filters.status && filters.status.length > 0) {
+        whereClause += ` AND status = ANY($${paramIndex}::text[])`;
+        params.push(filters.status);
+        paramIndex++;
+      }
+      
+      if (filters.visibility && filters.visibility.length > 0) {
+        whereClause += ` AND visibility = ANY($${paramIndex}::text[])`;
+        params.push(filters.visibility);
+        paramIndex++;
+      }
+      
       typeClauses.push(`
         SELECT 
           'prompt' as type,
@@ -74,6 +86,12 @@ export async function getFeedArtifacts(
       if (filters.search) {
         whereClause += ` AND (name ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`;
         params.push(`%${filters.search}%`);
+        paramIndex++;
+      }
+      
+      if (filters.status && filters.status.length > 0) {
+        whereClause += ` AND status = ANY($${paramIndex}::text[])`;
+        params.push(filters.status);
         paramIndex++;
       }
       

@@ -23,6 +23,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/librarian',
+        destination: '/hub',
+        permanent: false,
+      },
+    ];
+  },
   webpack: (config, { isServer }) => {
     config.module.rules.unshift({
       test: /node_modules[\\\/]next-auth[\\\/]css[\\\/]index\.js$/,

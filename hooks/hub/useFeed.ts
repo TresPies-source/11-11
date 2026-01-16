@@ -120,6 +120,8 @@ export function useFeed(options: UseFeedOptions): UseFeedReturn {
     filters.dateFrom,
     filters.dateTo,
     filters.search,
+    filters.status?.join(','),
+    filters.visibility?.join(','),
     pageSize,
     retryCount,
   ]);

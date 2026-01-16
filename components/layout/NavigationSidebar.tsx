@@ -114,20 +114,6 @@ export function NavigationSidebar({ isMobileOpen = false, onMobileToggle }: Navi
             isCollapsed={isCollapsed}
             onClick={() => onMobileToggle?.(false)}
           />
-          <NavItem 
-            href="/librarian" 
-            icon="📚" 
-            label="Librarian" 
-            isCollapsed={isCollapsed}
-            onClick={() => onMobileToggle?.(false)}
-          />
-          <NavItem 
-            href="/seeds" 
-            icon="🌱" 
-            label="Seeds" 
-            isCollapsed={isCollapsed}
-            onClick={() => onMobileToggle?.(false)}
-          />
         </nav>
       </div>
 

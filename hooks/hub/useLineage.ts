@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getLineage } from '@/lib/pglite/knowledge-links';
 import type { ArtifactType, LineageNode } from '@/lib/hub/types';
 
 interface UseLineageOptions {
@@ -16,6 +17,12 @@ interface UseLineageReturn {
   refetch: () => void;
   count: number;
 }
+
+// Dev mode detection
+const isDevMode = () => {
+  if (typeof window === 'undefined') return false;
+  return process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+};
 
 export function useLineage(options: UseLineageOptions): UseLineageReturn {
   const { type, id, enabled = true } = options;
@@ -39,14 +46,13 @@ export function useLineage(options: UseLineageOptions): UseLineageReturn {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/hub/lineage/${type}/${id}`);
+        // Call getLineage directly (client-side PGlite access)
+        // In dev mode, use mock user ID; in production, get from auth context
+        const userId = isDevMode() ? 'dev@11-11.dev' : 'user@example.com';
+        const lineageNodes = await getLineage(type, id, userId);
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch lineage: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setLineage(data.lineage || []);
+        setLineage(lineageNodes);
+        console.log(`[useLineage] Loaded ${lineageNodes.length} lineage nodes for ${type}:${id}`);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
         console.error('Error fetching lineage:', err);

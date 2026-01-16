@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, RotateCw, Sparkles } from 'lucide-react';
@@ -50,7 +50,7 @@ const nodeVariants = {
   }),
 };
 
-export function TrailOfThoughtPanel({
+export const TrailOfThoughtPanel = memo(function TrailOfThoughtPanel({
   artifactType,
   artifactId,
   defaultOpen = false,
@@ -67,10 +67,10 @@ export function TrailOfThoughtPanel({
 
   const displayedLineage = lineage.slice(0, maxItems);
 
-  const handleNodeClick = (node: LineageNode) => {
+  const handleNodeClick = useCallback((node: LineageNode) => {
     const path = getArtifactNavigationPath(node.type, node.id);
     router.push(path);
-  };
+  }, [router]);
 
   return (
     <div className={cn("border border-bg-tertiary rounded-lg bg-bg-secondary", className)}>
@@ -116,9 +116,9 @@ export function TrailOfThoughtPanel({
       </AnimatePresence>
     </div>
   );
-}
+});
 
-function LoadingState() {
+const LoadingState = memo(function LoadingState() {
   return (
     <div className="space-y-3">
       {[...Array(3)].map((_, i) => (
@@ -132,9 +132,9 @@ function LoadingState() {
       ))}
     </div>
   );
-}
+});
 
-function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
+const ErrorState = memo(function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
   return (
     <div className="text-center py-6">
       <p className="text-sm text-error mb-3">Failed to load connections</p>
@@ -148,9 +148,9 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
       </button>
     </div>
   );
-}
+});
 
-function EmptyState() {
+const EmptyState = memo(function EmptyState() {
   return (
     <div className="text-center py-6">
       <p className="text-sm text-text-secondary mb-1">No connections yet</p>
@@ -159,9 +159,9 @@ function EmptyState() {
       </p>
     </div>
   );
-}
+});
 
-function TimelineView({ 
+const TimelineView = memo(function TimelineView({ 
   lineage, 
   onNodeClick 
 }: { 
@@ -219,4 +219,4 @@ function TimelineView({
       })}
     </div>
   );
-}
+});

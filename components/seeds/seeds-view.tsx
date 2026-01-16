@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Leaf, Search, Plus, AlertCircle } from "lucide-react";
+import { Leaf, Search, Plus, AlertCircle, Network } from "lucide-react";
 import { useSeeds } from "@/hooks/useSeeds";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { SeedRow, SeedFilters, SeedStatus } from "@/lib/seeds/types";
@@ -12,6 +12,7 @@ import { PlantSeedModal } from "./plant-seed-modal";
 import { insertSeed, updateSeed, deleteSeed } from "@/lib/pglite/seeds";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export function SeedsView() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -237,15 +238,27 @@ export function SeedsView() {
               Manage your knowledge seeds through Keep, Grow, Compost, and Replant
             </p>
           </div>
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => setIsPlantModalOpen(true)}
-            className="flex-shrink-0 w-full sm:w-auto"
-          >
-            <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
-            Plant New Seed
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+            <Link href="/hub" className="flex-shrink-0 w-full sm:w-auto">
+              <Button
+                variant="secondary"
+                size="md"
+                className="w-full"
+              >
+                <Network className="w-4 sm:w-5 h-4 sm:h-5" />
+                View in Hub
+              </Button>
+            </Link>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setIsPlantModalOpen(true)}
+              className="flex-shrink-0 w-full sm:w-auto"
+            >
+              <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+              Plant New Seed
+            </Button>
+          </div>
         </div>
 
         {errorMessage && (

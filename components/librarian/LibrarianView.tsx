@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { motion } from "framer-motion";
-import { LibraryBig } from "lucide-react";
+import { LibraryBig, Network } from "lucide-react";
 import { useLibrarian } from "@/hooks/useLibrarian";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { useSuggestions } from "@/hooks/useSuggestions";
@@ -11,6 +11,8 @@ import { SuggestionsPanel } from "./SuggestionsPanel";
 import { RecentSearches } from "./RecentSearches";
 import { LibrarianNavigation } from "./LibrarianNavigation";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export function LibrarianView() {
   const {
@@ -57,6 +59,14 @@ export function LibrarianView() {
         subtitle="Search, discover, and manage your collective intelligence."
         icon={LibraryBig}
         iconClassName="text-librarian"
+        actions={
+          <Link href="/hub">
+            <Button variant="secondary" size="md">
+              <Network className="w-4 sm:w-5 h-4 sm:h-5" />
+              View in Hub
+            </Button>
+          </Link>
+        }
       />
 
       <LibrarianNavigation savedPromptsCount={savedPrompts.length} />

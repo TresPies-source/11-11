@@ -108,3 +108,80 @@ export interface TransferResponse {
   link_id?: string;
   message?: string;
 }
+
+/**
+ * Filter options for the activity feed.
+ */
+export interface FeedFilters {
+  types: ArtifactType[];
+  dateFrom: string | null;
+  dateTo: string | null;
+  search: string;
+}
+
+/**
+ * Represents a single artifact in the activity feed.
+ * Includes metadata and connection count for display.
+ */
+export interface FeedArtifact {
+  type: ArtifactType;
+  id: string;
+  title: string;
+  content_preview: string;
+  created_at: string;
+  updated_at: string;
+  last_activity: string;
+  connection_count: number;
+}
+
+/**
+ * Paginated response from the feed API.
+ */
+export interface FeedResponse {
+  artifacts: FeedArtifact[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    hasMore: boolean;
+  };
+}
+
+/**
+ * Represents a node in the knowledge graph visualization.
+ */
+export interface GraphNode {
+  id: string;
+  type: ArtifactType;
+  title: string;
+  created_at: string;
+  connectionCount?: number;
+}
+
+/**
+ * Represents a link (edge) in the knowledge graph visualization.
+ */
+export interface GraphLink {
+  source: string;
+  target: string;
+  relationship: RelationshipType;
+  created_at: string;
+}
+
+/**
+ * Statistics about the knowledge graph.
+ */
+export interface GraphStats {
+  totalNodes: number;
+  totalLinks: number;
+  nodesByType: Record<ArtifactType, number>;
+}
+
+/**
+ * Response from the graph API endpoint.
+ */
+export interface GraphResponse {
+  nodes: GraphNode[];
+  links: GraphLink[];
+  stats: GraphStats;
+}

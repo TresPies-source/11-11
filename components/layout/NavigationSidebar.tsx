@@ -108,6 +108,13 @@ export function NavigationSidebar({ isMobileOpen = false, onMobileToggle }: Navi
             onClick={() => onMobileToggle?.(false)}
           />
           <NavItem 
+            href="/hub" 
+            icon="🌐" 
+            label="Hub" 
+            isCollapsed={isCollapsed}
+            onClick={() => onMobileToggle?.(false)}
+          />
+          <NavItem 
             href="/librarian" 
             icon="📚" 
             label="Librarian" 

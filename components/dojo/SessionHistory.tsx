@@ -6,9 +6,10 @@ import { ChatMessage } from './ChatMessage';
 
 interface SessionHistoryProps {
   messages: DojoMessage[];
+  sessionId: string;
 }
 
-export function SessionHistory({ messages }: SessionHistoryProps) {
+export function SessionHistory({ messages, sessionId }: SessionHistoryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,10 +43,8 @@ export function SessionHistory({ messages }: SessionHistoryProps) {
       {messages.map((message) => (
         <ChatMessage
           key={message.id}
-          role={message.role}
-          content={message.content}
-          mode={message.mode}
-          timestamp={message.timestamp}
+          message={message}
+          sessionId={sessionId}
         />
       ))}
     </div>

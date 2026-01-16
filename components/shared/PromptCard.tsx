@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Copy, Check, PlayCircle, Download, Edit } from "lucide-react";
+import { Copy, Check, PlayCircle, Download, Edit, FileEdit, MessageSquare } from "lucide-react";
 import { PromptFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
+import { useWorkbenchStore } from "@/lib/stores/workbench.store";
+import { createSessionFromContext } from "@/lib/hub/context-injection";
 
 interface PromptCardProps {
   prompt: PromptFile;
@@ -17,8 +19,10 @@ interface PromptCardProps {
 export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
   const router = useRouter();
   const toast = useToast();
+  const { setPendingPromptId } = useWorkbenchStore();
   const [copied, setCopied] = useState(false);
   const [forking, setForking] = useState(false);
+  const [discussing, setDiscussing] = useState(false);
 
   const normalizedVariant = variant === "library" ? "greenhouse" : variant === "gallery" ? "commons" : variant;
 
@@ -71,6 +75,38 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
       toast.error("Failed to fork prompt");
     } finally {
       setForking(false);
+    }
+  };
+
+  const handleOpenInWorkbench = () => {
+    setPendingPromptId(prompt.id);
+    router.push("/workbench");
+  };
+
+  const handleDiscussInDojo = async () => {
+    if (discussing) return;
+
+    setDiscussing(true);
+    try {
+      const situation = `Let's discuss this prompt: "${title}"`;
+      const perspectives = prompt.rawContent ? [prompt.rawContent] : [];
+
+      const result = await createSessionFromContext({
+        artifact_type: 'prompt',
+        artifact_id: prompt.id,
+        situation,
+        perspectives,
+        user_id: 'dev-user',
+        title: `Discuss: ${title}`,
+      });
+
+      toast.success("Dojo session started");
+      router.push(`/dojo/${result.session_id}`);
+    } catch (error) {
+      console.error("Error creating Dojo session:", error);
+      toast.error("Failed to start Dojo session");
+    } finally {
+      setDiscussing(false);
     }
   };
 
@@ -164,36 +200,80 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
 
       <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800">
         {normalizedVariant === "greenhouse" ? (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <button
+                onClick={handleEdit}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 active:scale-95 transition-all duration-100 text-sm font-medium"
+                aria-label={`Edit ${title}`}
+              >
+                <Edit className="h-4 w-4" />
+                Edit
+              </button>
+              <button
+                onClick={handleRunInChat}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 active:scale-95 transition-all duration-100 text-sm font-medium"
+                aria-label={`Run ${title} in chat`}
+              >
+                <PlayCircle className="h-4 w-4" />
+                Run in Chat
+              </button>
+            </div>
             <button
-              onClick={handleEdit}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 active:scale-95 transition-all duration-100 text-sm font-medium"
-              aria-label={`Edit ${title}`}
+              onClick={handleOpenInWorkbench}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 active:scale-95 transition-all duration-100 text-sm font-medium"
+              aria-label={`Open ${title} in Workbench`}
             >
-              <Edit className="h-4 w-4" />
-              Edit
+              <FileEdit className="h-4 w-4" />
+              Open in Workbench
             </button>
             <button
-              onClick={handleRunInChat}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 active:scale-95 transition-all duration-100 text-sm font-medium"
-              aria-label={`Run ${title} in chat`}
+              onClick={handleDiscussInDojo}
+              disabled={discussing}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-md hover:bg-orange-700 dark:hover:bg-orange-600 active:scale-95 transition-all duration-100 text-sm font-medium",
+                discussing && "opacity-50 cursor-not-allowed"
+              )}
+              aria-label={`Discuss ${title} in Dojo`}
             >
-              <PlayCircle className="h-4 w-4" />
-              Run in Chat
+              <MessageSquare className="h-4 w-4" />
+              {discussing ? "Starting..." : "Discuss in Dojo"}
             </button>
           </div>
         ) : (
-          <button
-            onClick={handleFork}
-            disabled={forking}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 active:scale-95 transition-all duration-100 text-sm font-medium",
-              forking && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            <Download className="h-4 w-4" />
-            {forking ? "Forking..." : "Fork to Greenhouse"}
-          </button>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={handleFork}
+              disabled={forking}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 active:scale-95 transition-all duration-100 text-sm font-medium",
+                forking && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <Download className="h-4 w-4" />
+              {forking ? "Forking..." : "Fork to Greenhouse"}
+            </button>
+            <button
+              onClick={handleOpenInWorkbench}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 active:scale-95 transition-all duration-100 text-sm font-medium"
+              aria-label={`Open ${title} in Workbench`}
+            >
+              <FileEdit className="h-4 w-4" />
+              Open in Workbench
+            </button>
+            <button
+              onClick={handleDiscussInDojo}
+              disabled={discussing}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-md hover:bg-orange-700 dark:hover:bg-orange-600 active:scale-95 transition-all duration-100 text-sm font-medium",
+                discussing && "opacity-50 cursor-not-allowed"
+              )}
+              aria-label={`Discuss ${title} in Dojo`}
+            >
+              <MessageSquare className="h-4 w-4" />
+              {discussing ? "Starting..." : "Discuss in Dojo"}
+            </button>
+          </div>
         )}
       </div>
     </motion.div>

@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, memo, useCallback } from "react";
-import { Copy, Check, PlayCircle, Pencil, RefreshCw, Archive } from "lucide-react";
+import { Copy, Check, PlayCircle, Pencil, RefreshCw, Archive, FileEdit, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 import { usePromptStatus } from "@/hooks/usePromptStatus";
 import { Button } from "@/components/ui/Button";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { cn } from "@/lib/utils";
+import { useWorkbenchStore } from "@/lib/stores/workbench.store";
+import { createSessionFromContext } from "@/lib/hub/context-injection";
 
 interface GreenhouseCardActionsProps {
   promptId: string;
@@ -29,6 +31,8 @@ export const GreenhouseCardActions = memo(function GreenhouseCardActions({
   const { transitionStatus, transitioning } = usePromptStatus();
   const [copied, setCopied] = useState(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
+  const [discussing, setDiscussing] = useState(false);
+  const setPendingPromptId = useWorkbenchStore((state) => state.setPendingPromptId);
 
   const handleQuickCopy = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -74,6 +78,30 @@ export const GreenhouseCardActions = memo(function GreenhouseCardActions({
       setShowArchiveConfirm(false);
     }
   }, [promptId, driveFileId, transitionStatus, toast, onStatusChange]);
+
+  const handleOpenInWorkbench = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPendingPromptId(promptId);
+    router.push("/workbench");
+  }, [promptId, setPendingPromptId, router]);
+
+  const handleDiscussInDojo = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDiscussing(true);
+    try {
+      const { session_id } = await createSessionFromContext({
+        artifact_type: "prompt",
+        artifact_id: promptId,
+        situation: `I want to discuss my prompt: "${promptTitle}"`,
+        user_id: "dev-user",
+      });
+      router.push(`/dojo/${session_id}`);
+    } catch (error) {
+      console.error("Failed to create Dojo session:", error);
+      toast.error("Failed to start Dojo session");
+      setDiscussing(false);
+    }
+  }, [promptId, promptTitle, router, toast]);
 
   return (
     <div className="mt-auto pt-3 border-t border-bg-tertiary space-y-2">
@@ -128,6 +156,37 @@ export const GreenhouseCardActions = memo(function GreenhouseCardActions({
           <Pencil className="h-4 w-4" aria-hidden="true" />
           <span className="hidden sm:inline">Edit</span>
           <span className="sr-only sm:hidden">Edit prompt</span>
+        </Button>
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleOpenInWorkbench}
+          aria-label={`Open ${promptTitle} in Workbench`}
+          disabled={transitioning}
+          className="flex-1 bg-purple-600 dark:bg-purple-700 text-white hover:bg-purple-700 dark:hover:bg-purple-600"
+        >
+          <FileEdit className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">Open in Workbench</span>
+          <span className="sr-only sm:hidden">Open in Workbench</span>
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleDiscussInDojo}
+          aria-label={`Discuss ${promptTitle} in Dojo`}
+          disabled={transitioning || discussing}
+          className={cn(
+            "flex-1 bg-orange-600 dark:bg-orange-700 text-white hover:bg-orange-700 dark:hover:bg-orange-600",
+            (transitioning || discussing) && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          <MessageSquare className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">{discussing ? "Starting..." : "Discuss in Dojo"}</span>
+          <span className="sr-only sm:hidden">{discussing ? "Starting..." : "Discuss in Dojo"}</span>
         </Button>
       </div>
 

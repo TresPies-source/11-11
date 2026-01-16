@@ -7,6 +7,8 @@ export interface PromptTab {
   fileId?: string;
   filePath?: string;
   isFileBased?: boolean;
+  sourcePromptId?: string;
+  sourceSeedId?: string;
 }
 
 interface WorkbenchState {
@@ -14,6 +16,8 @@ interface WorkbenchState {
   activeTabId: string | null;
   isRunning: boolean;
   activeTabError: string | null;
+  pendingPromptId: string | null;
+  pendingSeedId: string | null;
   addTab: (tab: PromptTab) => void;
   removeTab: (id: string) => void;
   setActiveTab: (id: string) => void;
@@ -24,6 +28,8 @@ interface WorkbenchState {
   updateTabId: (oldId: string, newId: string) => void;
   openFileTab: (fileId: string, fileName: string, filePath: string, content: string) => void;
   getTabByFileId: (fileId: string) => PromptTab | undefined;
+  setPendingPromptId: (promptId: string | null) => void;
+  setPendingSeedId: (seedId: string | null) => void;
 }
 
 export const useWorkbenchStore = create<WorkbenchState>((set, get) => ({
@@ -31,6 +37,8 @@ export const useWorkbenchStore = create<WorkbenchState>((set, get) => ({
   activeTabId: null,
   isRunning: false,
   activeTabError: null,
+  pendingPromptId: null,
+  pendingSeedId: null,
   
   addTab: (tab) => set((state) => ({ 
     tabs: [...state.tabs, tab],
@@ -110,4 +118,8 @@ export const useWorkbenchStore = create<WorkbenchState>((set, get) => ({
   getTabByFileId: (fileId) => {
     return get().tabs.find((tab) => tab.fileId === fileId);
   },
+  
+  setPendingPromptId: (promptId) => set({ pendingPromptId: promptId }),
+  
+  setPendingSeedId: (seedId) => set({ pendingSeedId: seedId }),
 }));

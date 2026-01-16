@@ -20,8 +20,8 @@ function flattenEvents(events: HarnessEvent[]): HarnessEvent[] {
   
   for (const event of events) {
     result.push(event);
-    if (event.nested_events && event.nested_events.length > 0) {
-      result.push(...flattenEvents(event.nested_events));
+    if (event.children && event.children.length > 0) {
+      result.push(...flattenEvents(event.children));
     }
   }
   

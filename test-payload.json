@@ -1,0 +1,9 @@
+{
+  "target": {
+    "type": "prompt"
+  },
+  "content": {
+    "title": "Test Prompt",
+    "content": "This is a test prompt content to verify the API works"
+  }
+}

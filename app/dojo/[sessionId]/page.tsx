@@ -1,20 +1,32 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { useDojo } from '@/hooks/useDojo';
+import { useDojoStore } from '@/lib/stores/dojo.store';
 import { SessionHistory } from '@/components/dojo/SessionHistory';
 import { DojoInput, DojoInputData } from '@/components/dojo/DojoInput';
 import { SimpleTextInput } from '@/components/dojo/SimpleTextInput';
 import { Button } from '@/components/ui/Button';
+import { SaveSessionModal } from '@/components/dojo/SaveSessionModal';
 
 export default function DojoSessionPage() {
   const params = useParams();
   const sessionId = params.sessionId as string;
   const [sessionTitle, setSessionTitle] = useState('Untitled Session');
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   
   const { messages, isLoading, sendMessage } = useDojo(sessionId);
+  const loadMessages = useDojoStore((state) => state.loadMessages);
+
+  useEffect(() => {
+    if (sessionId && sessionId !== 'new') {
+      loadMessages(sessionId).catch((err) => {
+        console.error('Failed to load messages on mount:', err);
+      });
+    }
+  }, [sessionId, loadMessages]);
 
   const handleInitialSubmit = (data: DojoInputData) => {
     sendMessage(data.situation, data.perspectives);
@@ -25,7 +37,11 @@ export default function DojoSessionPage() {
   };
 
   const handleSaveSession = () => {
-    alert(`Saving session: ${sessionTitle}`);
+    setIsSaveModalOpen(true);
+  };
+
+  const handleSaveSuccess = () => {
+    console.log('[DOJO_PAGE] Session saved successfully');
   };
 
   const hasMessages = messages.length > 0;
@@ -53,7 +69,7 @@ export default function DojoSessionPage() {
       </header>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <SessionHistory messages={messages} />
+        <SessionHistory messages={messages} sessionId={sessionId} />
         
         {!hasMessages ? (
           <DojoInput 
@@ -67,6 +83,14 @@ export default function DojoSessionPage() {
           />
         )}
       </div>
+
+      <SaveSessionModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSuccess={handleSaveSuccess}
+        sessionId={sessionId}
+        messages={messages}
+      />
     </div>
   );
 }

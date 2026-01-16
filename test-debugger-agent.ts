@@ -205,10 +205,7 @@ async function test3_dojoPacketExtraction() {
       },
     ],
     user_intent: 'Find conflicts in my reasoning',
-    current_agent: 'supervisor',
     session_id: 'test-session-123',
-    mode: 'Mirror',
-    request_id: 'test-request-123',
   };
   
   try {
@@ -266,10 +263,7 @@ async function test4_conversationParsingFallback() {
       },
     ],
     user_intent: 'Help me understand my conflicting thoughts',
-    current_agent: 'supervisor',
     session_id: 'test-session-456',
-    mode: 'Mirror',
-    request_id: 'test-request-456',
   };
   
   try {
@@ -393,7 +387,7 @@ async function runAllTests() {
     console.log(`  Total Events: ${allEvents.length}`);
     console.log(`  Total Tokens Used: ${trace.summary.total_tokens.toLocaleString()}`);
     console.log('\n  Event Type Breakdown:');
-    for (const [type, count] of eventTypes.entries()) {
+    for (const [type, count] of Array.from(eventTypes.entries())) {
       console.log(`    ${type}: ${count}`);
     }
   }

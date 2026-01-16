@@ -10,6 +10,7 @@ import { applyMigration007 } from './migrations/007_add_context_tracking';
 import { applyMigration008 } from './migrations/008_add_safety_switch';
 import { applyMigration009 } from './migrations/009_add_dojo_sessions';
 import { applyMigration010 } from './migrations/010_add_seeds';
+import { applyMigration011 } from './migrations/011_add_knowledge_hub';
 
 export const DEFAULT_USER_ID = 'dev-user';
 
@@ -58,6 +59,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration008(db);
       await applyMigration009(db);
       await applyMigration010(db);
+      await applyMigration011(db);
       console.log('[PGlite] Initial migrations complete');
       
       console.log('[PGlite] Seeding database with sample data...');
@@ -76,6 +78,7 @@ async function initializeDatabase(): Promise<PGlite> {
       await applyMigration008(db);
       await applyMigration009(db);
       await applyMigration010(db);
+      await applyMigration011(db);
       await db.exec(MIGRATION_SQL);
       console.log('[PGlite] Migrations complete');
     }

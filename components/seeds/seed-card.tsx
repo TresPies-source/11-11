@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, memo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, Trash2, Leaf, TrendingUp, CheckCircle, X } from "lucide-react";
+import { Eye, Trash2, Leaf, TrendingUp, CheckCircle, X, FileEdit, MessageSquare } from "lucide-react";
 import type { SeedRow, SeedStatus } from "@/lib/seeds/types";
 import { cn } from "@/lib/utils";
+import { useWorkbenchStore } from "@/lib/stores/workbench.store";
+import { useToast } from "@/hooks/useToast";
+import { createSessionFromContext } from "@/lib/hub/context-injection";
 
 interface SeedCardProps {
   seed: SeedRow;
@@ -71,7 +75,11 @@ export const SeedCard = memo(function SeedCard({
   onUpdateStatus,
   onDelete,
 }: SeedCardProps) {
+  const router = useRouter();
+  const toast = useToast();
+  const { setPendingSeedId } = useWorkbenchStore();
   const [isHovering, setIsHovering] = useState(false);
+  const [discussing, setDiscussing] = useState(false);
 
   const typeColors = TYPE_COLORS[seed.type];
   const statusConfig = STATUS_CONFIG[seed.status];
@@ -100,6 +108,38 @@ export const SeedCard = memo(function SeedCard({
     },
     [onDelete, seed]
   );
+
+  const handleOpenInWorkbench = useCallback(() => {
+    setPendingSeedId(seed.id);
+    router.push("/workbench");
+  }, [setPendingSeedId, seed.id, router]);
+
+  const handleDiscussInDojo = useCallback(async () => {
+    if (discussing) return;
+
+    setDiscussing(true);
+    try {
+      const situation = `Let's discuss this seed: "${seed.name}"`;
+      const perspectives = seed.why_matters ? [seed.why_matters] : [];
+
+      const result = await createSessionFromContext({
+        artifact_type: 'seed',
+        artifact_id: seed.id,
+        situation,
+        perspectives,
+        user_id: 'dev-user',
+        title: `Discuss: ${seed.name}`,
+      });
+
+      toast.success("Dojo session started");
+      router.push(`/dojo/${result.session_id}`);
+    } catch (error) {
+      console.error("Error creating Dojo session:", error);
+      toast.error("Failed to start Dojo session");
+    } finally {
+      setDiscussing(false);
+    }
+  }, [discussing, seed, router, toast]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -227,6 +267,28 @@ export const SeedCard = memo(function SeedCard({
             Compost
           </button>
         </div>
+
+        <button
+          onClick={handleOpenInWorkbench}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-supervisor/30 text-supervisor rounded-md hover:bg-supervisor/40 transition-all duration-100 active:scale-95 text-sm font-medium"
+          aria-label={`Open ${seed.name} in Workbench`}
+        >
+          <FileEdit className="w-4 h-4" />
+          Open in Workbench
+        </button>
+
+        <button
+          onClick={handleDiscussInDojo}
+          disabled={discussing}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-4 py-2 bg-dojo/30 text-dojo rounded-md hover:bg-dojo/40 transition-all duration-100 active:scale-95 text-sm font-medium",
+            discussing && "opacity-50 cursor-not-allowed"
+          )}
+          aria-label={`Discuss ${seed.name} in Dojo`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          {discussing ? "Starting..." : "Discuss in Dojo"}
+        </button>
 
         <div className="flex items-center justify-between">
           <button

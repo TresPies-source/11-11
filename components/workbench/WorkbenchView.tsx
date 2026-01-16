@@ -1,22 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { useToast } from "@/hooks/useToast";
 import { useSupervisor } from "@/hooks/useSupervisor";
 import { TabBar } from "./TabBar";
 import { Editor } from "./Editor";
 import { ActionBar } from "./ActionBar";
+import { SaveArtifactModal } from "./SaveArtifactModal";
+import { DiscussWithDojoModal } from "./DiscussWithDojoModal";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
 import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { FileNode } from "@/lib/types";
 
 export function WorkbenchView() {
-  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError, openFileTab } = useWorkbenchStore();
+  const { tabs, addTab, setActiveTab, activeTabId, updateTabId, setActiveTabError, openFileTab, pendingPromptId, setPendingPromptId, pendingSeedId, setPendingSeedId } = useWorkbenchStore();
   const initialized = useRef(false);
   const toast = useToast();
   const supervisor = useSupervisor();
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isDiscussModalOpen, setIsDiscussModalOpen] = useState(false);
 
   useEffect(() => {
     if (!initialized.current && tabs.length === 0) {
@@ -43,6 +47,94 @@ export function WorkbenchView() {
     return () => window.removeEventListener('keydown', handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const loadPrompt = async () => {
+      if (!pendingPromptId) return;
+
+      const existingTab = tabs.find((tab) => tab.sourcePromptId === pendingPromptId);
+      if (existingTab) {
+        setActiveTab(existingTab.id);
+        setPendingPromptId(null);
+        return;
+      }
+
+      try {
+        toast.info("Loading prompt...");
+        const response = await fetch(`/api/drive/content/${pendingPromptId}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to fetch prompt");
+        }
+
+        const data = await response.json();
+        const content = data.content || "";
+        const fileName = data.fileName || "Untitled Prompt";
+
+        const newTab = {
+          id: `prompt-${pendingPromptId}-${Date.now()}`,
+          title: fileName.replace(/\.md$/, ""),
+          content,
+          sourcePromptId: pendingPromptId,
+        };
+
+        addTab(newTab);
+        toast.success(`Opened ${newTab.title}`);
+        setPendingPromptId(null);
+      } catch (error) {
+        console.error("[LoadPrompt] Error:", error);
+        toast.error(error instanceof Error ? error.message : "Failed to load prompt");
+        setPendingPromptId(null);
+      }
+    };
+
+    loadPrompt();
+  }, [pendingPromptId, tabs, addTab, setActiveTab, setPendingPromptId, toast]);
+
+  useEffect(() => {
+    const loadSeed = async () => {
+      if (!pendingSeedId) return;
+
+      const existingTab = tabs.find((tab) => tab.sourceSeedId === pendingSeedId);
+      if (existingTab) {
+        setActiveTab(existingTab.id);
+        setPendingSeedId(null);
+        return;
+      }
+
+      try {
+        toast.info("Loading seed...");
+        const response = await fetch(`/api/seeds/${pendingSeedId}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to fetch seed");
+        }
+
+        const seed = await response.json();
+        const content = seed.content || "";
+        const seedName = seed.name || "Untitled Seed";
+
+        const newTab = {
+          id: `seed-${pendingSeedId}-${Date.now()}`,
+          title: seedName,
+          content,
+          sourceSeedId: pendingSeedId,
+        };
+
+        addTab(newTab);
+        toast.success(`Opened ${newTab.title}`);
+        setPendingSeedId(null);
+      } catch (error) {
+        console.error("[LoadSeed] Error:", error);
+        toast.error(error instanceof Error ? error.message : "Failed to load seed");
+        setPendingSeedId(null);
+      }
+    };
+
+    loadSeed();
+  }, [pendingSeedId, tabs, addTab, setActiveTab, setPendingSeedId, toast]);
 
   const handleRun = async () => {
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
@@ -235,6 +327,30 @@ export function WorkbenchView() {
     }
   };
 
+  const handleSaveToHub = () => {
+    const activeTab = tabs.find((tab) => tab.id === activeTabId);
+    if (!activeTab) {
+      toast.error("No active content to save");
+      return;
+    }
+    setIsSaveModalOpen(true);
+  };
+
+  const handleDiscussWithDojo = () => {
+    const activeTab = tabs.find((tab) => tab.id === activeTabId);
+    if (!activeTab) {
+      toast.error("No active content to discuss");
+      return;
+    }
+    setIsDiscussModalOpen(true);
+  };
+
+  const handleSaveModalSuccess = () => {
+    toast.success("Content saved to Knowledge Hub");
+  };
+
+  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+
   return (
     <div className="h-full bg-bg-primary">
       <PanelGroup direction="horizontal">
@@ -250,7 +366,15 @@ export function WorkbenchView() {
             <div className="flex-1 overflow-hidden">
               <Editor />
             </div>
-            <ActionBar onRun={handleRun} onSave={handleSave} onExport={handleExport} isRunning={supervisor.isLoading} />
+            <ActionBar 
+              onRun={handleRun} 
+              onSave={handleSave} 
+              onExport={handleExport} 
+              onSaveToHub={handleSaveToHub}
+              onDiscussWithDojo={handleDiscussWithDojo}
+              isRunning={supervisor.isLoading}
+              hasActiveTab={!!activeTabId && tabs.length > 0}
+            />
           </div>
         </Panel>
         
@@ -260,6 +384,22 @@ export function WorkbenchView() {
           <AgentActivityPanel />
         </Panel>
       </PanelGroup>
+
+      <SaveArtifactModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSuccess={handleSaveModalSuccess}
+        content={activeTab?.content || ""}
+        title={activeTab?.title || ""}
+        sourceFileId={activeTab?.fileId}
+      />
+
+      <DiscussWithDojoModal
+        isOpen={isDiscussModalOpen}
+        onClose={() => setIsDiscussModalOpen(false)}
+        fileName={activeTab?.title || ""}
+        fileContent={activeTab?.content || ""}
+      />
     </div>
   );
 }

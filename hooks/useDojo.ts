@@ -20,6 +20,7 @@ export function useDojo(sessionId: string): UseDojo {
     setLoading,
     setMode,
     setError,
+    persistMessage,
   } = useDojoStore();
 
   useEffect(() => {
@@ -43,6 +44,9 @@ export function useDojo(sessionId: string): UseDojo {
     };
 
     addMessage(userMessage);
+    persistMessage(userMessage).catch((err) => {
+      console.error('Failed to persist user message:', err);
+    });
 
     let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
     let agentMessageStarted = false;
@@ -105,6 +109,15 @@ export function useDojo(sessionId: string): UseDojo {
             } catch (parseError) {
               console.error('Failed to parse event line:', trimmedLine, parseError);
             }
+          }
+        }
+
+        if (agentMessageStarted) {
+          const lastMessage = useDojoStore.getState().messages[useDojoStore.getState().messages.length - 1];
+          if (lastMessage && lastMessage.role === 'agent') {
+            persistMessage(lastMessage).catch((err) => {
+              console.error('Failed to persist agent message:', err);
+            });
           }
         }
       } catch (streamError) {

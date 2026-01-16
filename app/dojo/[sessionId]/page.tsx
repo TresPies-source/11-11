@@ -10,6 +10,7 @@ import { DojoInput, DojoInputData } from '@/components/dojo/DojoInput';
 import { SimpleTextInput } from '@/components/dojo/SimpleTextInput';
 import { Button } from '@/components/ui/Button';
 import { SaveSessionModal } from '@/components/dojo/SaveSessionModal';
+import { TrailOfThoughtPanel } from '@/components/hub/TrailOfThoughtPanel';
 
 export default function DojoSessionPage() {
   const params = useParams();
@@ -67,6 +68,14 @@ export default function DojoSessionPage() {
           <span className="hidden sm:inline">Save Session</span>
         </Button>
       </header>
+
+      {sessionId !== 'new' && (
+        <TrailOfThoughtPanel
+          artifactType="session"
+          artifactId={sessionId}
+          defaultOpen={false}
+        />
+      )}
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <SessionHistory messages={messages} sessionId={sessionId} />

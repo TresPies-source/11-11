@@ -11,6 +11,7 @@ import { SaveArtifactModal } from "./SaveArtifactModal";
 import { DiscussWithDojoModal } from "./DiscussWithDojoModal";
 import { AgentActivityPanel } from "@/components/agents/AgentActivityPanel";
 import { WorkbenchFileTreePanel } from "./WorkbenchFileTreePanel";
+import { TrailOfThoughtPanel } from "@/components/hub/TrailOfThoughtPanel";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { FileNode } from "@/lib/types";
 
@@ -366,6 +367,14 @@ export function WorkbenchView() {
             <div className="flex-1 overflow-hidden">
               <Editor />
             </div>
+            {activeTab?.isFileBased && activeTab?.fileId && (
+              <div className="border-t border-border">
+                <TrailOfThoughtPanel 
+                  artifactType="file" 
+                  artifactId={activeTab.fileId} 
+                />
+              </div>
+            )}
             <ActionBar 
               onRun={handleRun} 
               onSave={handleSave} 

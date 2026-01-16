@@ -13,6 +13,7 @@ import { CritiqueDetails } from "./CritiqueDetails";
 import { PublicToggle } from "./PublicToggle";
 import { PublicBadge } from "./PublicBadge";
 import { GreenhouseCardActions } from "./GreenhouseCardActions";
+import { TrailOfThoughtPanel } from "@/components/hub/TrailOfThoughtPanel";
 
 interface GreenhouseCardProps {
   prompt: PromptWithCritique;
@@ -161,6 +162,10 @@ export const GreenhouseCard = memo(function GreenhouseCard({ prompt, searchQuery
         driveFileId={prompt.drive_file_id || null}
         onStatusChange={onStatusChange}
       />
+
+      <div onClick={(e) => e.stopPropagation()} className="mt-2">
+        <TrailOfThoughtPanel artifactType="prompt" artifactId={prompt.id} />
+      </div>
       </Card>
     </motion.div>
   );

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { createSessionFromContext } from "@/lib/hub/context-injection";
+import { TrailOfThoughtPanel } from "@/components/hub/TrailOfThoughtPanel";
 
 interface PromptCardProps {
   prompt: PromptFile;
@@ -275,6 +276,7 @@ export function PromptCard({ prompt, variant, onTagClick }: PromptCardProps) {
             </button>
           </div>
         )}
+        <TrailOfThoughtPanel artifactType="prompt" artifactId={prompt.id} className="mt-2" />
       </div>
     </motion.div>
   );

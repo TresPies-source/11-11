@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useWorkbenchStore } from "@/lib/stores/workbench.store";
 import { useToast } from "@/hooks/useToast";
 import { createSessionFromContext } from "@/lib/hub/context-injection";
+import { TrailOfThoughtPanel } from "@/components/hub/TrailOfThoughtPanel";
 
 interface SeedCardProps {
   seed: SeedRow;
@@ -304,6 +305,8 @@ export const SeedCard = memo(function SeedCard({
             {new Date(seed.updated_at).toLocaleDateString()}
           </div>
         </div>
+
+        <TrailOfThoughtPanel artifactType="seed" artifactId={seed.id} className="mt-2" />
       </div>
     </motion.div>
   );

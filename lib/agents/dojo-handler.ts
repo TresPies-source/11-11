@@ -384,27 +384,22 @@ async function handleMirrorMode(packet: DojoPacket): Promise<DojoAgentResponse> 
       .map((p, i) => `${i + 1}. ${p.text}`)
       .join('\n');
 
-    const prompt = `You are the Dojo Agent in Mirror Mode. Your role is to reflect the user's thinking back to them with clarity.
+    const systemPrompt = `You are Mirror, a calm spirit in a forest. Your purpose is to help the user see their own thoughts more clearly. You do this by reflecting back the patterns and tensions you notice in their words, using simple, flowing language.
 
-Situation: ${packet.situation}
+- Start with a warm acknowledgment (e.g., "I hear you...", "Thank you for sharing...").
+- Write in 3-4 short, simple paragraphs.
+- Gently point out the core pattern or tension you see.
+- Ask 1-2 open-ended questions to invite deeper reflection.
+- Use emoji (🪞 ✨ 🌱) to add warmth and a touch of magic.
+- Do NOT use lists, bolding, or complex markdown. Just simple, flowing text.
+- Your tone is curious, gentle, and slightly magical.`;
+
+    const userPrompt = `Situation: ${packet.situation}
 Stake: ${packet.stake || 'Not specified'}
 Perspectives:
 ${perspectivesText || 'None yet'}
 
-Provide:
-1. A brief summary (2-3 sentences) of the pattern you see across these perspectives
-2. 1-3 key assumptions underlying their thinking
-3. 1-2 tensions or contradictions (if any)
-4. 1-2 reframes to shift their perspective
-
-Respond in JSON format with the following structure:
-{
-  "summary": "Brief summary of the pattern",
-  "pattern": "Detailed pattern description",
-  "assumptions": ["assumption1", "assumption2"],
-  "tensions": ["tension1", "tension2"],
-  "reframes": ["reframe1", "reframe2"]
-}`;
+Reflect back what you see in their thinking.`;
 
     if (isTraceActive()) {
       logEvent('AGENT_ACTIVITY_PROGRESS',
@@ -422,9 +417,12 @@ Respond in JSON format with the following structure:
     }
 
     const model = getModelForAgent('dojo');
-    const { data, usage } = await llmClient.createJSONCompletion<MirrorModeResponse>(
+    const { content, usage } = await llmClient.call(
       model,
-      [{ role: 'user', content: prompt }],
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
       {
         temperature: 0.7,
         timeout: 30000,
@@ -436,7 +434,7 @@ Respond in JSON format with the following structure:
         {
           agent_id: 'dojo',
           mode: 'Mirror',
-          message: 'Validating and processing response...',
+          message: 'Processing conversational response...',
           progress: 70,
         },
         {},
@@ -449,24 +447,15 @@ Respond in JSON format with the following structure:
       );
     }
 
-    const validated = MirrorModeResponseSchema.parse(data);
-
-    const newAssumptions: Assumption[] = validated.assumptions.map(text => ({
-      text,
-      challenged: false,
-      timestamp: new Date().toISOString(),
-    }));
-
-    const reframePerspective: Perspective = {
-      text: `Reframes: ${validated.reframes.join(' | ')}`,
+    const mirrorPerspective: Perspective = {
+      text: content,
       source: 'agent' as const,
       timestamp: new Date().toISOString(),
     };
 
     const updatedPacket: DojoPacket = {
       ...packet,
-      assumptions: [...packet.assumptions, ...newAssumptions],
-      perspectives: [...packet.perspectives, reframePerspective],
+      perspectives: [...packet.perspectives, mirrorPerspective],
     };
 
     const duration = Date.now() - startTime;
@@ -479,11 +468,7 @@ Respond in JSON format with the following structure:
           message: 'Mirror reflection complete',
           progress: 100,
         },
-        {
-          assumptions_found: validated.assumptions.length,
-          tensions_found: validated.tensions.length,
-          reframes_offered: validated.reframes.length,
-        },
+        {},
         {
           parent_type: 'agent_operation',
           metadata: {
@@ -494,32 +479,14 @@ Respond in JSON format with the following structure:
       );
     }
 
-    let summaryText = `**Pattern:** ${validated.pattern}\n\n`;
-    
-    if (validated.assumptions.length > 0) {
-      summaryText += `**Key Assumptions:**\n${validated.assumptions.map(a => `• ${a}`).join('\n')}\n\n`;
-    }
-    
-    if (validated.tensions.length > 0) {
-      summaryText += `**Tensions:**\n${validated.tensions.map(t => `• ${t}`).join('\n')}\n\n`;
-    }
-    
-    if (validated.reframes.length > 0) {
-      summaryText += `**Reframes:**\n${validated.reframes.map(r => `• ${r}`).join('\n')}`;
-    }
-
     return {
       next_move: {
-        action: validated.assumptions.length > 0 
-          ? `Explore assumption: ${validated.assumptions[0]}` 
-          : 'Continue exploring perspectives',
+        action: 'Continue exploring perspectives',
         why: 'Mirror mode reflection complete',
-        smallest_test: validated.tensions.length > 0 
-          ? `Test this tension: ${validated.tensions[0]}` 
-          : null,
+        smallest_test: null,
       },
       updated_packet: updatedPacket,
-      summary: summaryText,
+      summary: content,
     };
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -588,32 +555,21 @@ async function handleScoutMode(packet: DojoPacket): Promise<DojoAgentResponse> {
       .map((p, i) => `${i + 1}. ${p.text}`)
       .join('\n');
 
-    const prompt = `You are the Dojo Agent in Scout Mode. Your role is to map clear routes with honest tradeoffs.
+    const systemPrompt = `You are Scout, an adventurous guide. Your purpose is to help the user map out their options and understand the tradeoffs of each path. You are optimistic, clear, and encouraging.
 
-Situation: ${packet.situation}
+- Start with an enthusiastic opening (e.g., "Let's map out your options!", "An exciting journey ahead!").
+- Present 2-4 clear, distinct paths the user could take.
+- For each path, briefly describe the potential reward and the potential risk (the tradeoff).
+- Use emoji (🗺️ 🧭 ⚡) to add a sense of adventure.
+- End with an encouraging question that prompts a decision.
+- Your tone is energetic, clear, and inspiring.`;
+
+    const userPrompt = `Situation: ${packet.situation}
 Stake: ${packet.stake || 'Not specified'}
 Perspectives:
 ${perspectivesText || 'None yet'}
 
-Provide:
-1. 2-4 distinct routes the user could take
-2. For each route: name, brief description, and key tradeoffs (not just pros)
-3. ONE "smallest test" - a concrete action to learn fast without full commitment
-
-Keep routes actionable and tradeoffs honest.
-
-Respond in JSON format with the following structure:
-{
-  "summary": "Brief overview of the routes being considered",
-  "routes": [
-    {
-      "name": "Route name",
-      "description": "Brief description of this route",
-      "tradeoffs": "Key tradeoffs (pros AND cons)"
-    }
-  ],
-  "smallest_test": "One concrete action to learn fast"
-}`;
+Map out the possible paths forward.`;
 
     if (isTraceActive()) {
       logEvent('AGENT_ACTIVITY_PROGRESS',
@@ -631,9 +587,12 @@ Respond in JSON format with the following structure:
     }
 
     const model = getModelForAgent('dojo');
-    const { data, usage } = await llmClient.createJSONCompletion<ScoutModeResponse>(
+    const { content, usage } = await llmClient.call(
       model,
-      [{ role: 'user', content: prompt }],
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
       {
         temperature: 0.7,
         timeout: 30000,
@@ -645,7 +604,7 @@ Respond in JSON format with the following structure:
         {
           agent_id: 'dojo',
           mode: 'Scout',
-          message: 'Validating and processing routes...',
+          message: 'Processing conversational response...',
           progress: 70,
         },
         {},
@@ -658,17 +617,15 @@ Respond in JSON format with the following structure:
       );
     }
 
-    const validated = ScoutModeResponseSchema.parse(data);
-
-    const routePerspectives: Perspective[] = validated.routes.map(route => ({
-      text: `Route: ${route.name} - ${route.description} | Tradeoffs: ${route.tradeoffs}`,
+    const scoutPerspective: Perspective = {
+      text: content,
       source: 'agent' as const,
       timestamp: new Date().toISOString(),
-    }));
+    };
 
     const updatedPacket: DojoPacket = {
       ...packet,
-      perspectives: [...packet.perspectives, ...routePerspectives],
+      perspectives: [...packet.perspectives, scoutPerspective],
     };
 
     const duration = Date.now() - startTime;
@@ -681,10 +638,7 @@ Respond in JSON format with the following structure:
           message: 'Scout route mapping complete',
           progress: 100,
         },
-        {
-          routes_found: validated.routes.length,
-          smallest_test_provided: true,
-        },
+        {},
         {
           parent_type: 'agent_operation',
           metadata: {
@@ -695,24 +649,14 @@ Respond in JSON format with the following structure:
       );
     }
 
-    let summaryText = `**Routes to consider:**\n\n`;
-    
-    validated.routes.forEach((route, i) => {
-      summaryText += `**${i + 1}. ${route.name}**\n`;
-      summaryText += `${route.description}\n`;
-      summaryText += `*Tradeoffs:* ${route.tradeoffs}\n\n`;
-    });
-    
-    summaryText += `**Smallest Test:**\n${validated.smallest_test}`;
-
     return {
       next_move: {
-        action: validated.smallest_test,
-        why: 'Scout mode - smallest test to learn fast',
-        smallest_test: validated.smallest_test,
+        action: 'Explore the paths ahead',
+        why: 'Scout mode path mapping complete',
+        smallest_test: null,
       },
       updated_packet: updatedPacket,
-      summary: summaryText,
+      summary: content,
     };
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -781,27 +725,21 @@ async function handleGardenerMode(packet: DojoPacket): Promise<DojoAgentResponse
       .map((p, i) => `${i + 1}. ${p.text}`)
       .join('\n');
 
-    const prompt = `You are the Dojo Agent in Gardener Mode. Your role is to help the user focus by pruning ideas with direct, honest guidance.
+    const systemPrompt = `You are Gardener, a wise and nurturing presence. Your purpose is to help the user tend to their garden of ideas—pruning what's no longer needed and giving space for the strongest ideas to grow.
 
-Situation: ${packet.situation}
+- Start with a gentle, nurturing opening (e.g., "Let's tend to your garden of ideas...").
+- Identify the 2-3 strongest, most promising ideas from the user's input.
+- Gently suggest 1-2 ideas that might be less essential or could be set aside for now.
+- Use gardening metaphors naturally (e.g., "This idea has strong roots," "Let's prune this one back a bit").
+- Use emoji (🌱 ✂️ 🌿) to reinforce the gardening theme.
+- Your tone is calm, wise, and supportive.`;
+
+    const userPrompt = `Situation: ${packet.situation}
 Stake: ${packet.stake || 'Not specified'}
 Ideas/Perspectives:
 ${perspectivesText || 'None yet'}
 
-Provide:
-1. 2-3 strong ideas that deserve focus and energy
-2. 1-2 ideas that need growth or more development before pursuing
-3. (Optional) Ideas to compost - those that can be let go
-
-Be direct. Don't soften your guidance with excessive diplomacy. Help the user focus their energy.
-
-Respond in JSON format with the following structure:
-{
-  "summary": "Brief overview of the pruning process",
-  "strong_ideas": ["idea1", "idea2", "idea3"],
-  "ideas_to_grow": ["idea1", "idea2"],
-  "ideas_to_compost": ["idea1", "idea2"]
-}`;
+Help me tend to my garden of ideas.`;
 
     if (isTraceActive()) {
       logEvent('AGENT_ACTIVITY_PROGRESS',
@@ -819,9 +757,12 @@ Respond in JSON format with the following structure:
     }
 
     const model = getModelForAgent('dojo');
-    const { data, usage } = await llmClient.createJSONCompletion<GardenerModeResponse>(
+    const { content, usage } = await llmClient.call(
       model,
-      [{ role: 'user', content: prompt }],
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
       {
         temperature: 0.7,
         timeout: 30000,
@@ -833,7 +774,7 @@ Respond in JSON format with the following structure:
         {
           agent_id: 'dojo',
           mode: 'Gardener',
-          message: 'Validating and processing pruning guidance...',
+          message: 'Processing gardening guidance...',
           progress: 70,
         },
         {},
@@ -846,17 +787,15 @@ Respond in JSON format with the following structure:
       );
     }
 
-    const validated = GardenerModeResponseSchema.parse(data);
-
-    const focusPerspective: Perspective = {
-      text: `Gardener guidance: Focus on ${validated.strong_ideas.length} strong ideas`,
+    const gardenerPerspective: Perspective = {
+      text: content,
       source: 'agent' as const,
       timestamp: new Date().toISOString(),
     };
 
     const updatedPacket: DojoPacket = {
       ...packet,
-      perspectives: [...packet.perspectives, focusPerspective],
+      perspectives: [...packet.perspectives, gardenerPerspective],
     };
 
     const duration = Date.now() - startTime;
@@ -869,11 +808,7 @@ Respond in JSON format with the following structure:
           message: 'Gardener pruning complete',
           progress: 100,
         },
-        {
-          strong_ideas_count: validated.strong_ideas.length,
-          ideas_to_grow_count: validated.ideas_to_grow.length,
-          ideas_to_compost_count: validated.ideas_to_compost?.length || 0,
-        },
+        {},
         {
           parent_type: 'agent_operation',
           metadata: {
@@ -884,28 +819,14 @@ Respond in JSON format with the following structure:
       );
     }
 
-    let summaryText = `**Strong Ideas (focus here):**\n${validated.strong_ideas.map(i => `• ${i}`).join('\n')}\n\n`;
-    
-    if (validated.ideas_to_grow.length > 0) {
-      summaryText += `**Ideas to Grow (need more development):**\n${validated.ideas_to_grow.map(i => `• ${i}`).join('\n')}\n\n`;
-    }
-    
-    if (validated.ideas_to_compost && validated.ideas_to_compost.length > 0) {
-      summaryText += `**Ideas to Compost (let go):**\n${validated.ideas_to_compost.map(i => `• ${i}`).join('\n')}`;
-    }
-
     return {
       next_move: {
-        action: validated.strong_ideas.length > 0 
-          ? `Focus on: ${validated.strong_ideas[0]}` 
-          : 'Develop the strongest idea further',
-        why: 'Gardener mode - focusing energy on strongest ideas',
-        smallest_test: validated.strong_ideas.length > 0 
-          ? `Take one small step on: ${validated.strong_ideas[0]}` 
-          : null,
+        action: 'Focus on the strongest ideas',
+        why: 'Gardener mode - nurturing what has the most potential',
+        smallest_test: 'Take one small step on your strongest idea',
       },
       updated_packet: updatedPacket,
-      summary: summaryText,
+      summary: content,
     };
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -978,9 +899,17 @@ async function handleImplementationMode(packet: DojoPacket): Promise<DojoAgentRe
       .map((d, i) => `${i + 1}. ${d.text}`)
       .join('\n');
 
-    const prompt = `You are the Dojo Agent in Implementation Mode. Your role is to provide a concrete, actionable plan.
+    const systemPrompt = `You are Builder, a pragmatic and focused craftsperson. Your purpose is to turn the user's converged idea into a concrete, actionable plan. You are direct, clear, and motivating.
 
-Situation: ${packet.situation}
+- Start with a direct, action-oriented opening (e.g., "Alright, let's turn this into action!", "Time to build.").
+- Provide a numbered list of 1-5 clear, actionable steps.
+- Each step should be a concrete action the user can take RIGHT NOW.
+- Keep the language simple and direct.
+- End with a motivating statement to get them started.
+- Use emoji (🛠️ 🚀 ✅) to create a sense of progress and accomplishment.
+- Your tone is pragmatic, focused, and encouraging.`;
+
+    const userMessage = `Situation: ${packet.situation}
 Stake: ${packet.stake || 'Not specified'}
 
 Perspectives considered:
@@ -989,20 +918,7 @@ ${perspectivesText || 'None yet'}
 Decisions made:
 ${decisionsText || 'None yet'}
 
-Provide:
-1. A concrete action plan with 1-5 steps (NOT 20+ steps)
-2. Each step should be actionable and sequenced logically
-3. The user should be able to start step 1 within 5 minutes
-4. Steps should reflect the existing decisions
-
-Keep the plan focused and executable.
-
-Respond in JSON format with the following structure:
-{
-  "summary": "Brief overview of the plan",
-  "plan": ["Step 1: ...", "Step 2: ...", "Step 3: ..."],
-  "first_step": "The first actionable step to take right now"
-}`;
+Turn this into a concrete action plan.`;
 
     if (isTraceActive()) {
       logEvent('AGENT_ACTIVITY_PROGRESS',
@@ -1020,9 +936,12 @@ Respond in JSON format with the following structure:
     }
 
     const model = getModelForAgent('dojo');
-    const { data, usage } = await llmClient.createJSONCompletion<ImplementationModeResponse>(
+    const { content, usage } = await llmClient.call(
       model,
-      [{ role: 'user', content: prompt }],
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ],
       {
         temperature: 0.7,
         timeout: 30000,
@@ -1034,7 +953,7 @@ Respond in JSON format with the following structure:
         {
           agent_id: 'dojo',
           mode: 'Implementation',
-          message: 'Validating and processing plan...',
+          message: 'Processing plan response...',
           progress: 70,
         },
         {},
@@ -1047,10 +966,8 @@ Respond in JSON format with the following structure:
       );
     }
 
-    const validated = ImplementationModeResponseSchema.parse(data);
-
     const planPerspective: Perspective = {
-      text: `Implementation Plan: ${validated.plan.join(' → ')}`,
+      text: content,
       source: 'agent' as const,
       timestamp: new Date().toISOString(),
     };
@@ -1070,10 +987,7 @@ Respond in JSON format with the following structure:
           message: 'Implementation plan generated',
           progress: 100,
         },
-        {
-          plan_steps_count: validated.plan.length,
-          first_step_provided: true,
-        },
+        {},
         {
           parent_type: 'agent_operation',
           metadata: {
@@ -1084,22 +998,14 @@ Respond in JSON format with the following structure:
       );
     }
 
-    let summaryText = `**Action Plan:**\n\n`;
-    
-    validated.plan.forEach((step, i) => {
-      summaryText += `**${i + 1}.** ${step}\n`;
-    });
-    
-    summaryText += `\n**Start here:** ${validated.first_step}`;
-
     return {
       next_move: {
-        action: validated.first_step,
+        action: 'Follow the action plan provided',
         why: 'Implementation mode - concrete plan ready to execute',
-        smallest_test: validated.first_step,
+        smallest_test: 'Start with the first step in the plan',
       },
       updated_packet: updatedPacket,
-      summary: summaryText,
+      summary: content,
     };
   } catch (error) {
     const duration = Date.now() - startTime;

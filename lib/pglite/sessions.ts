@@ -197,3 +197,9 @@ export async function getAllSessions(userId: string): Promise<SessionRow[]> {
     updated_at: row.updated_at,
   }));
 }
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  const db = await getDB();
+  await db.query('DELETE FROM session_messages WHERE session_id = $1', [sessionId]);
+  await db.query('DELETE FROM sessions WHERE id = $1', [sessionId]);
+}

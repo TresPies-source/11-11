@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "@/components/providers/MockSessionProvider";
 import { OnboardingWizard } from "./OnboardingWizard";
+import { features } from "@/lib/features";
 
 export function OnboardingWrapper() {
   const { isAuthenticated } = useSession();
@@ -14,7 +15,7 @@ export function OnboardingWrapper() {
   }, []);
 
   useEffect(() => {
-    if (!mounted || !isAuthenticated) {
+    if (!mounted || !isAuthenticated || !features.enableOnboardingModal) {
       setShowOnboarding(false);
       return;
     }
@@ -36,7 +37,7 @@ export function OnboardingWrapper() {
     setShowOnboarding(false);
   };
 
-  if (!mounted || !isAuthenticated) {
+  if (!mounted || !isAuthenticated || !features.enableOnboardingModal) {
     return null;
   }
 

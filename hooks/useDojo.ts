@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDojoStore, DojoMessage, DojoMode } from '@/lib/stores/dojo.store';
 import { HarnessEvent } from '@/lib/harness/types';
+import { insertSession } from '@/lib/pglite/sessions';
 
 interface UseDojo {
   sendMessage: (situation: string, perspectives?: string[]) => Promise<void>;
@@ -10,6 +12,7 @@ interface UseDojo {
 }
 
 export function useDojo(sessionId: string): UseDojo {
+  const router = useRouter();
   const {
     messages,
     isLoading,
@@ -36,6 +39,39 @@ export function useDojo(sessionId: string): UseDojo {
     setLoading(true);
     setError(null);
 
+    let actualSessionId = sessionId;
+
+    if (sessionId === 'new') {
+      try {
+        console.log('[useDojo] Creating new session...');
+        const newSession = await insertSession({
+          user_id: 'dev@11-11.dev',
+          title: 'Untitled Session',
+          mode: null,
+          situation: situation,
+          stake: null,
+          agent_path: [],
+          next_move_action: null,
+          next_move_why: null,
+          next_move_test: null,
+          artifacts: [],
+          total_tokens: 0,
+          total_cost_usd: 0,
+        });
+        
+        actualSessionId = newSession.id;
+        setSessionId(actualSessionId);
+        console.log('[useDojo] New session created:', actualSessionId);
+        
+        router.push(`/dojo/${actualSessionId}`);
+      } catch (err) {
+        console.error('[useDojo] Failed to create session:', err);
+        setError('Failed to create session. Please try again.');
+        setLoading(false);
+        return;
+      }
+    }
+
     const userMessage: DojoMessage = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -61,7 +97,7 @@ export function useDojo(sessionId: string): UseDojo {
         body: JSON.stringify({
           situation,
           perspectives: perspectives.filter(p => p.trim().length > 0),
-          sessionId,
+          sessionId: actualSessionId,
         }),
       });
 
@@ -181,7 +217,7 @@ export function useDojo(sessionId: string): UseDojo {
           break;
       }
     }
-  }, [isLoading, addMessage, appendToLastMessage, setLoading, setMode, setError, sessionId]);
+  }, [isLoading, addMessage, appendToLastMessage, setLoading, setMode, setError, sessionId, setSessionId, persistMessage, router]);
 
   return {
     sendMessage,

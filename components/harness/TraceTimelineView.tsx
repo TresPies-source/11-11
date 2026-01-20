@@ -28,6 +28,7 @@ const EVENT_TYPE_COLORS = {
   COST_TRACKED: "bg-emerald-500 dark:bg-emerald-600",
   CONTEXT_BUILD: "bg-teal-500 dark:bg-teal-600",
   SAFETY_SWITCH: "bg-yellow-500 dark:bg-yellow-600",
+  AI_GATEWAY_ROUTE: "bg-indigo-500 dark:bg-indigo-600",
   ERROR: "bg-red-500 dark:bg-red-600",
   USER_INPUT: "bg-cyan-500 dark:bg-cyan-600",
   AGENT_RESPONSE: "bg-violet-500 dark:bg-violet-600",

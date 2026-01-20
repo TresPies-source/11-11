@@ -61,10 +61,14 @@
     "test:seeds-modal": "tsx __tests__/seeds/details-modal.test.tsx",
     "test:seeds-view": "tsx __tests__/seeds/seeds-view.test.tsx",
     "test:seeds-integration": "tsx __tests__/seeds/integration.test.ts",
-    "test:seeds": "npm run test:seeds-api && npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card && npm run test:seeds-filters && npm run test:seeds-modal && npm run test:seeds-view && npm run test:seeds-integration"
+    "test:seeds": "npm run test:seeds-api && npm run test:seeds-export && npm run test:seeds-hook && npm run test:seeds-card && npm run test:seeds-filters && npm run test:seeds-modal && npm run test:seeds-view && npm run test:seeds-integration",
+    "test:ai-gateway-logger": "tsx lib/ai-gateway/logger.test.ts",
+    "test:ai-gateway": "npm run test:ai-gateway-logger"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@electric-sql/pglite": "^0.3.14",
+    "@google/generative-ai": "^0.24.1",
     "@monaco-editor/react": "^4.6.0",
     "autoprefixer": "^10.4.23",
     "clsx": "^2.1.1",

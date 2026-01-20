@@ -12,7 +12,8 @@ import {
   type AgentId,
   type TokenUsage,
 } from './types';
-import { llmClient, canUseProvider } from '../llm/client';
+import { canUseProvider } from '../llm/client';
+import { aiGateway } from '../ai-gateway';
 import { getModelForAgent } from '../llm/registry';
 import { getDB } from '../pglite/client';
 import { trackRoutingCost, trackRoutingCostSimple } from './cost-tracking';
@@ -239,12 +240,13 @@ async function routeQueryWithLLM(
 
   try {
     const routingModel = getModelForAgent('supervisor');
-    const { data, usage } = await llmClient.createJSONCompletion(
-      routingModel,
+    const { data, usage } = await aiGateway.createJSONCompletion(
+      'general_chat',
       [{ role: 'user', content: prompt }],
       {
         temperature: 0.3,
         timeout: 30000,
+        agentName: 'supervisor',
       }
     );
 

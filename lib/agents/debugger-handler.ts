@@ -12,7 +12,7 @@ import { AgentError } from './types';
 import type { Perspective, Assumption, DojoPacket } from '../packet/schema';
 import { DojoPacketSchema } from '../packet/schema';
 import { logEvent, startSpan, endSpan } from '../harness/trace';
-import { LLMClient } from '../llm/client';
+import { aiGateway } from '../ai-gateway';
 
 export interface Conflict {
   description: string;
@@ -58,12 +58,10 @@ async function analyzeReasoning(
   perspectives: Perspective[],
   assumptions: Assumption[]
 ): Promise<ReasoningAnalysis> {
-  const llmClient = new LLMClient();
-
   const spanId = startSpan('TOOL_INVOCATION', {
     tool: 'llm',
     operation: 'reasoning_analysis',
-    model: 'deepseek-chat',
+    model: 'deepseek-reasoner',
   });
 
   try {
@@ -103,13 +101,14 @@ Rules:
 
 Identify any contradictions, logical fallacies, or conflicts in reasoning.`;
 
-    const response = await llmClient.call('deepseek-chat', [
+    const response = await aiGateway.call('complex_reasoning', [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ], {
       temperature: 0.5,
       responseFormat: { type: 'json_object' },
       timeout: 60000,
+      agentName: 'debugger',
     });
 
     const analysis = JSON.parse(response.content) as ReasoningAnalysis;

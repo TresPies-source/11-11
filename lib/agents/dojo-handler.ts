@@ -11,8 +11,7 @@ import type { DojoPacket, NextMove, Perspective, Assumption } from '../packet/sc
 import type { AgentInvocationContext, ChatMessage } from './types';
 import { logEvent, isTraceActive } from '../harness/trace';
 import { z } from 'zod';
-import { LLMClient } from '../llm/client';
-import { getModelForAgent } from '../llm/registry';
+import { aiGateway } from '../ai-gateway';
 
 export type DojoMode = 'Mirror' | 'Scout' | 'Gardener' | 'Implementation';
 
@@ -38,10 +37,7 @@ export class DojoAgentError extends Error {
   }
 }
 
-/**
- * LLM client instance for Dojo Agent operations
- */
-const llmClient = new LLMClient();
+
 
 /**
  * Zod schema for Mirror mode LLM response
@@ -416,9 +412,8 @@ Reflect back what you see in their thinking.`;
       );
     }
 
-    const model = getModelForAgent('dojo');
-    const { content, usage } = await llmClient.call(
-      model,
+    const { content, usage } = await aiGateway.call(
+      'general_chat',
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -426,6 +421,7 @@ Reflect back what you see in their thinking.`;
       {
         temperature: 0.7,
         timeout: 30000,
+        agentName: 'dojo',
       }
     );
 
@@ -586,9 +582,8 @@ Map out the possible paths forward.`;
       );
     }
 
-    const model = getModelForAgent('dojo');
-    const { content, usage } = await llmClient.call(
-      model,
+    const { content, usage } = await aiGateway.call(
+      'content_synthesis',
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -596,6 +591,7 @@ Map out the possible paths forward.`;
       {
         temperature: 0.7,
         timeout: 30000,
+        agentName: 'dojo',
       }
     );
 
@@ -756,9 +752,8 @@ Help me tend to my garden of ideas.`;
       );
     }
 
-    const model = getModelForAgent('dojo');
-    const { content, usage } = await llmClient.call(
-      model,
+    const { content, usage } = await aiGateway.call(
+      'content_synthesis',
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -766,6 +761,7 @@ Help me tend to my garden of ideas.`;
       {
         temperature: 0.7,
         timeout: 30000,
+        agentName: 'dojo',
       }
     );
 
@@ -935,9 +931,8 @@ Turn this into a concrete action plan.`;
       );
     }
 
-    const model = getModelForAgent('dojo');
-    const { content, usage } = await llmClient.call(
-      model,
+    const { content, usage } = await aiGateway.call(
+      'content_synthesis',
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
@@ -945,6 +940,7 @@ Turn this into a concrete action plan.`;
       {
         temperature: 0.7,
         timeout: 30000,
+        agentName: 'dojo',
       }
     );
 

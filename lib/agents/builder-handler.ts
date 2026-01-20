@@ -12,7 +12,7 @@ import { join, resolve, isAbsolute } from 'path';
 import type { AgentInvocationContext } from './types';
 import { AgentError } from './types';
 import { logEvent, startSpan, endSpan } from '../harness/trace';
-import { LLMClient } from '../llm/client';
+import { aiGateway } from '../ai-gateway';
 
 export interface CodeArtifact {
   path: string;
@@ -124,8 +124,6 @@ async function planCodeChanges(
   request: string,
   contextFiles: Array<{ path: string; content: string }>
 ): Promise<CodePlan> {
-  const llmClient = new LLMClient();
-
   const spanId = startSpan('TOOL_INVOCATION', {
     tool: 'llm',
     operation: 'code_planning',
@@ -159,12 +157,13 @@ Rules:
 
     const userPrompt = `Request: ${request}${contextText}`;
 
-    const response = await llmClient.call('deepseek-chat', [
+    const response = await aiGateway.call('code_generation', [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ], {
       temperature: 0.2,
       responseFormat: { type: 'json_object' },
+      agentName: 'builder',
     });
 
     const plan = JSON.parse(response.content) as CodePlan;
@@ -206,7 +205,6 @@ async function generateCodeArtifacts(
   contextFiles: Array<{ path: string; content: string }>,
   plan: CodePlan
 ): Promise<CodeArtifact[]> {
-  const llmClient = new LLMClient();
   const artifacts: CodeArtifact[] = [];
   const errors: Array<{ path: string; error: string }> = [];
 
@@ -259,11 +257,12 @@ Original Request: ${request}${contextText}
 
 Generate the complete file content:`;
 
-      const response = await llmClient.call('deepseek-chat', [
+      const response = await aiGateway.call('code_generation', [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ], {
         temperature: 0.2,
+        agentName: 'builder',
       });
 
       const artifact: CodeArtifact = {
